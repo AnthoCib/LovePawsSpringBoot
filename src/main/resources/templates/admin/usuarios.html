@@ -1,150 +1,147 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-<meta charset="UTF-8">
-<title>Gestión de Usuarios | Admin</title>
+    <meta charset="UTF-8">
+    <title>Usuarios | Admin</title>
 
-<!-- Bootstrap CSS -->
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-
-<!-- Bootstrap Icons -->
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-	rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/admin.css}" rel="stylesheet">
 </head>
 
-<body class="bg-light">
+<body class="admin-dark">
 
+<div class="d-flex">
 
-	<div class="container py-4">
+    <!-- SIDEBAR -->
+    <div th:replace="fragments/admin-sidebar :: adminSidebar"></div>
 
-		<!-- Header -->
-		<div class="d-flex justify-content-between align-items-center mb-4">
-			<h2 class="fw-bold">👥 Gestión de Usuarios</h2>
-			<a href="/admin/dashboard" class="btn btn-outline-secondary"> <i
-				class="bi bi-arrow-left"></i> Volver
-			</a>
-		</div>
+    <!-- CONTENIDO -->
+    <main class="admin-content w-100 p-4">
 
-		<!-- Cards -->
-		<div class="row g-4">
+        <h2 class="fw-bold mb-4">
+            👥 Gestión de Usuarios
+        </h2>
+        <a th:href="@{/admin/usuarios/nuevo}"
+		   class="btn btn-primary mb-3">
+		   <i class="bi bi-person-plus"></i> Nuevo Gestor
+		</a>
+        
 
-			<div class="col-md-6 col-lg-4" th:each="u : ${usuarios}">
+        <div class="row g-4">
 
-				<div class="card h-100 shadow-sm border-0">
+            <div class="col-xl-3 col-lg-4 col-md-6" th:each="u : ${usuarios}">
 
-					<div class="card-body">
+                <div class="card h-100 shadow-sm">
 
-						<!-- Usuario -->
-						<div class="d-flex align-items-center mb-3">
-							<div
-								class="rounded-circle bg-primary text-white d-flex
-                                    align-items-center justify-content-center me-3"
-								style="width: 45px; height: 45px;">
-								<i class="bi bi-person-fill fs-4"></i>
-							</div>
+                    <div class="card-body">
 
-							<div>
-								<h5 class="mb-0" th:text="${u.username}">admin</h5>
-								<small class="text-muted" th:text="${u.correo}">
-									admin@mail.com </small>
-							</div>
-						</div>
+                        <!-- Avatar + datos -->
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="rounded-circle bg-primary text-white
+                                        d-flex align-items-center justify-content-center me-3"
+                                 style="width:45px;height:45px;">
+                                <i class="bi bi-person-fill fs-4"></i>
+                            </div>
 
-						<!-- Estado -->
-						<div class="mb-3">
-							<span class="badge"
-								th:classappend="${u.estado.id == 'ACTIVO'} 
-                                ? 'bg-success' 
-                                : 'bg-danger'">
-								<i class="bi"
-								th:classappend="${u.estado.id == 'ACTIVO'} 
-                                ? 'bi-unlock-fill' 
-                                : 'bi-lock-fill'"></i>
-								<span th:text="${u.estado.id}">ACTIVO</span>
-							</span>
-						</div>
-						<!-- Rol -->
-						<div class="mb-3">
-							<span class="badge px-3 py-2"
-								th:classappend="
-					              ${u.rol.nombre == 'ADMIN'} ? 'bg-danger' :
-					              (${u.rol.nombre == 'MODERADOR'} ? 'bg-warning text-dark' :
-					              'bg-primary')">
+                            <div>
+                                <h5 class="mb-0" th:text="${u.username}">usuario</h5>
+                                <small class="text-muted" th:text="${u.correo}">
+                                    correo@mail.com
+                                </small>
+                            </div>
+                        </div>
 
-								<i class="bi bi-shield-lock-fill me-1"></i> <span
-								th:text="${u.rol.nombre}">ADMIN</span>
-							</span>
-						</div>
+                        <!-- Estado -->
+                        <span class="badge"
+                              th:classappend="${u.estado.id == 'ACTIVO'} 
+                                    ? 'bg-success' 
+                                    : 'bg-danger'">
+                            <i class="bi"
+                               th:classappend="${u.estado.id == 'ACTIVO'} 
+                                    ? 'bi-unlock-fill' 
+                                    : 'bi-lock-fill'"></i>
+                            <span th:text="${u.estado.id}">ACTIVO</span>
+                        </span>
 
+                        <!-- Rol -->
+                        <div class="mt-2">
+                            <span class="badge px-3 py-2"
+                                  th:classappend="
+                                    ${u.rol.nombre == 'ADMIN'} ? 'bg-danger' :
+                                    (${u.rol.nombre == 'GESTOR'} ? 'bg-warning text-dark' :
+                                    'bg-primary')">
+                                <i class="bi bi-shield-lock-fill me-1"></i>
+                                <span th:text="${u.rol.nombre}">ADMIN</span>
+                            </span>
+                        </div>
 
-						<!-- Rol -->
-						<form th:if="${u.id != #authentication.principal.usuario.id}"
-						      th:action="@{/admin/usuarios/{id}/rol(id=${u.id})}"
-							  method="post" 
-							  class="mb-3">
+                    </div>
 
-							<label class="form-label small text-muted"> Cambiar rol </label>
+                    <!-- FOOTER -->
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-grid gap-2">
 
-							<div class="input-group">
-								<select name="rolId" class="form-select form-select-sm">
-									<option th:each="r : ${roles}" 
-											th:value="${r.id}"
-											th:text="${r.nombre}" 
-											th:selected="${r.id == u.rol.id}">
-									</option>
-								</select>
+                            <!-- Cambiar rol -->
+                            <form th:if="${u.id != #authentication.principal.usuario.id}"
+                                  th:action="@{/admin/usuarios/{id}/rol(id=${u.id})}"
+                                  method="post">
 
-								<button class="btn btn-sm btn-primary">
-									<i class="bi bi-check"></i>
-								</button>
-							</div>
-						</form>
+                                <div class="input-group input-group-sm">
+                                    <select name="rolId" class="form-select">
+                                        <option th:each="r : ${roles}"
+                                                th:value="${r.id}"
+                                                th:text="${r.nombre}"
+                                                th:selected="${r.id == u.rol.id}">
+                                        </option>
+                                    </select>
 
-					</div>
+                                    <button class="btn btn-outline-primary">
+                                        <i class="bi bi-check"></i>
+                                    </button>
+                                </div>
+                            </form>
 
-					<!-- Acciones -->
-					<div class="card-footer bg-white border-0 text-end">
-						<form th:action="@{/admin/usuarios/{id}/estado(id=${u.id})}"
-							method="post">
+                            <!-- Activar / Bloquear -->
+                            <form th:action="@{/admin/usuarios/{id}/estado(id=${u.id})}"
+                                  method="post">
 
-							<button class="btn btn-sm w-100"
-								th:classappend="${u.estado.id == 'ACTIVO'} 
-                                    ? 'btn-outline-danger' 
-                                    : 'btn-outline-success'">
+                                <button class="btn btn-sm w-100"
+                                        th:classappend="${u.estado.id == 'ACTIVO'} 
+                                            ? 'btn-outline-danger' 
+                                            : 'btn-outline-success'">
 
-								<i class="bi"
-									th:classappend="${u.estado.id == 'ACTIVO'} 
-                                ? 'bi-lock-fill' 
-                                : 'bi-unlock-fill'"></i>
+                                    <i class="bi"
+                                       th:classappend="${u.estado.id == 'ACTIVO'} 
+                                            ? 'bi-lock-fill' 
+                                            : 'bi-unlock-fill'"></i>
 
-								<span
-									th:text="${u.estado.id == 'ACTIVO'} 
-                                ? 'Bloquear usuario' 
-                                : 'Activar usuario'">
-								</span>
-							</button>
-						</form>
-					</div>
+                                    <span th:text="${u.estado.id == 'ACTIVO'} 
+                                            ? 'Bloquear usuario' 
+                                            : 'Activar usuario'">
+                                    </span>
+                                </button>
+                            </form>
 
-				</div>
-			</div>
+                        </div>
+                    </div>
 
-			<!-- Sin usuarios -->
-			<div class="col-12" th:if="${#lists.isEmpty(usuarios)}">
-				<div class="alert alert-info text-center">No hay usuarios
-					registrados</div>
-			</div>
+                </div>
+            </div>
 
-		</div>
+            <!-- Sin usuarios -->
+            <div th:if="${#lists.isEmpty(usuarios)}"
+                 class="text-center text-muted py-5">
+                No hay usuarios registrados
+            </div>
 
-	</div>
+        </div>
 
-	<!-- Bootstrap JS -->
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </main>
+</div>
 
 </body>
 </html>

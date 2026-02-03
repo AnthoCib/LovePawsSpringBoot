@@ -6,6 +6,8 @@ import java.util.Optional;
 import com.lovepaws.app.user.domain.Usuario;
 
 public interface UsuarioService {
+	
+	void crearUsuarioDesdeAdmin(Usuario usuario);
 
 	Usuario createUsuario(Usuario usuario);
 

@@ -61,17 +61,28 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/usuarios/login")                    // Página de login personalizada
                 .loginProcessingUrl("/login")  //  URL que procesa el formulario
-                .successHandler(successHandler)
                 .usernameParameter("username")          // Campo del formulario
                 .passwordParameter("password")
                 .successHandler((request, response, authentication) -> {
-                	 UsuarioPrincipal userPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
-                	String nombre = userPrincipal.getUsuario().getNombre();
-                	String primerNombre = nombre.split(" ")[0];
-                    primerNombre = primerNombre.substring(0,1).toUpperCase() +
-                            primerNombre.substring(1).toLowerCase();
-                    response.sendRedirect("/?loginSuccess=true&user=" + URLEncoder.encode(primerNombre, StandardCharsets.UTF_8));
+
+                    UsuarioPrincipal userPrincipal =
+                            (UsuarioPrincipal) authentication.getPrincipal();
+
+                    boolean isAdmin = authentication.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+                    boolean isGestor = authentication.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_GESTOR"));
+
+                    if (isAdmin) {
+                        response.sendRedirect("/admin/dashboard");
+                    } else if (isGestor) {
+                        response.sendRedirect("/gestor/dashboard");
+                    } else {
+                        response.sendRedirect("/");
+                    }
                 })
+
            // Redirección después de login exitoso
                 .failureUrl("/usuarios/procesar-login?error=true")             // Redirección si falla
                 .permitAll()

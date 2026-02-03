@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,4 +54,25 @@ public class AdminUsuarioController {
 		usuarioService.cambiarRol(id, rolId);
 		return "redirect:/admin/usuarios";
 	}
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/nuevo")
+	public String nuevoUsuario(Model model) {
+
+	    model.addAttribute("usuario", new Usuario());
+	    model.addAttribute("roles", rolService.listarRoles());
+	    model.addAttribute("isAdmin", true);
+
+	    return "admin/usuarios/crear";
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/admin/usuarios")
+	public String guardarUsuarioAdmin(
+	        @ModelAttribute Usuario usuario) {
+
+	    usuarioService.crearUsuarioDesdeAdmin(usuario);
+	    return "redirect:/admin/usuarios?creado=true";
+	}
+
+
 }

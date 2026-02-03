@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +24,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
+    private final PasswordEncoder passwordEncoder;
+
 	private final UsuarioRepository usuarioRepo;
 	private final RolRepository rolRepo;
 	private final EstadoUsuarioRepository estadoUsuarioRepo;
+
+  
 
 	@Override
 	@Transactional
@@ -125,6 +130,44 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuarioRepo.save(usuario);
 
 	}
+
+	@Override
+    public void crearUsuarioDesdeAdmin(Usuario usuario) {
+
+        // Validaciones básicas
+        if (usuarioRepo.existsByUsername(usuario.getUsername())) {
+            throw new RuntimeException("El username ya existe");
+        }
+
+        if (usuarioRepo.existsByCorreo(usuario.getCorreo())) {
+            throw new RuntimeException("El correo ya está registrado");
+        }
+
+        // Rol (obligatorio desde ADMIN)
+        Rol rol = rolRepo.findById(usuario.getRol().getId())
+                .orElseThrow(() -> new RuntimeException("Rol inválido"));
+
+        usuario.setRol(rol);
+
+        //  Estado → ACTIVO por defecto
+        EstadoUsuario estado = estadoUsuarioRepo.findById("ACTIVO")
+                .orElseThrow(() -> new RuntimeException("Estado ACTIVO no encontrado"));
+
+        usuario.setEstado(estado);
+
+        // Encriptar contraseña
+        usuario.setPasswordHash(
+                passwordEncoder.encode(usuario.getPasswordHash())
+        );
+
+        // Campos de sistema 
+        usuario.setFechaCreacion(LocalDateTime.now());
+        usuario.setDeletedAt(null);
+
+
+        // 6Guardar
+        usuarioRepo.save(usuario);
+    }
 
 
 }
