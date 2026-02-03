@@ -1,0 +1,34 @@
+package com.lovepaws.app.admin.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import com.lovepaws.app.admin.dto.MascotaPorEstadoDTO;
+import com.lovepaws.app.admin.dto.UsuarioPorRolDTO;
+import com.lovepaws.app.mascota.domain.Mascota;;
+
+@Repository
+public interface ReporteRepository  extends JpaRepository<Mascota, Integer>{
+
+	@Query("""
+			    SELECT new com.lovepaws.app.admin.dto.MascotaPorEstadoDTO(
+			        m.estado.id,
+			        COUNT(m)
+			    )
+			    FROM Mascota m
+			    GROUP BY m.estado.id
+			""")
+	List<MascotaPorEstadoDTO> mascotasPorEstado();
+
+	@Query("""
+	        SELECT new com.lovepaws.app.admin.dto.UsuarioPorRolDTO(
+	            u.rol.nombre,
+	            COUNT(u)
+	        )
+	        FROM Usuario u
+	        GROUP BY u.rol.nombre
+	    """)
+	    List<UsuarioPorRolDTO> usuariosPorRol();
+}

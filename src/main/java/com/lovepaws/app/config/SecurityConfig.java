@@ -1,0 +1,97 @@
+package com.lovepaws.app.config;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import com.lovepaws.app.security.CustomSuccessHandler;
+import com.lovepaws.app.security.CustomUserDetailsService;
+import com.lovepaws.app.security.UsuarioPrincipal;
+
+import lombok.RequiredArgsConstructor;
+
+@Configuration
+@RequiredArgsConstructor
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    private final CustomUserDetailsService userDetailsService;
+
+    private final CustomSuccessHandler successHandler;
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                //  Recursos estáticos y rutas públicas
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                .requestMatchers("/","/index", "/home", "/usuarios/registro", "/login", "/registro", "/mascotas/**").permitAll()
+                // Rutas protegidas por rol
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/gestor/**").hasAnyRole("GESTOR","ADMIN")
+                .requestMatchers("/mascotas/**").permitAll()
+                .requestMatchers("/mascota/catalogo/**").hasRole("ADOPTANTE")
+                // Todo lo demás requiere login
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/usuarios/login")                    // Página de login personalizada
+                .loginProcessingUrl("/login")  //  URL que procesa el formulario
+                .successHandler(successHandler)
+                .usernameParameter("username")          // Campo del formulario
+                .passwordParameter("password")
+                .successHandler((request, response, authentication) -> {
+                	 UsuarioPrincipal userPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
+                	String nombre = userPrincipal.getUsuario().getNombre();
+                	String primerNombre = nombre.split(" ")[0];
+                    primerNombre = primerNombre.substring(0,1).toUpperCase() +
+                            primerNombre.substring(1).toLowerCase();
+                    response.sendRedirect("/?loginSuccess=true&user=" + URLEncoder.encode(primerNombre, StandardCharsets.UTF_8));
+                })
+           // Redirección después de login exitoso
+                .failureUrl("/usuarios/procesar-login?error=true")             // Redirección si falla
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            )
+            .csrf(Customizer.withDefaults()) // Mantiene CSRF habilitado
+            .authenticationProvider(authenticationProvider());
+
+        return http.build();
+    }
+
+    
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}

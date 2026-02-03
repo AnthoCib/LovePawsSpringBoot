@@ -1,0 +1,167 @@
+/* Estilos generales inspirados en el diseño de la captura (aproximando Figma-like elements: colores, tipografías, sombras, etc.) */
+.logo {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+nav ul {
+	list-style: none;
+	display: flex;
+	margin: 0;
+	padding: 0;
+	gap: 15px; /* Espaciado entre links */
+	align-items: center;
+}
+
+nav ul li {
+	margin-right: 0;
+}
+
+nav ul li a {
+	color: white;
+	text-decoration: none;
+	padding: 0.5rem 1rem
+}
+
+.icons {
+	display: flex;
+	align-items: center;
+}
+
+.icons button {
+	background-color: #ffc107;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 20px;
+	color: #333;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.hero {
+	position: relative;
+	padding: 0;
+	overflow: hidden;
+}
+
+.hero-image-container {
+	position: relative;
+	border: 8px solid white; /* Bordes blancos */
+	border-radius: 20px;
+	max-width: 1200px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+.hero-image {
+	width: 100%;
+	height: auto;
+	display: block;
+	filter: brightness(0.7); /* Oscurece la imagen */
+}
+
+.hero-overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.5));
+	/* Degradado gris */
+}
+
+.hero-text {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	text-align: center;
+	padding: 20px;
+}
+
+.hero-text h1 {
+	font-size: 36px;
+	margin-bottom: 15px;
+}
+
+.hero-text p {
+	font-size: 18px;
+	margin-bottom: 20px;
+}
+
+.section {
+	padding: 40px 20px;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.section h2 {
+	font-size: 28px;
+	margin-bottom: 20px;
+}
+
+.cards {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: nowrap; /* Cambiado a nowrap para mantener en una fila */
+	gap: 20px; /* Espacio entre cards */
+}
+
+.card {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	padding: 20px;
+	flex: 1; /* Permite que crezcan igual */
+	min-width: 0; /* Evita overflow */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra Figma-like */
+	text-align: center;
+}
+
+.card img {
+	max-width: 100%;
+	border-radius: 10px;
+}
+
+.stories, .shelters {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+.story, .shelter {
+	width: 30%;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.sponsors {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	margin-top: 20px;
+}
+
+.sponsors img {
+	height: 50px;
+}
+/* Ajustes responsivos (Figma-inspired responsiveness) */
+@media ( max-width : 768px) {
+	.cards {
+		flex-wrap: wrap; /* En pantallas pequeñas, permite wrap */
+		justify-content: center;
+	}
+	.card, .story, .shelter {
+		width: 100%;
+	}
+	.footer-top {
+		flex-direction: column;
+	}
+	@media ( max-width : 768px) {
+		nav ul {
+			flex-direction: column;
+			gap: 10px;
+			align-items: center;
+		}
+	}
+}

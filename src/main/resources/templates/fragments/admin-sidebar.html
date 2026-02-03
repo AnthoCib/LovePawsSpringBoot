@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="adminSidebar"
+     class="admin-sidebar d-flex flex-column p-3">
+
+    <h5 class="text-center mb-4 text-light">
+        <i class="bi bi-shield-lock"></i> Administración
+    </h5>
+
+    <ul class="nav nav-pills flex-column gap-1">
+
+        <li class="nav-item">
+            <a th:href="@{/admin/dashboard}" class="nav-link text-light">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a th:href="@{/admin/usuarios}" class="nav-link text-light">
+                <i class="bi bi-people me-2"></i> Usuarios
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a th:href="@{/admin/mascotas}" class="nav-link text-light">
+                <i class="bi bi-heart me-2"></i> Mascotas
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a th:href="@{/admin/reportes}" class="nav-link text-light">
+                <i class="bi bi-bar-chart me-2"></i> Reportes
+            </a>
+        </li>
+
+    </ul>
+
+    <hr class="text-secondary">
+
+    <form th:action="@{/logout}" method="post">
+        <button class="btn btn-outline-light w-100">
+            <i class="bi bi-box-arrow-right"></i> Salir
+        </button>
+    </form>
+
+</div>
+</html>

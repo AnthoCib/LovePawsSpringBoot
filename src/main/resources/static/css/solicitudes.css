@@ -1,0 +1,10 @@
+/* solicitudes.css */
+body { background:#f7f8f9; }
+.page-head h2 { margin: 0; }
+.page-desc { color:#6b7280; }
+.table thead th { color:#374151; font-weight:600; }
+.col-actions { width: 160px; text-align: center; }
+.badge-pill { border-radius:999px; padding:.35rem .7rem; font-size:.80rem; }
+.nowrap { white-space: nowrap; }
+.brand { font-weight:700; letter-spacing:.2px; }
+.main-card { background:#fff; border-radius:12px; box-shadow: 0 1px 2px rgba(0,0,0,.05); }

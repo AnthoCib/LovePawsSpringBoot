@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head><title>Gestión de Mascotas</title></head>
+<body>
+<h2>Panel del Gestor 🐾</h2>
+<p>Gestión de mascotas y solicitudes de adopción.</p>
+<a th:href="@{/logout}">Cerrar sesión</a>
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mascotas | Gestión</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+          rel="stylesheet">
+    <link th:href="@{/css/admin.css}" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container py-4">
+
+    <h2 class="fw-bold mb-4">🐾 Gestión de Mascotas</h2>
+
+    <a href="/admin/dashboard" class="btn btn-outline-secondary mb-3">
+        ← Volver
+    </a>
+
+    <div class="row g-4">
+
+        <!-- CARD -->
+        <div class="col-xl-3 col-lg-4 col-md-6"
+             th:each="m : ${mascotas}">
+
+            <div class="card mascota-card h-100 shadow-sm">
+
+                <!-- FOTO -->
+                <img class="card-img-top"
+                     th:src="${m.fotoUrl != null ? m.fotoUrl : '/images/mascotas/mascota-default.jpg'}"
+                     alt="Foto mascota">
+
+                <div class="card-body">
+
+                    <!-- NOMBRE -->
+                    <h5 class="card-title" th:text="${m.nombre}">Nombre</h5>
+
+                    <!-- CATEGORIA / RAZA -->
+                    <p class="text-muted mb-1">
+                        <i class="bi bi-tags"></i>
+                        <span th:text="${m.categoria != null ? m.categoria.nombre : 'Sin categoría'}"></span>
+                        ·
+                        <span th:text="${m.raza != null ? m.raza.nombre : 'Sin raza'}"></span>
+                    </p>
+
+                    <!-- USUARIO -->
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-person"></i>
+                        Publicado por
+                        <b th:text="${m.usuarioCreacion != null ? m.usuarioCreacion.username : 'Sistema'}"></b>
+                    </p>
+
+                    <!-- ESTADO -->
+                
+                <span class="badge bg-success"
+				      th:if="${m.estado != null and m.estado.id == 'DISPONIBLE'}">
+				    DISPONIBLE
+				</span>
+				
+				<span class="badge bg-warning text-dark"
+				      th:if="${m.estado != null and m.estado.id == 'NO_DISPONIBLE'}">
+				    NO DISPONIBLE
+				</span>
+				
+				<span class="badge bg-secondary"
+				      th:if="${m.estado != null and m.estado.id == 'ADOPTADA'}">
+				    ADOPTADA
+				</span>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div class="card-footer bg-transparent border-0">
+                    <div class="d-grid gap-2">
+
+                        <!-- EDITAR -->
+                        <a th:href="@{/gestor/mascotas/editar/{id}(id=${m.id})}"
+                           class="btn btn-outline-warning btn-sm"
+                           sec:authorize="hasAnyRole('GESTOR','ADMIN')">
+                            ✏️ Editar
+                        </a>
+
+                        <!-- ELIMINAR (solo GESTOR) -->
+                        <form th:action="@{/gestor/mascotas/eliminar/{id}(id=${m.id})}"
+                              method="post"
+                              sec:authorize="hasRole('GESTOR')">
+
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}"/>
+
+                            <button class="btn btn-outline-danger btn-sm">
+                                🗑️ Eliminar
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SIN MASCOTAS -->
+        <div th:if="${#lists.isEmpty(mascotas)}"
+             class="text-center text-muted py-5">
+            No hay mascotas registradas
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+
+
+</body>
+</html>

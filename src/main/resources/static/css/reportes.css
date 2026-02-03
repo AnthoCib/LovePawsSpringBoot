@@ -1,0 +1,69 @@
+/* === Fondo general de la página de Reportes === */
+body { background-color: #f8faf8; }
+
+/* === Tarjetas KPI (cards) === */
+.card-soft {
+  background: #e8f0e8;
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: transform .05s ease-in-out, background .15s ease-in-out, border-color .15s ease-in-out;
+}
+.card-soft.active {
+  border-color: #9cc29c;
+  background: #e3efe3;
+}
+.card-soft:active { transform: scale(.99); }
+
+.metric-value { font-size: 2rem; font-weight: 700; }
+.metric-label { color: #557; }
+
+/* Pills de estado */
+.pill { border-radius: 999px; padding: .35rem .8rem; font-size: .85rem; }
+
+/* Tabla y utilidades */
+.table-rounded { border-radius: 1rem; overflow: hidden; }
+.row-gap { row-gap: 1rem; }
+#th-fecha { cursor: pointer; }
+
+/* Botón volver */
+.btn-ghost { background: #e9efe9; border: 0; }
+.btn-ghost:hover { background: #dbe6db; }
+
+/* Links de acción */
+.link-more { font-size: .85rem; color: #245; }
+.link-more:hover { text-decoration: underline; }
+
+/* =========================
+   BÚSQUEDA AMPLIA (desktop)
+   ========================= */
+
+/* Contenedor de la barra (derecha del título) */
+.search-wrap{
+  flex: 0 1 720px;    /* ancho "objetivo" en desktop */
+  max-width: 820px;   /* tope en desktop grande */
+}
+
+/* Input grande y cómodo */
+.search-wrap .form-control,
+.search-input {
+  height: 44px;
+  padding: .5rem 1rem;
+  width: 100%;
+  /* IMPORTANTE: anula el límite pequeño del snippet original */
+  max-width: none;
+}
+
+/* Muy ancha en pantallas grandes */
+@media (min-width: 1400px){
+  .search-wrap{ flex-basis: 960px; max-width: 960px; }
+}
+
+/* En móviles: que ocupe toda la fila y baje debajo del título */
+@media (max-width: 991.98px){
+  .search-wrap{ flex: 1 1 100%; max-width: none; }
+}
+
+/* reportes.css — agregado desde reportes.jsp */
+.search-wrap { max-width: 440px; }
+

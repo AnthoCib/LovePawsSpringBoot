@@ -1,0 +1,71 @@
+@charset "UTF-8";
+
+--CATALOGO--
+   body {
+        background-color: #fdfdfd;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Header limpio */
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: #fff;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    /* Botón Añadir cachorro */
+    .btn-custom {
+        background-color: #b3e5fc; /* azul pastel */
+        border-radius: 20px;
+        padding: 8px 20px;
+        font-weight: bold;
+        border: none;
+        color: #000;
+        cursor: pointer;
+    }
+    .btn-custom:hover {
+        background-color: #81d4fa; /* un poco más fuerte al pasar mouse */
+    }
+
+    /* Buscador */
+    .search-box {
+        flex: 1;
+    }
+    .search-input {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        background-color: #f1fdf7; /* verde pastel muy suave */
+        font-size: 14px;
+    }
+
+    /* Catálogo título */
+    .catalog-title {
+        font-size: 40px;
+        font-weight: bold;
+        color: #000; /* negro */
+        text-align:center;
+        margin-bottom:10px;
+    }
+
+    /* Botón Volver al inicio */
+    .btn-light {
+        background-color: #e1f5fe; /* azul clarito pastel */
+        border-radius: 15px;
+        padding: 8px 20px;
+        font-weight: bold;
+        border: none;
+        color: #000;
+        cursor: pointer;
+    }
+    .btn-light:hover {
+        background-color: #b3e5fc;
+    }
+ 

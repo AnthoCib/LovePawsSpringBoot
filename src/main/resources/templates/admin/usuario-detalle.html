@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Detalle Usuario | Admin</title>
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+	rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+
+	<div class="container py-4">
+
+		<!-- Volver -->
+		<a href="/admin/mascotas" class="btn btn-outline-secondary mb-4">
+			← Volver </a>
+
+		<div class="row justify-content-center">
+
+			<div class="col-md-6">
+
+				<div class="card shadow-sm border-0">
+
+					<!-- Header -->
+					<div class="card-header bg-white text-center border-0">
+						<i class="bi bi-person-circle fs-1 text-primary"></i>
+						<h4 class="fw-bold mt-2" th:text="${usuario.username}">
+							Username</h4>
+					</div>
+
+					<!-- Body -->
+					<div class="card-body">
+
+						<p class="mb-2">
+							<i class="bi bi-envelope-fill text-primary me-1"></i> <strong>Email:</strong>
+							<span th:text="${usuario.correo}"></span>
+						</p>
+
+						<p class="mb-2">
+							<i class="bi"
+								th:classappend="
+							       ${usuario.rol.nombre == 'ADMIN'} ? 'bi-shield-fill-exclamation text-danger' :
+							       (${usuario.rol.nombre == 'MODERADOR'} ? 'bi-shield-fill-check text-warning' :
+							       'bi-person-badge-fill text-primary')">
+							</i> <strong>Rol:</strong> <span class="badge"
+								th:text="${usuario.rol.nombre}"
+								th:classappend="
+					              ${usuario.rol.nombre == 'ADMIN'} ? 'bg-danger' :
+					              (${usuario.rol.nombre == 'MODERADOR'} ? 'bg-warning text-dark' :
+					              'bg-primary')">
+							</span>
+						</p>
+
+						<p class="mb-0 d-flex align-items-center gap-2">
+							<i class="bi"
+								th:classappend="
+						           ${usuario.estado.id == 'ACTIVO'} ? 'bi-toggle-on text-success' :
+						           'bi-toggle-off text-danger'">
+							</i> <strong>Estado:</strong> <span class="badge"
+								th:classappend="
+						              ${usuario.estado.id == 'ACTIVO'} ? 'bg-success' : 'bg-danger'"
+								th:text="${usuario.estado.id}"> </span>
+						</p>
+
+					</div>
+
+					<!-- Footer -->
+					<div class="card-footer bg-white border-0 text-center">
+						<small class="text-muted"> ID Usuario: <span
+							th:text="${usuario.id}"></span>
+						</small>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</body>
+</html>

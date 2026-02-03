@@ -1,0 +1,85 @@
+@charset "UTF-8";
+
+/* Fondo general */
+body {
+    background-color: #ffff;
+}
+
+/* Navbar */
+nav.blue.darken-2 {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+nav .brand-logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+nav ul li a {
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+nav ul li a:hover {
+    background-color: rgba(255, 204, 0, 0.2);
+    border-radius: 6px;
+}
+
+/* Filtros */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+select {
+    border-radius: 8px;
+}
+
+/* Tarjetas de mascotas */
+.card {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+.card-image img {
+    height: 220px;
+    object-fit: cover;
+}
+.card-content {
+    min-height: 120px;
+}
+
+/* Botones personalizados */
+.btn-love {
+    background-color: #0050C3 !important;
+    color: white !important;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+.btn-love:hover {
+    background-color: #ffffff !important;
+    color: #1F386D !important;
+    border: 1px solid #1F386D !important;
+}
+
+/* Footer */
+.page-footer {
+    padding-top: 30px;
+}
+.page-footer h6 {
+    font-weight: bold;
+}
+.page-footer p {
+    margin: 0;
+}
+.footer-copyright {
+    background-color: rgba(0, 0, 0, 0.15);
+    padding: 10px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-image img {
+        height: 180px;
+    }
+}

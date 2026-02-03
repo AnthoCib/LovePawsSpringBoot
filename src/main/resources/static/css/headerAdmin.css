@@ -1,0 +1,83 @@
+/* Base */
+.navbar-admin {
+  background: #ffffff;
+  border-bottom: 1px solid #eef1f0;
+  min-height: 56px;
+}
+
+/* Marca + navegación */
+.navbar-admin .navbar-brand {
+  font-size: 1.125rem;
+}
+
+.navbar-admin .nav-link {
+  color: #232b2b;
+  opacity: .8;
+  padding: .25rem .5rem;
+}
+
+.navbar-admin .nav-link:hover {
+  opacity: 1;
+}
+
+.navbar-admin .nav-link.active {
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* Icono campana “pill” */
+.btn-icon-pill {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #eff2f1;
+  color: #2a2f2e;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+}
+
+.btn-icon-pill:hover {
+  background: #e7ecea;
+}
+
+/* Avatar circular turquesa */
+.btn-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0ea5a5; /* turquesa */
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+}
+
+.btn-avatar:hover {
+  filter: brightness(0.95);
+}
+
+/* Utilidad para el container si no usas bootstrap */
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Si no incluyes Bootstrap, añade esto para el toggler en móviles */
+.navbar-toggler {
+  border: 0;
+  background: transparent;
+}
+.navbar-toggler-icon {
+  display: inline-block;
+  width: 1.5em; height: 1.5em;
+  background: no-repeat center/100% url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0,0,0,.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Espaciado entre elementos en pantallas grandes */
+@media (min-width: 992px) {
+  .navbar-admin .navbar-nav { gap: .25rem .75rem; }
+}
