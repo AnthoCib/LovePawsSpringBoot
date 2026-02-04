@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 
 import com.lovepaws.app.user.domain.Rol;
@@ -28,14 +29,21 @@ public class AdminUsuarioController {
 	private final UsuarioService usuarioService;
 	private final RolService rolService;
 
-	// Listar usuarios
+	
 	@GetMapping
 	public String listarUsuarios(Model model) {
 		List<Usuario> usuarios = usuarioService.listarUsuarios();
 		List<Rol> roles = rolService.listarRoles();
 
 		model.addAttribute("usuarios", usuarios);
-		model.addAttribute("roles", roles);
+		model.addAttribute("roles",
+			    rolService.listarRoles().stream()
+			        .filter(r ->
+			            r.getNombre().equalsIgnoreCase("ADMIN") ||
+			            r.getNombre().equalsIgnoreCase("GESTOR")
+			        )
+			        .toList()
+			);
 
 		return "admin/usuarios";
 	}
@@ -54,25 +62,37 @@ public class AdminUsuarioController {
 		usuarioService.cambiarRol(id, rolId);
 		return "redirect:/admin/usuarios";
 	}
-	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/nuevo")
-	public String nuevoUsuario(Model model) {
-
-	    model.addAttribute("usuario", new Usuario());
-	    model.addAttribute("roles", rolService.listarRoles());
-	    model.addAttribute("isAdmin", true);
-
-	    return "admin/usuarios/crear";
-	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping("/admin/usuarios")
-	public String guardarUsuarioAdmin(
-	        @ModelAttribute Usuario usuario) {
+	@GetMapping("/nuevo")
+	public String nuevoUsuarioAdmin(Model model) {
 
-	    usuarioService.crearUsuarioDesdeAdmin(usuario);
-	    return "redirect:/admin/usuarios?creado=true";
+	    model.addAttribute("usuario", new Usuario());
+	   
+	    model.addAttribute("isAdmin", true);
+	    List<Rol> roles = rolService.listarRoles().stream()
+	            .filter(r ->
+	                    r.getNombre().equalsIgnoreCase("ADMIN") ||
+	                    r.getNombre().equalsIgnoreCase("GESTOR")
+	            )
+	            .toList();
+
+	    model.addAttribute("roles", roles);
+
+	    return "admin/crear";
 	}
+	
+	
+	@PostMapping
+	public String crearUsuarioDesdeAdmin(
+	        @ModelAttribute Usuario usuario,
+	        RedirectAttributes ra
+	) {
+	    usuarioService.crearUsuarioDesdeAdmin(usuario);
+	    ra.addFlashAttribute("exito", "Usuario creado correctamente");
+	    return "redirect:/admin/usuarios";
+	}
+
 
 
 }

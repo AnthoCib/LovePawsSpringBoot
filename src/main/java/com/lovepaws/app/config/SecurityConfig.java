@@ -1,7 +1,6 @@
 package com.lovepaws.app.config;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,10 +68,10 @@ public class SecurityConfig {
                             (UsuarioPrincipal) authentication.getPrincipal();
 
                     boolean isAdmin = authentication.getAuthorities().stream()
-                            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                            .anyMatch(a -> a.getAuthority().equals("ADMIN"));
 
                     boolean isGestor = authentication.getAuthorities().stream()
-                            .anyMatch(a -> a.getAuthority().equals("ROLE_GESTOR"));
+                            .anyMatch(a -> a.getAuthority().equals("GESTOR"));
 
                     if (isAdmin) {
                         response.sendRedirect("/admin/dashboard");

@@ -30,16 +30,7 @@
                     <form th:action="@{/usuarios/registro}" th:object="${usuario}" method="post" novalidate>
                         <!-- CSRF -->
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-                        <!-- Errores 
-                        <div th:if="${#fields.hasErrors()}">
-                            <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
-                                </ul>
-                            </div>
-                        </div>
-						-->
+              
                         <div class="row g-3">
                             <!-- Username -->
                             <div class="col-md-6 position-relative">

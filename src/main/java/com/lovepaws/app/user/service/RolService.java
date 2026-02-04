@@ -11,4 +11,6 @@ public interface RolService {
 	List<Rol> listarRoles();
 
 	Rol updateRol(Rol rol);
+	
+
 }

@@ -24,13 +24,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
-    private final PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 
 	private final UsuarioRepository usuarioRepo;
 	private final RolRepository rolRepo;
 	private final EstadoUsuarioRepository estadoUsuarioRepo;
-
-  
 
 	@Override
 	@Transactional
@@ -132,42 +130,40 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-    public void crearUsuarioDesdeAdmin(Usuario usuario) {
+	public void crearUsuarioDesdeAdmin(Usuario usuario) {
+		// Validaciones básicas
+		if (usuario.getRol() == null || usuario.getRol().getId() == null) {
+			throw new RuntimeException("Rol obligatorio");
+		}
 
-        // Validaciones básicas
-        if (usuarioRepo.existsByUsername(usuario.getUsername())) {
-            throw new RuntimeException("El username ya existe");
-        }
+		if (usuarioRepo.existsByUsername(usuario.getUsername())) {
+			throw new RuntimeException("El username ya existe");
+		}
 
-        if (usuarioRepo.existsByCorreo(usuario.getCorreo())) {
-            throw new RuntimeException("El correo ya está registrado");
-        }
+		if (usuarioRepo.existsByCorreo(usuario.getCorreo())) {
+			throw new RuntimeException("El correo ya está registrado");
+		}
 
-        // Rol (obligatorio desde ADMIN)
-        Rol rol = rolRepo.findById(usuario.getRol().getId())
-                .orElseThrow(() -> new RuntimeException("Rol inválido"));
+		// Rol (obligatorio desde ADMIN)
+		Rol rol = rolRepo.findById(usuario.getRol().getId()).orElseThrow(() -> new RuntimeException("Rol inválido"));
 
-        usuario.setRol(rol);
+		usuario.setRol(rol);
 
-        //  Estado → ACTIVO por defecto
-        EstadoUsuario estado = estadoUsuarioRepo.findById("ACTIVO")
-                .orElseThrow(() -> new RuntimeException("Estado ACTIVO no encontrado"));
+		// Estado → ACTIVO por defecto
+		EstadoUsuario estado = estadoUsuarioRepo.findById("ACTIVO")
+				.orElseThrow(() -> new RuntimeException("Estado ACTIVO no encontrado"));
 
-        usuario.setEstado(estado);
+		usuario.setEstado(estado);
 
-        // Encriptar contraseña
-        usuario.setPasswordHash(
-                passwordEncoder.encode(usuario.getPasswordHash())
-        );
+		// Encriptar contraseña
+		usuario.setPasswordHash(passwordEncoder.encode(usuario.getPasswordHash()));
 
-        // Campos de sistema 
-        usuario.setFechaCreacion(LocalDateTime.now());
-        usuario.setDeletedAt(null);
+		// Campos de sistema
+		usuario.setFechaCreacion(LocalDateTime.now());
+		usuario.setDeletedAt(null);
 
-
-        // 6Guardar
-        usuarioRepo.save(usuario);
-    }
-
+		// 6Guardar
+		usuarioRepo.save(usuario);
+	}
 
 }

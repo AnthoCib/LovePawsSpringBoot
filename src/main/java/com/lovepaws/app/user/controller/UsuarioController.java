@@ -97,7 +97,10 @@ public class UsuarioController {
 
         // Redirección según tipo de usuario
         // Redirige a login para nuevos adoptantes
-        return isAdmin ? "redirect:/usuarios/lista?registro=ok" : "redirect:/login?registro=ok"; 
+        return isAdmin 
+        	    ? "redirect:/admin/dashboard?registro=ok"
+        	    : "redirect:/login?registro=ok";
+ 
         
     }
 
@@ -137,21 +140,25 @@ public class UsuarioController {
        MÉTODOS AUXILIARES
        ========================= */
     private void cargarRolesSegunUsuario(Model model, Authentication auth) {
-        boolean isAdmin = auth != null && auth.getAuthorities().stream()
+    	
+    	boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
         model.addAttribute("isAdmin", isAdmin);
 
         List<Rol> roles;
+
         if (isAdmin) {
             roles = rolService.listarRoles().stream()
-                    .filter(r -> r.getNombre().equalsIgnoreCase("ADMIN")
-                            || r.getNombre().equalsIgnoreCase("GESTOR"))
+                    .filter(r ->
+                            r.getNombre().equalsIgnoreCase("ADMIN") ||
+                            r.getNombre().equalsIgnoreCase("GESTOR")
+                    )
                     .toList();
         } else {
-            roles = rolService.listarRoles().stream()
-                    .filter(r -> r.getNombre().equalsIgnoreCase("ADOPTANTE"))
-                    .toList();
+            roles = List.of(); 
         }
+
         model.addAttribute("roles", roles);
     }
 }

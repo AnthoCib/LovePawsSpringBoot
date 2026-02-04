@@ -59,6 +59,9 @@ public class Usuario  implements UserDetails{
     @JoinColumn(name = "rol_id")
     private Rol rol;
 
+    @Transient
+    private Integer rolId;
+
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id")

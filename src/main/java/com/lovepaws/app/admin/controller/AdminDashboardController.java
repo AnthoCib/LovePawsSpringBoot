@@ -37,6 +37,7 @@ public class AdminDashboardController {
 
 		return "admin/dashboard";
 	}
+	
 	@GetMapping("/admin/usuarios/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public String verUsuario(@PathVariable Integer id, Model model) {
