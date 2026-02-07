@@ -67,23 +67,26 @@ public class AdminUsuarioController {
 	@GetMapping("/nuevo")
 	public String nuevoUsuarioAdmin(Model model) {
 
+		Usuario usuario = new Usuario();
+	    usuario.setRol(new Rol());
+	    
 	    model.addAttribute("usuario", new Usuario());
-	   
 	    model.addAttribute("isAdmin", true);
+	    
 	    List<Rol> roles = rolService.listarRoles().stream()
 	            .filter(r ->
 	                    r.getNombre().equalsIgnoreCase("ADMIN") ||
 	                    r.getNombre().equalsIgnoreCase("GESTOR")
 	            )
 	            .toList();
-
 	    model.addAttribute("roles", roles);
 
 	    return "admin/crear";
 	}
 	
 	
-	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/nuevo")
 	public String crearUsuarioDesdeAdmin(
 	        @ModelAttribute Usuario usuario,
 	        RedirectAttributes ra

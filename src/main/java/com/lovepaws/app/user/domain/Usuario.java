@@ -56,11 +56,11 @@ public class Usuario  implements UserDetails{
 
   
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rol_id")
+    @JoinColumn(name = "rol_id",nullable = false)
     private Rol rol;
 
-    @Transient
-    private Integer rolId;
+    /*@Transient
+    private Integer rolId;*/
 
     
     @ManyToOne(fetch = FetchType.LAZY)
