@@ -16,7 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.lovepaws.app.security.CustomSuccessHandler;
 import com.lovepaws.app.security.CustomUserDetailsService;
-import com.lovepaws.app.security.UsuarioPrincipal;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,25 +61,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login")  //  URL que procesa el formulario
                 .usernameParameter("username")          // Campo del formulario
                 .passwordParameter("password")
-                .successHandler((request, response, authentication) -> {
-
-                    UsuarioPrincipal userPrincipal =
-                            (UsuarioPrincipal) authentication.getPrincipal();
-
-                    boolean isAdmin = authentication.getAuthorities().stream()
-                            .anyMatch(a -> a.getAuthority().equals("ADMIN"));
-
-                    boolean isGestor = authentication.getAuthorities().stream()
-                            .anyMatch(a -> a.getAuthority().equals("GESTOR"));
-
-                    if (isAdmin) {
-                        response.sendRedirect("/admin/dashboard");
-                    } else if (isGestor) {
-                        response.sendRedirect("/gestor/dashboard");
-                    } else {
-                        response.sendRedirect("/");
-                    }
-                })
+                .successHandler(successHandler)
 
            // Redirección después de login exitoso
                 .failureUrl("/usuarios/procesar-login?error=true")             // Redirección si falla

@@ -35,7 +35,7 @@ public class AdopcionController {
 	@PostMapping("/solicitar")
 
 	public String solicitarAdopcion(@ModelAttribute("solicitud") @Validated SolicitudAdopcion solicitud,
-			BindingResult br) {
+			BindingResult br, Authentication auth) {
 		if (solicitud.getMascota() == null) {
 			return "redirect:/mascotas?error";
 		}
@@ -46,8 +46,10 @@ public class AdopcionController {
 		estado.setId("PENDIENTE");
 		solicitud.setEstado(estado);
 
+		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+		solicitud.setUsuario(principal.getUsuario());
 		solicitudService.createSolicitud(solicitud);
-		return "redirect:/mis-solicitudes?created";
+		return "redirect:/adopcion/mis-adopciones?created";
 	}
 
 	// Gestor: ver solicitudes pendientes por mascota
@@ -73,6 +75,7 @@ public class AdopcionController {
 	}
 
 	// Adoptante: ver mis adopciones
+	@PreAuthorize("hasRole('ADOPTANTE')")
 	@GetMapping("/mis-adopciones")
 	public String misAdopciones(Model model, Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();

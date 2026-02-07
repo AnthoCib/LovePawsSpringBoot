@@ -35,7 +35,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
                 redirectURL += "/gestor/mascotas";
                 break;
             } else if (role.equals("ROLE_ADOPTANTE")) {
-                redirectURL += "/mascota/catalogo";
+                redirectURL += "/mascotas";
                 break;
             }
         }

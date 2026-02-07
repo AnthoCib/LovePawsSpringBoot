@@ -11,12 +11,26 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MascotaRepository extends JpaRepository<Mascota, Integer> {
-	
+
 	List<Mascota> findByEstado_Id(String estadoId);
 
+	@Query("""
+			SELECT m FROM Mascota m
+			WHERE m.estado.id = 'DISPONIBLE'
+			  AND (:categoriaId IS NULL OR m.categoria.id = :categoriaId)
+			  AND (:razaId IS NULL OR m.raza.id = :razaId)
+			  AND (:edadMax IS NULL OR m.edad <= :edadMax)
+			  AND (:q IS NULL OR LOWER(m.nombre) LIKE LOWER(CONCAT('%', :q, '%'))
+			       OR LOWER(COALESCE(m.descripcion,'')) LIKE LOWER(CONCAT('%', :q, '%')))
+			""")
+	List<Mascota> buscarDisponibles(
+			@Param("categoriaId") Integer categoriaId,
+			@Param("razaId") Integer razaId,
+			@Param("edadMax") Integer edadMax,
+			@Param("q") String q);
+
 	//Bloqueo pesimista
-	@Lock(LockModeType.PESSIMISTIC_WRITE) //Nadie más podrá leer ni escribir ese registro mientras una transacción lo tiene bloqueado
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT m FROM Mascota m WHERE m.id = :id")
-	
 	Optional<Mascota> findByIdForUpdate(@Param("id") Integer id);
 }
