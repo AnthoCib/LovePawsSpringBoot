@@ -45,7 +45,7 @@ public class Usuario implements UserDetails {
 	@Pattern(regexp = "^[A-Za-z0-9._-]{4,30}$", message = "El username debe tener entre 4 y 30 caracteres válidos")
 	private String username;
 
-<<<<<<< HEAD
+
 	@Column(name = "password_hash", nullable = false)
 	@NotBlank(message = "La contraseña es obligatoria")
 	private String passwordHash;
@@ -53,16 +53,10 @@ public class Usuario implements UserDetails {
 	@NotBlank(message = "El teléfono es obligatorio")
 	@Pattern(regexp = "^\\+?[0-9]{9,15}$", message = "El teléfono debe contener entre 9 y 15 dígitos")
 	private String telefono;
-=======
-  
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rol_id",nullable = false)
-    private Rol rol;
 
+  
     /*@Transient
     private Integer rolId;*/
->>>>>>> 69079660f8eb3e059994cd460ca5bc4802cd155f
-
 	private String fotoUrl;
 
 	@NotBlank(message = "La direccion es obligatoria")
