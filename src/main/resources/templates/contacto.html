@@ -6,32 +6,54 @@
     <title>Contacto | LovePaws</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link th:href="@{/css/contacto-page.css}" rel="stylesheet"/>
 </head>
 <body class="bg-light">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <main class="container py-5">
-    <section class="bg-white rounded-4 shadow-sm p-4 p-md-5">
-        <h1 class="fw-bold mb-3">Contáctanos</h1>
-        <p class="text-muted">¿Tienes dudas del proceso de adopción? Nuestro equipo te ayuda.</p>
-
-        <div class="row g-4 mt-1">
-            <div class="col-md-6">
-                <div class="border rounded-3 p-3 h-100">
+    <section class="bg-white shadow-sm p-4 p-md-5 contact-wrap">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <h1 class="fw-bold mb-3">Contáctanos</h1>
+                <p class="text-muted">¿Tienes dudas del proceso de adopción? Escríbenos y te responderemos pronto.</p>
+                <div class="contact-info p-3">
                     <p class="mb-2"><i class="bi bi-envelope me-2"></i>contacto@lovepaws.com</p>
                     <p class="mb-2"><i class="bi bi-telephone me-2"></i>+51 987 654 321</p>
                     <p class="mb-0"><i class="bi bi-geo-alt me-2"></i>Lima, Perú</p>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="alert alert-primary mb-0">
-                    <strong>Horario de atención:</strong><br>
-                    Lunes a viernes de 9:00 a.m. a 6:00 p.m.
-                </div>
+            <div class="col-lg-7">
+                <form th:action="@{/contacto}" method="post" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nombre completo</label>
+                        <input type="text" class="form-control" name="nombre" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Correo</label>
+                        <input type="email" class="form-control" name="correo" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Asunto</label>
+                        <input type="text" class="form-control" name="asunto" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Mensaje</label>
+                        <textarea class="form-control" rows="5" name="mensaje" required></textarea>
+                    </div>
+                    <div class="col-12 d-grid d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>
 </main>
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<div th:if="${param.sent}"><script>Swal.fire({icon:'success',title:'Mensaje enviado',text:'Gracias por contactarte con LovePaws.'});</script></div>
+<div th:if="${param.error}"><script>Swal.fire({icon:'warning',title:'Faltan datos',text:'Completa todos los campos del formulario.'});</script></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

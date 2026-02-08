@@ -69,7 +69,7 @@ public class MascotaController {
 	public String showCreateForm(Model model) {
 		model.addAttribute("mascota", new Mascota());
 		cargarCatalogos(model);
-		return "gestor/mascota/form";
+		return "gestor/mascota/nuevo";
 	}
 
 	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
@@ -82,7 +82,7 @@ public class MascotaController {
 
 		if (br.hasErrors()) {
 			cargarCatalogos(model);
-			return "gestor/mascota/form";
+			return "gestor/mascota/nuevo";
 		}
 
 		try {
@@ -93,7 +93,7 @@ public class MascotaController {
 		} catch (RuntimeException ex) {
 			model.addAttribute("fileError", ex.getMessage());
 			cargarCatalogos(model);
-			return "gestor/mascota/form";
+			return "gestor/mascota/nuevo";
 		}
 
 		if (authentication != null && authentication.getPrincipal() instanceof UsuarioPrincipal up) {
