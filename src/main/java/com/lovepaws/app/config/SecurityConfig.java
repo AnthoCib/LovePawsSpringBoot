@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .successHandler(successHandler)
 
            // Redirección después de login exitoso
-                .failureUrl("/usuarios/procesar-login?error=true")             // Redirección si falla
+                .failureUrl("/usuarios/login?error=true")             // Redirección si falla
                 .permitAll()
             )
             .logout(logout -> logout

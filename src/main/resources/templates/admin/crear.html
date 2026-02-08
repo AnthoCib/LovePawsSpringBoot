@@ -154,7 +154,7 @@ Swal.fire({
 }).then((result) => {
     if (result.isConfirmed) {
         // Redirige al login
-        window.location.href = '/usuarios/procesar-login';
+        window.location.href = '/usuarios/login';
     } else if (result.dismiss === Swal.DismissReason.cancel) {
         // Redirige al index o la página principal
         window.location.href = '/';

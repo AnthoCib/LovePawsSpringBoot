@@ -4,6 +4,7 @@
   <meta charset="utf-8"/>
   <title>Gestión de Mascotas - LovePaws</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div class="container mt-4">
@@ -12,11 +13,6 @@
     <h1 class="h4 m-0">Gestión de Mascotas</h1>
     <a class="btn btn-primary" th:href="@{/gestor/mascotas/nuevo}">Nueva Mascota</a>
   </div>
-
-  <div th:if="${param.created}" class="alert alert-success">Mascota creada correctamente.</div>
-  <div th:if="${param.updated}" class="alert alert-success">Mascota actualizada correctamente.</div>
-  <div th:if="${param.deleted}" class="alert alert-warning">Mascota eliminada.</div>
-  <div th:if="${param.notfound}" class="alert alert-danger">Mascota no encontrada.</div>
 
   <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -37,14 +33,14 @@
         <tr th:each="m : ${mascotas}">
           <td th:text="${m.id}">1</td>
           <td th:text="${m.nombre}">Firulais</td>
-          <td th:text="${m.razaId}">1</td>
-          <td th:text="${m.categoriaId}">2</td>
+          <td th:text="${m.raza != null ? m.raza.nombre : '-'}">Mestizo</td>
+          <td th:text="${m.categoria != null ? m.categoria.nombre : '-'}">Perro</td>
           <td th:text="${m.edad}">3</td>
           <td th:text="${m.sexo}">M</td>
-          <td><span th:text="${m.estadoId}" th:classappend="${m.estadoId == 'ADOPTADO'} ? 'badge bg-success' : 'badge bg-secondary'">DISPONIBLE</span></td>
+          <td><span th:text="${m.estado != null ? m.estado.id : '-'}" class="badge bg-secondary">DISPONIBLE</span></td>
           <td>
             <img th:if="${m.fotoUrl}" th:src="${m.fotoUrl}" alt="foto" style="max-height:48px;max-width:64px;object-fit:cover;border-radius:4px;" />
-            <span th:if="${!m.fotoUrl}">—</span>
+            <span th:if="${m.fotoUrl == null}">—</span>
           </td>
           <td class="text-end">
             <a class="btn btn-sm btn-outline-primary me-1" th:href="@{'/gestor/mascotas/editar/' + ${m.id}}">Editar</a>
@@ -64,6 +60,12 @@
   </div>
 
 </div>
+
+<div th:if="${param.created}"><script>Swal.fire({icon:'success',title:'Mascota creada'});</script></div>
+<div th:if="${param.updated}"><script>Swal.fire({icon:'success',title:'Mascota actualizada'});</script></div>
+<div th:if="${param.deleted}"><script>Swal.fire({icon:'info',title:'Mascota eliminada'});</script></div>
+<div th:if="${param.aprobada}"><script>Swal.fire({icon:'success',title:'Solicitud aprobada'});</script></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

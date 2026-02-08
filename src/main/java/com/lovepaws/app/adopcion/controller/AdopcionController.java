@@ -1,5 +1,6 @@
 package com.lovepaws.app.adopcion.controller;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +49,11 @@ public class AdopcionController {
 
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
 		solicitud.setUsuario(principal.getUsuario());
-		solicitudService.createSolicitud(solicitud);
+		try {
+			solicitudService.createSolicitud(solicitud);
+		} catch (DataIntegrityViolationException ex) {
+			return "redirect:/mascotas?duplicate=true";
+		}
 		return "redirect:/adopcion/mis-adopciones?created";
 	}
 
@@ -71,7 +76,13 @@ public class AdopcionController {
 		Integer gestorId = principal.getUsuario().getId();
 		// Se obtiene gestorId del session con Authentication;
 		adopcionService.aprobarSolicitud(solicitudId, gestorId);
-		return "redirect:/gestor/solicitudes?aprobada";
+		Integer mascotaId = solicitudService.findSolicitudById(solicitudId)
+				.map(s -> s.getMascota().getId())
+				.orElse(null);
+		if (mascotaId == null) {
+			return "redirect:/gestor/mascotas?aprobada";
+		}
+		return "redirect:/adopcion/gestor/solicitudes/" + mascotaId + "?aprobada";
 	}
 
 	// Adoptante: ver mis adopciones
