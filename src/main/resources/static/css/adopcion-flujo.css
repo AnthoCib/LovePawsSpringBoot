@@ -48,6 +48,19 @@
     border: 1px solid #e9edf5;
 }
 
+.form-section {
+    border: 1px solid #edf1f7;
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: #fbfcff;
+}
+
+.section-title {
+    font-weight: 700;
+    margin-bottom: .75rem;
+    color: #2b2f38;
+}
+
 
 @media (max-width: 768px) {
     .section-card {
