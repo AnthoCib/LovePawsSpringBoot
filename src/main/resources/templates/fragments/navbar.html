@@ -6,6 +6,40 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm"
      th:fragment="navbar">
 
+    <style>
+        .navbar .nav-link.nav-pill {
+            color: #fff;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: .38rem .9rem;
+            margin: 0 .15rem;
+            transition: all .2s ease-in-out;
+        }
+
+        .navbar .nav-link.nav-pill:hover,
+        .navbar .nav-link.nav-pill:focus {
+            color: #1F386D;
+            background-color: #FEBB00;
+            border-color: #FEBB00;
+        }
+
+        .navbar .btn-auth {
+            border: 2px solid #FEBB00;
+            border-radius: 12px;
+            color: #FEBB00;
+            background: #fff;
+            padding: .35rem .7rem;
+            font-size: .9rem;
+            transition: all .2s ease-in-out;
+        }
+
+        .navbar .btn-auth:hover,
+        .navbar .btn-auth:focus {
+            background-color: #FEBB00;
+            color: #fff;
+        }
+    </style>
+
     <div class="container">
 
         <!-- LOGO -->
@@ -22,75 +56,62 @@
 
         <!-- MENÚ -->
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav align-items-center text-center">
-
-                <!-- =============================== -->
-                <!-- PUBLICO / ADOPTANTE              -->
-                <!-- =============================== -->
+            <ul class="navbar-nav align-items-center text-center gap-lg-1">
 
                 <li class="nav-item"
                     sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
-                    <a class="nav-link" th:href="@{/}">Inicio</a>
+                    <a class="nav-link nav-pill" th:href="@{/}">Inicio</a>
                 </li>
 
                 <li class="nav-item"
                     sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
-                    <a class="nav-link" th:href="@{/mascotas}">Catálogo</a>
+                    <a class="nav-link nav-pill" th:href="@{/mascotas}">Catálogo</a>
                 </li>
 
                 <li class="nav-item"
                     sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
-                    <a class="nav-link" th:href="@{/nosotros}">Nosotros</a>
+                    <a class="nav-link nav-pill" th:href="@{/nosotros}">Nosotros</a>
                 </li>
 
                 <li class="nav-item"
                     sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
-                    <a class="nav-link" th:href="@{/contacto}">Contacto</a>
+                    <a class="nav-link nav-pill" th:href="@{/contacto}">Contacto</a>
                 </li>
 
-                <!-- ADOPTANTE -->
                 <li class="nav-item"
                     sec:authorize="hasRole('ADOPTANTE')">
-                    <a class="nav-link" th:href="@{/adopcion/mis-adopciones}">
+                    <a class="nav-link nav-pill" th:href="@{/adopcion/mis-adopciones}">
                         Mis Adopciones
                     </a>
                 </li>
 
+                <!-- Mi perfil para TODOS los roles autenticados -->
                 <li class="nav-item"
-                    sec:authorize="hasRole('ADOPTANTE')">
-                    <a class="nav-link" th:href="@{/usuarios/perfil}">
+                    sec:authorize="isAuthenticated()">
+                    <a class="nav-link nav-pill" th:href="@{/usuarios/perfil}">
                         Mi Perfil
                     </a>
                 </li>
 
-                <!-- =============================== -->
-                <!-- GESTOR                          -->
-                <!-- =============================== -->
                 <li class="nav-item"
                     sec:authorize="hasRole('GESTOR')">
-                    <a class="nav-link fw-bold"
+                    <a class="nav-link nav-pill fw-semibold"
                        th:href="@{/gestor/dashboard}">
-                        📊 Dashboard Gestor
+                        Dashboard Gestor
                     </a>
                 </li>
 
-                <!-- =============================== -->
-                <!-- ADMIN                           -->
-                <!-- =============================== -->
                 <li class="nav-item"
                     sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link fw-bold"
+                    <a class="nav-link nav-pill fw-semibold"
                        th:href="@{/admin/dashboard}">
-                        🛠️ Dashboard Admin
+                        Dashboard Admin
                     </a>
                 </li>
 
-                <!-- =============================== -->
-                <!-- INVITADO                        -->
-                <!-- =============================== -->
                 <li class="nav-item"
                     sec:authorize="isAnonymous()">
-                    <a class="btn btn-light btn-sm ms-lg-3"
+                    <a class="btn btn-auth btn-sm ms-lg-2"
                        th:href="@{/usuarios/login}">
                         <i class="bi bi-box-arrow-in-right"></i>
                         Iniciar Sesión
@@ -99,19 +120,16 @@
 
                 <li class="nav-item"
                     sec:authorize="isAnonymous()">
-                    <a class="btn btn-outline-light btn-sm ms-lg-2"
+                    <a class="btn btn-auth btn-sm ms-lg-1"
                        th:href="@{/usuarios/registro}">
                         <i class="bi bi-person-plus"></i>
                         Registrarse
                     </a>
                 </li>
 
-                <!-- =============================== -->
-                <!-- USUARIO LOGUEADO                -->
-                <!-- =============================== -->
                 <li class="nav-item dropdown"
                     sec:authorize="isAuthenticated()">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center"
+                    <a class="nav-link dropdown-toggle d-flex align-items-center nav-pill"
                        href="#"
                        data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-2"></i>

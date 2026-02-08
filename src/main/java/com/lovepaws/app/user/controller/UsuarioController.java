@@ -119,12 +119,22 @@ public class UsuarioController {
        PERFIL
        ========================= */
     @GetMapping("/perfil")
-    public String verPerfil(Model model, Integer id) {
+    public String verPerfil(Model model, Integer id, Authentication auth) {
         if (id != null) {
             usuarioService.findUsuarioById(id).ifPresent(u -> model.addAttribute("usuario", u));
+            return "usuario/perfil";
+        }
+
+        if (auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal) {
+            usuarioService.findUsuarioById(principal.getUsuario().getId())
+                    .ifPresentOrElse(
+                            u -> model.addAttribute("usuario", u),
+                            () -> model.addAttribute("usuario", new Usuario())
+                    );
         } else {
             model.addAttribute("usuario", new Usuario());
         }
+
         return "usuario/perfil";
     }
 
