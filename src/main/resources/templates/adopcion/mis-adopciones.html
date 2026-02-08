@@ -9,6 +9,7 @@
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container py-4">
+    <div class="d-flex gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/mascotas}" class="btn btn-outline-primary btn-sm">Ver catálogo</a></div>
     <h1 class="h4">Historial de adopciones</h1>
 
     <table class="table table-hover">

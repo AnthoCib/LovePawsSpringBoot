@@ -10,6 +10,8 @@
 <div th:replace="~{fragments/gestor-navbar :: gestorNavbar}"></div>
 <div class="container mt-4">
 
+  <div class="d-flex gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/gestor/dashboard}" class="btn btn-outline-primary btn-sm">Dashboard</a></div>
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h4 m-0">Gestión de Mascotas</h1>
     <a class="btn btn-primary" th:href="@{/gestor/mascotas/nuevo}">Nueva Mascota</a>
