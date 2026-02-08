@@ -32,21 +32,31 @@ public class MascotaServiceImpl implements MascotaService {
         		|| mascota.getEstado().getId().isBlank()) {
         	
         	EstadoMascota estado = new EstadoMascota();
-        	estado.setId("DISPONIBLE");
             mascota.setEstado(estado);
         }
         return mascotaRepository.save(mascota);	
     }
 
+ 
     @Override
     public Mascota updateMascota(Mascota mascota) {
-        // Opcional: validar existencia antes de actualizar
-        Optional<Mascota> exists = mascotaRepository.findById(mascota.getId());
-        if (exists.isEmpty()) {
-            throw new RuntimeException("Mascota no existe con id: " + mascota.getId());
-        }
-        return mascotaRepository.save(mascota);
+        Mascota existente = mascotaRepository.findById(mascota.getId())
+                .orElseThrow(() -> new RuntimeException("Mascota no existe con id: " + mascota.getId()));
+
+        
+        existente.setNombre(mascota.getNombre());
+        existente.setEdad(mascota.getEdad());
+        existente.setDescripcion(mascota.getDescripcion());
+        existente.setFotoUrl(mascota.getFotoUrl());
+        existente.setSexo(mascota.getSexo());
+        existente.setCategoria(mascota.getCategoria());
+        existente.setRaza(mascota.getRaza());
+
+       
+
+        return mascotaRepository.save(existente);
     }
+
 
     @Override
     public List<Mascota> listarMascotasDisponibles() {
