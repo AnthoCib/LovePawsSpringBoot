@@ -69,10 +69,10 @@
                                 👁️ Ver detalle
                             </a>
 
-                            <!-- Editar (ADMIN y GESTOR, solo si no está adoptada) -->
+                            <!-- Editar (GESTOR, solo si no está adoptada) -->
                             <a th:href="@{/gestor/mascotas/editar/{id}(id=${m.id})}"
                                class="btn btn-outline-warning btn-sm"
-                               sec:authorize="hasAnyRole('ADMIN','GESTOR')"
+                               sec:authorize="hasRole('GESTOR')"
                                th:if="${m.estado != null and m.estado.id != 'ADOPTADA'}">
                                 ✏️ Editar
                             </a>
