@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "estado_mascota")
+@Table(name = "estado_adopcion")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +17,6 @@ public class EstadoAdopcion {
 	@Id
 	@Column(length = 40)
 	private String id;
-	private String descripcion;
 
+	private String descripcion;
 }
