@@ -194,8 +194,10 @@ public class UsuarioController {
         try {
             if (fotoArchivo != null && !fotoArchivo.isEmpty()) {
                 usuario.setFotoUrl(fileStorageService.store(fotoArchivo));
+            } else if (fotoUrl != null && !fotoUrl.isBlank()) {
+                usuario.setFotoUrl(fotoUrl);
             } else {
-                usuario.setFotoUrl((fotoUrl != null && !fotoUrl.isBlank()) ? fotoUrl : null);
+                usuario.setFotoUrl(usuario.getFotoUrl());
             }
         } catch (RuntimeException ex) {
             if (isAdmin && !id.equals(usuarioAutenticadoId)) {

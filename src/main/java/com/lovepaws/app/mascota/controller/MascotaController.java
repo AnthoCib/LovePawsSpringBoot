@@ -115,10 +115,15 @@ public class MascotaController {
 			return "gestor/mascota/form";
 		}
 
+		Mascota mascotaExistente = mascotaService.findMascotaById(mascota.getId())
+				.orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+
 		try {
 			if (foto != null && !foto.isEmpty()) {
 				String url = fileStorageService.store(foto);
 				mascota.setFotoUrl(url);
+			} else if (mascota.getFotoUrl() == null || mascota.getFotoUrl().isBlank()) {
+				mascota.setFotoUrl(mascotaExistente.getFotoUrl());
 			}
 		} catch (RuntimeException ex) {
 			model.addAttribute("fileError", ex.getMessage());
@@ -146,6 +151,13 @@ public class MascotaController {
 	public String deleteMascota(@PathVariable Integer id) {
 		mascotaService.deleteMascotaById(id);
 		return "redirect:/gestor/mascotas?deleted";
+	}
+
+	@PreAuthorize("hasRole('GESTOR')")
+	@PostMapping("/gestor/mascotas/estado/{id}")
+	public String cambiarEstadoMascota(@PathVariable Integer id) {
+		mascotaService.cambiarEstado(id);
+		return "redirect:/gestor/mascotas?estado=ok";
 	}
 
 	private void cargarCatalogos(Model model) {
