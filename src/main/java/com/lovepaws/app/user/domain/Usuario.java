@@ -3,6 +3,7 @@ package com.lovepaws.app.user.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -30,6 +31,7 @@ public class Usuario  implements UserDetails{
     private Integer id;
 
     @NotBlank(message = "El nombre es obligatorio")
+    @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,80}$", message = "El nombre solo debe contener letras y espacios")
     private String nombre;
 
     @Column(unique = true, nullable = false)
@@ -40,6 +42,7 @@ public class Usuario  implements UserDetails{
     
     @Column(unique = true, nullable = false)
     @NotBlank(message = "El username es obligatorio")
+    @Pattern(regexp = "^[A-Za-z0-9._-]{4,30}$", message = "El username debe tener entre 4 y 30 caracteres válidos")
     private String username;
 
     @Column(name = "password_hash", nullable = false)
@@ -47,11 +50,13 @@ public class Usuario  implements UserDetails{
     private String passwordHash;
     
     @NotBlank(message = "El telefono es obligatoria")
+    @Pattern(regexp = "^\+?[0-9]{9,15}$", message = "El teléfono debe contener entre 9 y 15 dígitos")
     private String telefono;
     
     private String fotoUrl;
     
     @NotBlank(message = "La direccion es obligatoria")
+    @Pattern(regexp = "^.{5,120}$", message = "La dirección debe tener entre 5 y 120 caracteres")
     private String direccion;
 
   
