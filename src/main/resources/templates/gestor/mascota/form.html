@@ -26,30 +26,30 @@
 		<h3 class="fw-bold mb-4"
 			th:text="${mascota.id == null ? '➕ Registrar Mascota' : '✏️ Editar Mascota'}"></h3>
 
-	<form
-			th:action="@{${mascota.id == null} ? '/gestor/mascotas/guardar' : '/gestor/mascotas/actualizar'}"
-			method="post" enctype="multipart/form-data" th:object="${mascota}">
+		<form
+				th:action="@{${mascota.id == null} ? '/gestor/mascotas/guardar' : '/gestor/mascotas/actualizar'}"
+				method="post" enctype="multipart/form-data" th:object="${mascota}">
 
 			<input type="hidden" th:field="*{id}" />
 			<input type="hidden" th:field="*{fotoUrl}" />
 
 			<div class="card shadow-sm border-0">
 				<div class="card-body">
-					<div class="row g-3">
+					<div class="row g-4">
 
-						<div class="col-md-6">
+						<div class="col-lg-6">
 							<label class="form-label">Nombre</label>
 							<input type="text" class="form-control" th:field="*{nombre}" required>
 							<div class="text-danger small" th:errors="*{nombre}"></div>
 						</div>
 
-						<div class="col-md-3">
+						<div class="col-lg-3 col-md-6">
 							<label class="form-label">Edad</label>
 							<input type="number" class="form-control" th:field="*{edad}" min="0" required>
 							<div class="text-danger small" th:errors="*{edad}"></div>
 						</div>
 
-						<div class="col-md-3">
+						<div class="col-lg-3 col-md-6">
 							<label class="form-label">Sexo</label>
 							<select class="form-select" th:field="*{sexo}">
 								<option value="M">Macho</option>
@@ -78,22 +78,23 @@
 							<div class="text-danger small" th:errors="*{raza}"></div>
 						</div>
 
-						<div class="col-md-6">
+						<div class="col-lg-6">
 							<label class="form-label">Foto</label>
 							<input type="file" class="form-control" name="foto" accept="image/*"
 								onchange="previewNuevaFoto(event)">
 							<div class="text-danger small" th:text="${fileError}"></div>
+							<small class="text-muted d-block mt-2">Formatos recomendados: JPG o PNG.</small>
 						</div>
 
-						<div class="col-md-6">
+						<div class="col-lg-6">
 							<label class="form-label">Vista previa</label>
-							<div class="border rounded p-2 bg-white text-center">
+							<div class="border rounded p-3 bg-white text-center h-100 d-flex align-items-center justify-content-center">
 								<img id="previewActual"
 									th:src="${mascota.fotoUrl != null ? mascota.fotoUrl : '/images/mascotas/mascota-default.jpg'}"
 									alt="Vista previa de la mascota"
 									style="max-height:220px; width:auto; max-width:100%; object-fit:cover; border-radius:8px;" />
 							</div>
-							<small class="text-muted">Si subes una nueva foto, esta vista previa se actualizará.</small>
+							<small class="text-muted d-block mt-2">Si subes una nueva foto, esta vista previa se actualizará.</small>
 						</div>
 
 						<div class="col-12">
