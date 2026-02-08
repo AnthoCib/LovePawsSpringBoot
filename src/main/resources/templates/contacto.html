@@ -24,6 +24,7 @@
 
     <section class="bg-white shadow-sm p-4 p-md-5 contact-wrap">
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div class="row g-4">
             <div class="col-lg-5">
                 <h1 class="fw-bold mb-3">Contáctanos</h1>
@@ -33,7 +34,18 @@
         <div class="row g-4 align-items-stretch">
             <div class="col-lg-5 d-flex flex-column gap-3">
 >>>>>>> refs/remotes/origin/codex/review-code-for-completion-issues
+=======
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-5 d-flex flex-column gap-3">
+                <div class="contact-hero p-4">
+                    <img src="/images/Imagenes_PNG/comunidad.png" th:src="@{/images/Imagenes_PNG/comunidad.png}" alt="Comunidad LovePaws" class="contact-hero-img mb-3">
+                    <h1 class="fw-bold mb-2">Hablemos de tu próxima adopción</h1>
+                    <p class="text-muted mb-0">Estamos aquí para ayudarte paso a paso. Escríbenos y te responderemos con recomendaciones para que encuentres a tu compañero ideal.</p>
+                </div>
+
+>>>>>>> refs/remotes/origin/codex/review-code-for-project-completion
                 <div class="contact-info p-3">
+<<<<<<< HEAD
                     <h5 class="fw-semibold mb-3">Canales de atención</h5>
                     <p class="mb-2"><i class="bi bi-envelope-heart me-2"></i>contacto@lovepaws.com</p>
                     <p class="mb-2"><i class="bi bi-telephone-fill me-2"></i>+51 987 654 321</p>
@@ -49,10 +61,21 @@
                     <h2 class="h6 fw-bold">Horarios de atención</h2>
                     <p class="text-muted mb-1">Lunes a viernes: 9:00 - 18:00</p>
                     <p class="text-muted mb-0">Sábados: 9:00 - 13:00</p>
+=======
+                    <p class="mb-2"><i class="bi bi-envelope-heart me-2"></i>contacto@lovepaws.com</p>
+                    <p class="mb-2"><i class="bi bi-telephone-fill me-2"></i>+51 987 654 321</p>
+                    <p class="mb-3"><i class="bi bi-geo-alt-fill me-2"></i>Lima, Perú</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge text-bg-light"><i class="bi bi-clock-history me-1"></i>Respuesta en 24h</span>
+                        <span class="badge text-bg-light"><i class="bi bi-shield-check me-1"></i>Atención segura</span>
+                        <span class="badge text-bg-light"><i class="bi bi-hearts me-1"></i>Equipo LovePaws</span>
+                    </div>
+>>>>>>> refs/remotes/origin/codex/review-code-for-project-completion
                 </div>
             </div>
 
             <div class="col-lg-7">
+<<<<<<< HEAD
                 <div class="friendly-tag mb-3">
                     <i class="bi bi-chat-heart-fill me-2"></i>
                     Responderemos en menos de 24 horas hábiles.
@@ -67,7 +90,17 @@
 =======
                         <input type="text" class="form-control" name="nombre" placeholder="Ej. María López" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,80}" required>
 >>>>>>> refs/remotes/origin/codex/review-code-for-completion-issues
+=======
+                <div class="friendly-form p-4 p-md-5">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img src="/images/Imagenes_PNG/patitasfelices.png" th:src="@{/images/Imagenes_PNG/patitasfelices.png}" alt="Patitas felices" class="paw-icon">
+                        <div>
+                            <h2 class="h4 fw-bold mb-1">Cuéntanos cómo podemos ayudarte</h2>
+                            <p class="text-muted mb-0">Completa el formulario y te orientaremos en todo el proceso.</p>
+                        </div>
+>>>>>>> refs/remotes/origin/codex/review-code-for-project-completion
                     </div>
+<<<<<<< HEAD
                     <div class="col-md-6">
                         <label class="form-label">Correo</label>
 <<<<<<< HEAD
@@ -105,10 +138,38 @@
 >>>>>>> refs/remotes/origin/codex/review-code-for-completion-issues
                     </div>
                 </form>
+=======
+
+                    <form th:action="@{/contacto}" method="post" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre completo</label>
+                            <input type="text" class="form-control" name="nombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,80}" placeholder="Ej. Ana Pérez" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Correo</label>
+                            <input type="email" class="form-control" name="correo" placeholder="tucorreo@ejemplo.com" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Asunto</label>
+                            <input type="text" class="form-control" name="asunto" minlength="4" maxlength="120" placeholder="Ej. Requisitos para adoptar" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mensaje</label>
+                            <textarea class="form-control" rows="5" name="mensaje" minlength="10" maxlength="1000" placeholder="Cuéntanos más detalles para ayudarte mejor..." required></textarea>
+                        </div>
+                        <div class="col-12 d-grid d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary contact-btn">
+                                <i class="bi bi-send-fill me-1"></i>Enviar mensaje
+                            </button>
+                        </div>
+                    </form>
+                </div>
+>>>>>>> refs/remotes/origin/codex/review-code-for-project-completion
             </div>
         </div>
     </section>
 </main>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <div th:if="${param.sent}"><script>Swal.fire({icon:'success',title:'Mensaje enviado',text:'Gracias por contactarte con LovePaws.'});</script></div>
