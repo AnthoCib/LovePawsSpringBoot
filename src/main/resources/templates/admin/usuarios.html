@@ -123,7 +123,10 @@
                             <!-- BLOQUEAR / ACTIVAR (SOLO ADMIN) -->
                             <form sec:authorize="hasRole('ADMIN')"
                                   th:action="@{/admin/usuarios/{id}/estado(id=${u.id})}"
-                                  method="post">
+                                  method="post"
+                                  class="js-confirm-usuario"
+                                  th:attr="data-accion=${u.estado != null and u.estado.id == 'ACTIVO' ? 'bloquear' : 'activar'},
+                                           data-nombre=${u.username}">
 
                                 <input type="hidden"
                                        th:name="${_csrf.parameterName}"
@@ -164,6 +167,28 @@
 </div>
 
 <div th:if="${param.created}"><script>Swal.fire({icon:'success',title:'Usuario creado',text:'El usuario fue registrado correctamente.'});</script></div>
+
+<script>
+    document.querySelectorAll('.js-confirm-usuario').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const accion = form.dataset.accion === 'bloquear' ? 'Bloquear' : 'Activar';
+            const nombre = form.dataset.nombre || 'este usuario';
+            Swal.fire({
+                icon: 'warning',
+                title: `${accion} usuario`,
+                text: `¿Deseas ${accion.toLowerCase()} a ${nombre}?`,
+                showCancelButton: true,
+                confirmButtonText: `Sí, ${accion.toLowerCase()}`,
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>
