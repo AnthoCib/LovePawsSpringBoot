@@ -48,14 +48,78 @@
                 <div sec:authorize="hasRole('ADOPTANTE')" class="card mt-4">
                     <div class="card-body">
                         <h5 class="card-title">Solicitar adopción</h5>
-                        <form th:action="@{/adopcion/solicitar}" method="post">
+                        <p class="text-muted small mb-4">Queremos asegurarnos de que cada mascota llegue a un hogar ideal.
+                            Completa estos datos para conocer mejor tu situación y plan de cuidado.</p>
+                        <form th:action="@{/adopcion/solicitar}" method="post" class="row g-3">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                             <input type="hidden" name="mascota.id" th:value="${mascota.id}"/>
-                            <div class="mb-3">
+                            <div class="col-12">
                                 <label class="form-label">¿Por qué quieres adoptarlo?</label>
-                                <textarea name="pqAdoptar" class="form-control" rows="3" required></textarea>
+                                <textarea name="pqAdoptar" class="form-control" rows="3" minlength="20" maxlength="600" required
+                                          placeholder="Cuéntanos qué te motivó y cómo encaja esta mascota en tu familia."></textarea>
                             </div>
-                            <button class="btn btn-success" type="submit">Enviar solicitud</button>
+                            <div class="col-md-6">
+                                <label class="form-label">Tipo de vivienda</label>
+                                <select name="tipoVivienda" class="form-select" required>
+                                    <option value="" selected disabled>Selecciona una opción</option>
+                                    <option value="Casa con patio">Casa con patio</option>
+                                    <option value="Casa sin patio">Casa sin patio</option>
+                                    <option value="Departamento">Departamento</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Experiencia con mascotas</label>
+                                <select name="experiencia" class="form-select" required>
+                                    <option value="" selected disabled>Selecciona una opción</option>
+                                    <option value="Primera vez">Es mi primera mascota</option>
+                                    <option value="Experiencia previa">Ya he cuidado mascotas antes</option>
+                                    <option value="Actualmente tengo mascotas">Actualmente tengo mascotas</option>
+                                    <option value="Experiencia avanzada">Tengo amplia experiencia</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">¿Hay niños u otras mascotas?</label>
+                                <select name="ninosOtraMascotas" class="form-select" required>
+                                    <option value="" selected disabled>Selecciona una opción</option>
+                                    <option value="No">No</option>
+                                    <option value="Niños en casa">Sí, hay niños</option>
+                                    <option value="Otras mascotas">Sí, hay otras mascotas</option>
+                                    <option value="Niños y mascotas">Sí, hay niños y mascotas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tiempo disponible al día</label>
+                                <select name="tiempoDedicado" class="form-select" required>
+                                    <option value="" selected disabled>Selecciona una opción</option>
+                                    <option value="1-2 horas">1-2 horas</option>
+                                    <option value="3-4 horas">3-4 horas</option>
+                                    <option value="5+ horas">Más de 5 horas</option>
+                                    <option value="Disponible la mayor parte del día">Disponible la mayor parte del día</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Plan de cuidado</label>
+                                <textarea name="planMascota" class="form-control" rows="3" minlength="20" maxlength="600" required
+                                          placeholder="Describe cómo será su rutina, paseos, alimentación y atención veterinaria."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">¿Puedes cubrir los costos básicos?</label>
+                                <select name="cubrirCostos" class="form-select" required>
+                                    <option value="" selected disabled>Selecciona una opción</option>
+                                    <option value="Sí">Sí, estoy preparado(a)</option>
+                                    <option value="Necesito orientación">Necesito orientación</option>
+                                </select>
+                                <div class="form-text">Incluye alimentación, vacunas, controles y emergencias.</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Información adicional (opcional)</label>
+                                <textarea name="infoAdicional" class="form-control" rows="3" maxlength="600"
+                                          placeholder="Si deseas añadir algo más, este es el lugar."></textarea>
+                            </div>
+                            <div class="col-12 d-grid d-md-flex justify-content-md-end">
+                                <button class="btn btn-success" type="submit">Enviar solicitud</button>
+                            </div>
                         </form>
                     </div>
                 </div>

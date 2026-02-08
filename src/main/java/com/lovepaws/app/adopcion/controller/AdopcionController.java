@@ -70,6 +70,10 @@ public class AdopcionController {
 			return "redirect:/mascotas/" + mascota.getId() + "?error=motivo";
 		}
 
+		if (camposSolicitudIncompletos(solicitud)) {
+			return "redirect:/mascotas/" + mascota.getId() + "?error=form";
+		}
+
 		boolean mascotaConSolicitudActiva = solicitudService.listarSolicitudesPorMascota(mascota.getId()).stream()
 				.anyMatch(s -> s.getEstado() != null && "PENDIENTE".equalsIgnoreCase(s.getEstado().getId()));
 		if (mascotaConSolicitudActiva) {
@@ -157,5 +161,18 @@ public class AdopcionController {
 		model.addAttribute("adopciones", adopcionService.listarAdopcionesPorUsuario(usuarioId));
 		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPorUsuario(usuarioId));
 		return "adopcion/mis-adopciones";
+	}
+
+	private boolean camposSolicitudIncompletos(SolicitudAdopcion solicitud) {
+		return esTextoVacio(solicitud.getTipoVivienda())
+				|| esTextoVacio(solicitud.getExperiencia())
+				|| esTextoVacio(solicitud.getNinosOtraMascotas())
+				|| esTextoVacio(solicitud.getTiempoDedicado())
+				|| esTextoVacio(solicitud.getCubrirCostos())
+				|| esTextoVacio(solicitud.getPlanMascota());
+	}
+
+	private boolean esTextoVacio(String valor) {
+		return valor == null || valor.trim().isBlank();
 	}
 }
