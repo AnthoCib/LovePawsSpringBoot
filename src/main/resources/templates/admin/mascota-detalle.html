@@ -73,31 +73,7 @@
 				</p>
 
 
-				<!-- Botón bloquear / activar -->
-				<form th:action="@{/admin/mascotas/{id}/estado(id=${mascota.id})}"
-					method="post"
-					th:if="${mascota.estado!= null and mascota.estado.id != 'ADOPTADA'}">
-
-					<input type="hidden" th:name="${_csrf.parameterName}"
-						th:value="${_csrf.token}">
-
-					<button class="btn btn-sm w-100"
-						th:classappend="${mascota.estado.id == 'DISPONIBLE'}
-		            ? 'btn-outline-danger'
-		            : 'btn-outline-success'">
-
-						<i class="bi"
-							th:classappend="${mascota.estado.id == 'DISPONIBLE'}
-		                ? 'bi-slash-circle'
-		                : 'bi-check-circle'"></i>
-
-						<span
-							th:text="${mascota.estado.id == 'DISPONIBLE'}
-		                ? 'Bloquear'
-		                : 'Activar'">
-						</span>
-					</button>
-				</form>
+				<p class="text-muted small">Los cambios de estado y edición de mascotas se gestionan desde el rol gestor.</p>
 
 
 				<!-- Ver usuario -->

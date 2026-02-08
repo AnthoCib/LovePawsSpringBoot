@@ -6,9 +6,9 @@ import com.lovepaws.app.mascota.repository.CategoriaRepository;
 import com.lovepaws.app.mascota.repository.RazaRepository;
 import com.lovepaws.app.mascota.service.MascotaService;
 import com.lovepaws.app.security.UsuarioPrincipal;
+
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -57,14 +57,14 @@ public class MascotaController {
 		return "mascota/detalle";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@GetMapping("/gestor/mascotas")
 	public String listarParaGestor(Model model) {
 		model.addAttribute("mascotas", mascotaService.listarMascotas());
 		return "gestor/mascota/lista";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@GetMapping("/gestor/mascotas/nuevo")
 	public String showCreateForm(Model model) {
 		model.addAttribute("mascota", new Mascota());
@@ -72,7 +72,7 @@ public class MascotaController {
 		return "gestor/mascota/nuevo";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@PostMapping("/gestor/mascotas/guardar")
 	public String createMascota(@Validated @ModelAttribute("mascota") Mascota mascota,
 							BindingResult br,
@@ -104,7 +104,7 @@ public class MascotaController {
 		return "redirect:/gestor/mascotas?created";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@PostMapping("/gestor/mascotas/actualizar")
 	public String updateMascota(@Validated @ModelAttribute("mascota") Mascota mascota,
 							BindingResult br,
@@ -115,10 +115,15 @@ public class MascotaController {
 			return "gestor/mascota/form";
 		}
 
+		Mascota mascotaExistente = mascotaService.findMascotaById(mascota.getId())
+				.orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+
 		try {
 			if (foto != null && !foto.isEmpty()) {
 				String url = fileStorageService.store(foto);
 				mascota.setFotoUrl(url);
+			} else if (mascota.getFotoUrl() == null || mascota.getFotoUrl().isBlank()) {
+				mascota.setFotoUrl(mascotaExistente.getFotoUrl());
 			}
 		} catch (RuntimeException ex) {
 			model.addAttribute("fileError", ex.getMessage());
@@ -130,28 +135,29 @@ public class MascotaController {
 		return "redirect:/gestor/mascotas?updated";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@GetMapping("/gestor/mascotas/editar/{id}")
 	public String editarMascota(@PathVariable Integer id, Authentication auth, Model model) {
 		Mascota mascota = mascotaService.findMascotaById(id)
 				.orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
-
-		UsuarioPrincipal up = (UsuarioPrincipal) auth.getPrincipal();
-		if (!mascota.getUsuarioCreacion().getId().equals(up.getUsuario().getId())
-				&& auth.getAuthorities().stream().noneMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()))) {
-			throw new AccessDeniedException("No puedes editar esta mascota");
-		}
 
 		model.addAttribute("mascota", mascota);
 		cargarCatalogos(model);
 		return "gestor/mascota/form";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@PostMapping("/gestor/mascotas/eliminar/{id}")
 	public String deleteMascota(@PathVariable Integer id) {
 		mascotaService.deleteMascotaById(id);
 		return "redirect:/gestor/mascotas?deleted";
+	}
+
+	@PreAuthorize("hasRole('GESTOR')")
+	@PostMapping("/gestor/mascotas/estado/{id}")
+	public String cambiarEstadoMascota(@PathVariable Integer id) {
+		mascotaService.cambiarEstado(id);
+		return "redirect:/gestor/mascotas?estado=ok";
 	}
 
 	private void cargarCatalogos(Model model) {

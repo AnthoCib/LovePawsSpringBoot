@@ -62,6 +62,6 @@
 <div th:if="${param.duplicate}"><script>Swal.fire({icon:'warning',title:'Solicitud ya registrada',text:'Ya tienes una solicitud para esta mascota.'});</script></div>
 <div th:if="${param.error == 'estado-mascota'}"><script>Swal.fire({icon:'warning',title:'Mascota no disponible',text:'Solo se puede solicitar adopción de mascotas DISPONIBLES.'});</script></div>
 <div th:if="${param.error == 'mascota-ocupada'}"><script>Swal.fire({icon:'warning',title:'Mascota en proceso',text:'Esta mascota ya tiene una solicitud activa.'});</script></div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
