@@ -32,7 +32,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
                 redirectURL += "/admin/dashboard";
                 break;
             } else if (role.equals("ROLE_GESTOR")) {
-                redirectURL += "/gestor/mascotas";
+                redirectURL += "/gestor/dashboard";
                 break;
             } else if (role.equals("ROLE_ADOPTANTE")) {
                 redirectURL += "/mascotas";

@@ -131,38 +131,42 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public void crearUsuarioDesdeAdmin(Usuario usuario) {
-		// Validaciones básicas
-		if (usuario.getRol() == null || usuario.getRol().getId() == null) {
+		if (usuario.getUsername() == null || usuario.getUsername().isBlank()) {
+			throw new RuntimeException("Username obligatorio");
+		}
+		if (usuario.getCorreo() == null || usuario.getCorreo().isBlank()) {
+			throw new RuntimeException("Correo obligatorio");
+		}
+		if (usuario.getPasswordHash() == null || usuario.getPasswordHash().isBlank()) {
+			throw new RuntimeException("Contraseña obligatoria");
+		}
+
+		Integer rolId = usuario.getRolId();
+		if (rolId == null && usuario.getRol() != null) {
+			rolId = usuario.getRol().getId();
+		}
+		if (rolId == null) {
 			throw new RuntimeException("Rol obligatorio");
 		}
 
 		if (usuarioRepo.existsByUsername(usuario.getUsername())) {
 			throw new RuntimeException("El username ya existe");
 		}
-
 		if (usuarioRepo.existsByCorreo(usuario.getCorreo())) {
 			throw new RuntimeException("El correo ya está registrado");
 		}
 
-		// Rol (obligatorio desde ADMIN)
-		Rol rol = rolRepo.findById(usuario.getRol().getId()).orElseThrow(() -> new RuntimeException("Rol inválido"));
-
+		Rol rol = rolRepo.findById(rolId).orElseThrow(() -> new RuntimeException("Rol inválido"));
 		usuario.setRol(rol);
 
-		// Estado → ACTIVO por defecto
 		EstadoUsuario estado = estadoUsuarioRepo.findById("ACTIVO")
 				.orElseThrow(() -> new RuntimeException("Estado ACTIVO no encontrado"));
-
 		usuario.setEstado(estado);
 
-		// Encriptar contraseña
 		usuario.setPasswordHash(passwordEncoder.encode(usuario.getPasswordHash()));
-
-		// Campos de sistema
 		usuario.setFechaCreacion(LocalDateTime.now());
 		usuario.setDeletedAt(null);
 
-		// 6Guardar
 		usuarioRepo.save(usuario);
 	}
 
