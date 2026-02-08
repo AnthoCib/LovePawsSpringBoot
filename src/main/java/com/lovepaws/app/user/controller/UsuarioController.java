@@ -1,5 +1,6 @@
 package com.lovepaws.app.user.controller;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lovepaws.app.security.UsuarioPrincipal;
+import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
 import com.lovepaws.app.user.domain.Usuario;
@@ -34,6 +36,8 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private static final String TEMP_PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
 
     /* =========================
        REGISTRO DE USUARIO
@@ -200,15 +204,15 @@ public class UsuarioController {
 
 
     /* =========================
-       CAMBIAR CONTRASEÑA (ADOPTANTE)
+       CAMBIAR CONTRASEÑA
        ========================= */
-    @PreAuthorize("hasRole('ADOPTANTE')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/cambiar-password")
     public String cambiarPasswordForm() {
         return "usuario/cambiar-password";
     }
 
-    @PreAuthorize("hasRole('ADOPTANTE')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/cambiar-password")
     public String cambiarPassword(@RequestParam String actual,
                                   @RequestParam String nueva,
@@ -241,6 +245,38 @@ public class UsuarioController {
         return "redirect:/usuarios/cambiar-password?updated=true";
     }
 
+    /* =========================
+       RECUPERAR CONTRASEÑA
+       ========================= */
+    @GetMapping("/recuperar-password")
+    public String recuperarPasswordForm() {
+        return "usuario/recuperar-password";
+    }
+
+    @PostMapping("/recuperar-password")
+    public String recuperarPassword(@RequestParam String correo) {
+        if (correo == null || !correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            return "redirect:/usuarios/recuperar-password?error=formato";
+        }
+
+        usuarioService.findByCorreo(correo).ifPresent(usuario -> {
+            String tempPassword = generarPasswordTemporal(10);
+            usuario.setPasswordHash(passwordEncoder.encode(tempPassword));
+            usuarioService.updateUsuario(usuario);
+
+            String asunto = "Recuperación de contraseña - LovePaws";
+            String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
+                    + "<p>Generamos una contraseña temporal para que puedas acceder a tu cuenta:</p>"
+                    + "<p><strong>" + tempPassword + "</strong></p>"
+                    + "<p>Te recomendamos iniciar sesión y cambiarla desde el menú de tu perfil.</p>"
+                    + "<p>Equipo LovePaws</p>";
+
+            emailService.enviarCorreo(usuario.getCorreo(), asunto, contenido);
+        });
+
+        return "redirect:/usuarios/recuperar-password?sent";
+    }
+
 
     /* =========================
        MÉTODOS AUXILIARES
@@ -266,5 +302,15 @@ public class UsuarioController {
         }
 
         model.addAttribute("roles", roles);
+    }
+
+    private String generarPasswordTemporal(int length) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder builder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int idx = random.nextInt(TEMP_PASSWORD_CHARS.length());
+            builder.append(TEMP_PASSWORD_CHARS.charAt(idx));
+        }
+        return builder.toString();
     }
 }
