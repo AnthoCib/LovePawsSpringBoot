@@ -5,6 +5,8 @@ import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.mascota.repository.CategoriaRepository;
 import com.lovepaws.app.mascota.repository.RazaRepository;
 import com.lovepaws.app.mascota.service.MascotaService;
+import com.lovepaws.app.security.UsuarioPrincipal;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.access.prepost.PreAuthorize;
