@@ -5,10 +5,8 @@ import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.mascota.repository.CategoriaRepository;
 import com.lovepaws.app.mascota.repository.RazaRepository;
 import com.lovepaws.app.mascota.service.MascotaService;
-import com.lovepaws.app.security.UsuarioPrincipal;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -135,12 +133,6 @@ public class MascotaController {
 	public String editarMascota(@PathVariable Integer id, Authentication auth, Model model) {
 		Mascota mascota = mascotaService.findMascotaById(id)
 				.orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
-
-		UsuarioPrincipal up = (UsuarioPrincipal) auth.getPrincipal();
-		if (!mascota.getUsuarioCreacion().getId().equals(up.getUsuario().getId())
-				&& auth.getAuthorities().stream().noneMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()))) {
-			throw new AccessDeniedException("No puedes editar esta mascota");
-		}
 
 		model.addAttribute("mascota", mascota);
 		cargarCatalogos(model);
