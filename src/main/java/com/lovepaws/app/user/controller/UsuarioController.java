@@ -166,6 +166,18 @@ public class UsuarioController {
         Usuario usuario = usuarioService.findUsuarioById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        boolean datosValidos = nombre != null && nombre.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]{2,80}$")
+                && correo != null && correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
+                && telefono != null && telefono.matches("^\\+?[0-9]{9,15}$")
+                && direccion != null && direccion.length() >= 5 && direccion.length() <= 120;
+
+        if (!datosValidos) {
+            if (isAdmin && !id.equals(usuarioAutenticadoId)) {
+                return "redirect:/usuarios/perfil?id=" + id + "&error=formato";
+            }
+            return "redirect:/usuarios/perfil?error=formato";
+        }
+
         if (usuarioService.findByCorreo(correo)
                 .filter(existente -> !existente.getId().equals(id))
                 .isPresent()) {

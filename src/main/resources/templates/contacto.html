@@ -27,7 +27,7 @@
                 <form th:action="@{/contacto}" method="post" class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Nombre completo</label>
-                        <input type="text" class="form-control" name="nombre" required>
+                        <input type="text" class="form-control" name="nombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,80}" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Correo</label>
@@ -35,11 +35,11 @@
                     </div>
                     <div class="col-12">
                         <label class="form-label">Asunto</label>
-                        <input type="text" class="form-control" name="asunto" required>
+                        <input type="text" class="form-control" name="asunto" minlength="4" maxlength="120" required>
                     </div>
                     <div class="col-12">
                         <label class="form-label">Mensaje</label>
-                        <textarea class="form-control" rows="5" name="mensaje" required></textarea>
+                        <textarea class="form-control" rows="5" name="mensaje" minlength="10" maxlength="1000" required></textarea>
                     </div>
                     <div class="col-12 d-grid d-md-flex justify-content-md-end">
                         <button type="submit" class="btn btn-primary">Enviar mensaje</button>

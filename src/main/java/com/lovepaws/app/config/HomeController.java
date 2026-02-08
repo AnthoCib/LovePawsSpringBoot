@@ -28,8 +28,12 @@ public class HomeController {
                                  @RequestParam String correo,
                                  @RequestParam String asunto,
                                  @RequestParam String mensaje) {
-        if (nombre == null || nombre.isBlank() || correo == null || correo.isBlank() ||
-                asunto == null || asunto.isBlank() || mensaje == null || mensaje.isBlank()) {
+        boolean valido = nombre != null && nombre.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]{2,80}$")
+                && correo != null && correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
+                && asunto != null && asunto.length() >= 4 && asunto.length() <= 120
+                && mensaje != null && mensaje.length() >= 10 && mensaje.length() <= 1000;
+
+        if (!valido) {
             return "redirect:/contacto?error";
         }
         return "redirect:/contacto?sent";
