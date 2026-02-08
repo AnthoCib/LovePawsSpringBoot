@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.lovepaws.app.mascota.domain.Mascota;
@@ -39,10 +38,4 @@ public class AdminMascotaController {
 
         return "admin/mascota-detalle";
     }
-    @PostMapping("/{id}/estado")
-    public String cambiarEstado(@PathVariable Integer id) {
-        mascotaService.cambiarEstado(id);
-        return "redirect:/admin/mascotas";
-    }
-   
 }

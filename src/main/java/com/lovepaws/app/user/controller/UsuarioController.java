@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.lovepaws.app.config.storage.FileStorageService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
@@ -32,6 +34,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
+    private final FileStorageService fileStorageService;
 
     /* =========================
        REGISTRO DE USUARIO
@@ -145,6 +148,7 @@ public class UsuarioController {
                                @RequestParam String telefono,
                                @RequestParam String direccion,
                                @RequestParam(required = false) String fotoUrl,
+                               @RequestParam(value = "fotoArchivo", required = false) MultipartFile fotoArchivo,
                                Authentication auth) {
 
         if (!(auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal)) {
@@ -187,7 +191,18 @@ public class UsuarioController {
         usuario.setCorreo(correo);
         usuario.setTelefono(telefono);
         usuario.setDireccion(direccion);
-        usuario.setFotoUrl((fotoUrl != null && !fotoUrl.isBlank()) ? fotoUrl : null);
+        try {
+            if (fotoArchivo != null && !fotoArchivo.isEmpty()) {
+                usuario.setFotoUrl(fileStorageService.store(fotoArchivo));
+            } else {
+                usuario.setFotoUrl((fotoUrl != null && !fotoUrl.isBlank()) ? fotoUrl : null);
+            }
+        } catch (RuntimeException ex) {
+            if (isAdmin && !id.equals(usuarioAutenticadoId)) {
+                return "redirect:/usuarios/perfil?id=" + id + "&error=avatar";
+            }
+            return "redirect:/usuarios/perfil?error=avatar";
+        }
 
         usuarioService.updateUsuario(usuario);
         if (isAdmin && !id.equals(usuarioAutenticadoId)) {
