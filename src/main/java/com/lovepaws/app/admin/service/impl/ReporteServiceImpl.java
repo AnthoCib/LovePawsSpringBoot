@@ -1,6 +1,7 @@
 package com.lovepaws.app.admin.service.impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -16,47 +17,49 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ReporteServiceImpl  implements ReporteService{
-
+public class ReporteServiceImpl implements ReporteService {
 
     private final UsuarioRepository usuarioRepo;
     private final MascotaRepository mascotaRepo;
     private final ReporteRepository reporteRepo;
-	@Override
-	public Long totalUsuarios() {
-		// TODO Auto-generated method stub
-		 return usuarioRepo.count();
-	}
 
-	@Override
-	public Long totalMascotas() {
-		// TODO Auto-generated method stub
-		return mascotaRepo.count();
-	}
+    @Override
+    public Long totalUsuarios() {
+        return usuarioRepo.count();
+    }
 
+    @Override
+    public Long totalMascotas() {
+        return mascotaRepo.count();
+    }
 
-	@Override
-	public List<MascotaPorEstadoDTO> mascotasPorEstado(LocalDate desde, LocalDate hasta) {
-		// TODO Auto-generated method stub
-		return reporteRepo.mascotasPorEstado();
-	}
+    @Override
+    public List<MascotaPorEstadoDTO> mascotasPorEstado(LocalDate desde, LocalDate hasta) {
+        if (desde == null || hasta == null || hasta.isBefore(desde)) {
+            return reporteRepo.mascotasPorEstado();
+        }
+        LocalDateTime inicio = desde.atStartOfDay();
+        LocalDateTime finExclusivo = hasta.plusDays(1).atStartOfDay();
+        return reporteRepo.mascotasPorEstado(inicio, finExclusivo);
+    }
 
-	@Override
-	public List<UsuarioPorRolDTO> usuariosPorRol(LocalDate desde, LocalDate hasta) {
-		// TODO Auto-generated method stub
-		return reporteRepo.usuariosPorRol();
-	}
+    @Override
+    public List<UsuarioPorRolDTO> usuariosPorRol(LocalDate desde, LocalDate hasta) {
+        if (desde == null || hasta == null || hasta.isBefore(desde)) {
+            return reporteRepo.usuariosPorRol();
+        }
+        LocalDateTime inicio = desde.atStartOfDay();
+        LocalDateTime finExclusivo = hasta.plusDays(1).atStartOfDay();
+        return reporteRepo.usuariosPorRol(inicio, finExclusivo);
+    }
 
-	@Override
-	public List<MascotaPorEstadoDTO> mascotasPorEstado() {
-		// TODO Auto-generated method stub
-		return reporteRepo.mascotasPorEstado();
-	}
+    @Override
+    public List<MascotaPorEstadoDTO> mascotasPorEstado() {
+        return reporteRepo.mascotasPorEstado();
+    }
 
-	@Override
-	public List<UsuarioPorRolDTO> usuariosPorRol() {
-		// TODO Auto-generated method stub
-		return reporteRepo.usuariosPorRol();
-	}
-
+    @Override
+    public List<UsuarioPorRolDTO> usuariosPorRol() {
+        return reporteRepo.usuariosPorRol();
+    }
 }
