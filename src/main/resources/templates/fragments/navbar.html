@@ -51,14 +51,14 @@
                 <!-- ADOPTANTE -->
                 <li class="nav-item"
                     sec:authorize="hasRole('ADOPTANTE')">
-                    <a class="nav-link" th:href="@{/adopciones}">
+                    <a class="nav-link" th:href="@{/adopcion/mis-adopciones}">
                         Mis Adopciones
                     </a>
                 </li>
 
                 <li class="nav-item"
                     sec:authorize="hasRole('ADOPTANTE')">
-                    <a class="nav-link" th:href="@{/perfil/usuario}">
+                    <a class="nav-link" th:href="@{/usuarios/perfil}">
                         Mi Perfil
                     </a>
                 </li>

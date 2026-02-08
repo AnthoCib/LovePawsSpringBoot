@@ -102,7 +102,7 @@ public class UsuarioController {
         // Redirige a login para nuevos adoptantes
         return isAdmin 
         	    ? "redirect:/admin/dashboard?registro=ok"
-        	    : "redirect:/login?registro=ok";
+        	    : "redirect:/usuarios/login?registro=ok";
  
         
     }
