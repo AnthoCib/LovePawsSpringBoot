@@ -1,2 +1,61 @@
-.contact-wrap { border-radius: 16px; }
-.contact-info { border-radius: 12px; background: #f4f8ff; }
+.contact-wrap {
+    border-radius: 18px;
+}
+
+.contact-hero {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    min-height: 240px;
+}
+
+.hero-image {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+}
+
+.contact-hero .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, rgba(30, 60, 114, 0.78), rgba(42, 82, 152, 0.45));
+}
+
+.hero-content {
+    position: absolute;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 1.25rem;
+}
+
+.contact-info {
+    border-radius: 14px;
+    background: #f4f8ff;
+}
+
+.friendly-tag {
+    border-radius: 10px;
+    background: #fff5e6;
+    color: #8a5b00;
+    padding: .75rem 1rem;
+    font-size: .95rem;
+}
+
+.btn-send {
+    padding: .65rem 1.2rem;
+    border-radius: 999px;
+}
+
+.mini-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .5rem;
+}
+
+.gallery-img {
+    width: 100%;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 10px;
+}

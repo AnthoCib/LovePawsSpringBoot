@@ -22,11 +22,13 @@ import com.lovepaws.app.user.service.RolService;
 import com.lovepaws.app.user.service.UsuarioService;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/usuarios")
 @RequiredArgsConstructor
+@Slf4j
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -48,10 +50,9 @@ public class UsuarioController {
                                   BindingResult br,
                                   Model model,
                                   Authentication auth) { 	
-    	
-    	System.out.println("POST /usuarios/registro llamado");
-    	System.out.println("Usuario recibido: " + usuario);
-    	System.out.println("BindingResult: " + br);
+
+	    log.debug("POST /usuarios/registro llamado. username={}, correo={}", usuario.getUsername(), usuario.getCorreo());
+	    log.debug("Resultado de validación de formulario: hasErrors={}", br.hasErrors());
 
     	
         boolean isAdmin = auth != null && auth.getAuthorities().stream()
