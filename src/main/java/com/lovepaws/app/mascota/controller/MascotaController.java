@@ -57,14 +57,14 @@ public class MascotaController {
 		return "mascota/detalle";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@GetMapping("/gestor/mascotas")
 	public String listarParaGestor(Model model) {
 		model.addAttribute("mascotas", mascotaService.listarMascotas());
 		return "gestor/mascota/lista";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@GetMapping("/gestor/mascotas/nuevo")
 	public String showCreateForm(Model model) {
 		model.addAttribute("mascota", new Mascota());
@@ -72,7 +72,7 @@ public class MascotaController {
 		return "gestor/mascota/nuevo";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@PostMapping("/gestor/mascotas/guardar")
 	public String createMascota(@Validated @ModelAttribute("mascota") Mascota mascota,
 							BindingResult br,
@@ -104,7 +104,7 @@ public class MascotaController {
 		return "redirect:/gestor/mascotas?created";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@PostMapping("/gestor/mascotas/actualizar")
 	public String updateMascota(@Validated @ModelAttribute("mascota") Mascota mascota,
 							BindingResult br,
@@ -130,7 +130,7 @@ public class MascotaController {
 		return "redirect:/gestor/mascotas?updated";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@GetMapping("/gestor/mascotas/editar/{id}")
 	public String editarMascota(@PathVariable Integer id, Authentication auth, Model model) {
 		Mascota mascota = mascotaService.findMascotaById(id)
@@ -141,7 +141,7 @@ public class MascotaController {
 		return "gestor/mascota/form";
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@PostMapping("/gestor/mascotas/eliminar/{id}")
 	public String deleteMascota(@PathVariable Integer id) {
 		mascotaService.deleteMascotaById(id);
