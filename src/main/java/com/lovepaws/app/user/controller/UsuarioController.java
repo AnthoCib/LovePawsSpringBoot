@@ -49,10 +49,6 @@ public class UsuarioController {
                                   Model model,
                                   Authentication auth) { 	
     	
-    	System.out.println("POST /usuarios/registro llamado");
-    	System.out.println("Usuario recibido: " + usuario);
-    	System.out.println("BindingResult: " + br);
-
     	
         boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));

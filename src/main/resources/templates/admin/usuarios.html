@@ -23,21 +23,23 @@
     <!-- CONTENIDO -->
     <main class="admin-content w-100 p-4">
 
-        <h2 class="fw-bold mb-4">
-            👥 Gestión de Usuarios
-        </h2>
+        <h2 class="fw-bold mb-4">👥 Gestión de Usuarios</h2>
+
         <a th:href="@{/admin/usuarios/nuevo}"
-		   class="btn btn-primary mb-3">
-		   <i class="bi bi-person-plus"></i> Nuevo Registro
-		</a>
-        
+           class="btn btn-primary mb-3"
+           sec:authorize="hasRole('ADMIN')">
+            <i class="bi bi-person-plus"></i> Nuevo Registro
+        </a>
 
         <div class="row g-4">
 
-            <div class="col-xl-3 col-lg-4 col-md-6" th:each="u : ${usuarios}">
+            <!-- LISTADO -->
+            <div class="col-xl-3 col-lg-4 col-md-6"
+                 th:each="u : ${usuarios}">
 
                 <div class="card h-100 shadow-sm">
 
+                    <!-- BODY -->
                     <div class="card-body">
 
                         <!-- Avatar + datos -->
@@ -50,33 +52,40 @@
 
                             <div>
                                 <h5 class="mb-0" th:text="${u.username}">usuario</h5>
-                                <small class="text-muted" th:text="${u.correo}">
-                                    correo@mail.com
-                                </small>
+                                <small class="text-muted"
+                                       th:text="${u.correo}">correo@mail.com</small>
                             </div>
                         </div>
 
-                        <!-- Estado -->
+                        <!-- ESTADO -->
                         <span class="badge"
-                              th:classappend="${u.estado.id == 'ACTIVO'} 
-                                    ? 'bg-success' 
+                              th:classappend="${u.estado != null and u.estado.id == 'ACTIVO'}
+                                    ? 'bg-success'
                                     : 'bg-danger'">
+
                             <i class="bi"
-                               th:classappend="${u.estado.id == 'ACTIVO'} 
-                                    ? 'bi-unlock-fill' 
+                               th:classappend="${u.estado != null and u.estado.id == 'ACTIVO'}
+                                    ? 'bi-unlock-fill'
                                     : 'bi-lock-fill'"></i>
-                            <span th:text="${u.estado.id}">ACTIVO</span>
+
+                            <span th:text="${u.estado != null ? u.estado.id : 'SIN ESTADO'}">
+                                ACTIVO
+                            </span>
                         </span>
 
-                        <!-- Rol -->
+                        <!-- ROL -->
                         <div class="mt-2">
                             <span class="badge px-3 py-2"
                                   th:classappend="
-                                    ${u.rol.nombre == 'ADMIN'} ? 'bg-danger' :
-                                    (${u.rol.nombre == 'GESTOR'} ? 'bg-warning text-dark' :
-                                    'bg-primary')">
+                                    ${u.rol != null and u.rol.nombre == 'ADMIN'} ? 'bg-danger' :
+                                    (${u.rol != null and u.rol.nombre == 'GESTOR'}
+                                        ? 'bg-warning text-dark'
+                                        : 'bg-secondary')">
+
                                 <i class="bi bi-shield-lock-fill me-1"></i>
-                                <span th:text="${u.rol.nombre}">ADMIN</span>
+                                <span th:text="${u.rol != null ? u.rol.nombre : 'SIN ROL'}">
+                                    ROL
+                                </span>
                             </span>
                         </div>
 
@@ -86,17 +95,22 @@
                     <div class="card-footer bg-transparent border-0">
                         <div class="d-grid gap-2">
 
-                            <!-- Cambiar rol -->
-                            <form th:if="${u.id != #authentication.principal.usuario.id}"
+                            <!-- CAMBIAR ROL (SOLO ADMIN / NO A SÍ MISMO) -->
+                            <form sec:authorize="hasRole('ADMIN')"
+                                  th:if="${u.id != #authentication.principal.usuario.id}"
                                   th:action="@{/admin/usuarios/{id}/rol(id=${u.id})}"
                                   method="post">
+
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}" />
 
                                 <div class="input-group input-group-sm">
                                     <select name="rolId" class="form-select">
                                         <option th:each="r : ${roles}"
                                                 th:value="${r.id}"
                                                 th:text="${r.nombre}"
-                                                th:selected="${r.id == u.rol.id}">
+                                                th:selected="${u.rol != null and r.id == u.rol.id}">
                                         </option>
                                     </select>
 
@@ -106,22 +120,27 @@
                                 </div>
                             </form>
 
-                            <!-- Activar / Bloquear -->
-                            <form th:action="@{/admin/usuarios/{id}/estado(id=${u.id})}"
+                            <!-- BLOQUEAR / ACTIVAR (SOLO ADMIN) -->
+                            <form sec:authorize="hasRole('ADMIN')"
+                                  th:action="@{/admin/usuarios/{id}/estado(id=${u.id})}"
                                   method="post">
 
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}" />
+
                                 <button class="btn btn-sm w-100"
-                                        th:classappend="${u.estado.id == 'ACTIVO'} 
-                                            ? 'btn-outline-danger' 
+                                        th:classappend="${u.estado != null and u.estado.id == 'ACTIVO'}
+                                            ? 'btn-outline-danger'
                                             : 'btn-outline-success'">
 
                                     <i class="bi"
-                                       th:classappend="${u.estado.id == 'ACTIVO'} 
-                                            ? 'bi-lock-fill' 
+                                       th:classappend="${u.estado != null and u.estado.id == 'ACTIVO'}
+                                            ? 'bi-lock-fill'
                                             : 'bi-unlock-fill'"></i>
 
-                                    <span th:text="${u.estado.id == 'ACTIVO'} 
-                                            ? 'Bloquear usuario' 
+                                    <span th:text="${u.estado != null and u.estado.id == 'ACTIVO'}
+                                            ? 'Bloquear usuario'
                                             : 'Activar usuario'">
                                     </span>
                                 </button>
@@ -133,7 +152,7 @@
                 </div>
             </div>
 
-            <!-- Sin usuarios -->
+            <!-- SIN USUARIOS -->
             <div th:if="${#lists.isEmpty(usuarios)}"
                  class="text-center text-muted py-5">
                 No hay usuarios registrados

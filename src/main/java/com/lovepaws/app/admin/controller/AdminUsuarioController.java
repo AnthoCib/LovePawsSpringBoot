@@ -58,6 +58,7 @@ public class AdminUsuarioController {
 
 	@GetMapping("/nuevo")
 	public String nuevoUsuarioAdmin(Model model) {
+<<<<<<< HEAD
 		model.addAttribute("usuario", new Usuario());
 		model.addAttribute("isAdmin", true);
 		cargarRolesAdmin(model);
@@ -85,6 +86,36 @@ public class AdminUsuarioController {
 			model.addAttribute("errorRegistroAdmin", ex.getMessage());
 			return "admin/crear";
 		}
+=======
+
+		Usuario usuario = new Usuario();
+	    usuario.setRol(new Rol());
+	    
+	    model.addAttribute("usuario", new Usuario());
+	    model.addAttribute("isAdmin", true);
+	    
+	    List<Rol> roles = rolService.listarRoles().stream()
+	            .filter(r ->
+	                    r.getNombre().equalsIgnoreCase("ADMIN") ||
+	                    r.getNombre().equalsIgnoreCase("GESTOR")
+	            )
+	            .toList();
+	    model.addAttribute("roles", roles);
+
+	    return "admin/crear";
+	}
+	
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/nuevo")
+	public String crearUsuarioDesdeAdmin(
+	        @ModelAttribute Usuario usuario,
+	        RedirectAttributes ra
+	) {
+	    usuarioService.crearUsuarioDesdeAdmin(usuario);
+	    ra.addFlashAttribute("exito", "Usuario creado correctamente");
+	    return "redirect:/admin/usuarios";
+>>>>>>> 69079660f8eb3e059994cd460ca5bc4802cd155f
 	}
 
 	private void cargarRolesAdmin(Model model) {
