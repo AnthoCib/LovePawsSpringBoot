@@ -2,6 +2,7 @@
     --lp-primary: #0d6efd;
     --lp-soft: #eef4ff;
     --lp-border: #d9e5ff;
+    --lp-ink: #1e3a8a;
 }
 
 .stepper {
@@ -12,29 +13,47 @@
 
 .stepper .step {
     flex: 1 1 200px;
-    background: #fff;
+    background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 10px 20px rgba(13, 110, 253, 0.12);
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.stepper .step::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
     border: 1px solid var(--lp-border);
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 3px 12px rgba(13, 110, 253, 0.08);
+    pointer-events: none;
 }
 
 .step-number {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--lp-soft);
+    background: #fff;
     color: var(--lp-primary);
     font-weight: 700;
     margin-bottom: .5rem;
+    box-shadow: 0 6px 12px rgba(13, 110, 253, 0.2);
+    border: 1px solid var(--lp-border);
 }
 
 .step.active {
     border-color: var(--lp-primary);
-    background: linear-gradient(180deg, #fff, #f7faff);
+    box-shadow: 0 12px 24px rgba(13, 110, 253, 0.18);
+}
+
+.stepper .step:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 24px rgba(13, 110, 253, 0.2);
 }
 
 .page-shell {
@@ -46,6 +65,51 @@
     background: #fff;
     border-radius: 14px;
     border: 1px solid #e9edf5;
+}
+
+.pet-attribute {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+}
+
+.meta-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background: var(--lp-soft);
+    border: 1px solid var(--lp-border);
+    color: var(--lp-ink);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.01em;
+}
+
+.meta-value {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.lp-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--lp-border);
+    color: var(--lp-ink);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.1);
+}
+
+.adoption-card {
+    border-radius: 18px;
+    border: 1px solid var(--lp-border);
+    box-shadow: 0 16px 24px rgba(13, 110, 253, 0.12);
 }
 
 
