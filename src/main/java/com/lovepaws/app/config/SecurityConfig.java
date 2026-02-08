@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index", "/home", "/usuarios/registro", "/login", "/registro", "/mascotas/**", "/nosotros", "/contacto", "/adopcion").permitAll()
                 // Rutas protegidas por rol
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/gestor/**").hasAnyRole("GESTOR","ADMIN")
+                .requestMatchers("/gestor/**").hasRole("GESTOR")
                 .requestMatchers("/mascotas/**").permitAll()
                 .requestMatchers("/mascota/catalogo/**").hasRole("ADOPTANTE")
                 // Todo lo demás requiere login
