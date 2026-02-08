@@ -70,6 +70,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		String usuarioNombre = saved.getUsuario() != null ? saved.getUsuario().getNombre() : "Sistema";
 		auditoriaService.registrar("solicitud_adopcion", saved.getId(), "CREAR_SOLICITUD", usuarioId, usuarioNombre,
 				"Solicitud creada para mascota " + (saved.getMascota() != null ? saved.getMascota().getId() : "-"));
+		enviarCorreoRecepcion(saved);
 		return saved;
 	}
 
@@ -179,6 +180,25 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 				u != null ? u.getNombre() : "USUARIO", "Estado cambiado a CANCELADA");
 		enviarCorreoCancelacion(updated);
 		return updated;
+	}
+
+	@Async
+	private void enviarCorreoRecepcion(SolicitudAdopcion solicitud) {
+		try {
+			Usuario usuario = solicitud.getUsuario();
+			if (usuario == null || usuario.getCorreo() == null) {
+				return;
+			}
+			String asunto = "Hemos recibido tu solicitud de adopción";
+			String contenido = "Hola " + usuario.getNombre() + ",\n\n"
+					+ "Confirmamos la recepción de tu solicitud para adoptar a "
+					+ solicitud.getMascota().getNombre() + ".\n"
+					+ "Te mantendremos informado sobre el estado de la solicitud.\n\n"
+					+ "Gracias por confiar en LovePaws.\nEquipo LovePaws";
+			emailService.enviarCorreo(usuario.getCorreo(), asunto, contenido);
+		} catch (Exception e) {
+			logger.error("Error enviando correo de recepción", e);
+		}
 	}
 
 	@Async
