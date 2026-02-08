@@ -20,6 +20,10 @@ public interface SolicitudAdopcionRepository extends JpaRepository<SolicitudAdop
 
 	boolean existsByUsuario_IdAndMascota_IdAndEstado_Id(Integer usuarioId, Integer mascotaId, String estadoId);
 
+	boolean existsByMascota_IdAndEstado_Id(Integer mascotaId, String estadoId);
+
+	boolean existsByUsuario_IdAndEstado_Id(Integer usuarioId, String estadoId);
+
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT s FROM SolicitudAdopcion s WHERE s.id = :id")
 	Optional<SolicitudAdopcion> findByIdForUpdate(@Param("id") Integer id);

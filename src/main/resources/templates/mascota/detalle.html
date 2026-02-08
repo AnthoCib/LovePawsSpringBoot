@@ -74,5 +74,7 @@
         Swal.fire({icon: 'error', title: 'Solicitud inválida', text: 'No se pudo procesar tu solicitud. Verifica los datos e inténtalo nuevamente.'});
     </script>
 </div>
+<div th:if="${param.error == 'motivo'}"><script>Swal.fire({icon:'warning',title:'Motivo obligatorio',text:'Debes indicar por qué deseas adoptar.'});</script></div>
+<div th:if="${param.error == 'form'}"><script>Swal.fire({icon:'warning',title:'Información incompleta',text:'Completa todos los campos obligatorios.'});</script></div>
 </body>
 </html>
