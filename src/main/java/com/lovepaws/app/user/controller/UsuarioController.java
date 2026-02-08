@@ -2,6 +2,7 @@ package com.lovepaws.app.user.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
 import com.lovepaws.app.user.domain.Usuario;
@@ -133,6 +136,49 @@ public class UsuarioController {
 
         usuarioService.updateUsuario(usuario);
         return "redirect:/usuarios/perfil?updated";
+    }
+
+
+    /* =========================
+       CAMBIAR CONTRASEÑA (ADOPTANTE)
+       ========================= */
+    @PreAuthorize("hasRole('ADOPTANTE')")
+    @GetMapping("/cambiar-password")
+    public String cambiarPasswordForm() {
+        return "usuario/cambiar-password";
+    }
+
+    @PreAuthorize("hasRole('ADOPTANTE')")
+    @PostMapping("/cambiar-password")
+    public String cambiarPassword(@RequestParam String actual,
+                                  @RequestParam String nueva,
+                                  @RequestParam String confirmar,
+                                  Authentication auth) {
+
+        if (actual == null || actual.isBlank() || nueva == null || nueva.isBlank() || confirmar == null || confirmar.isBlank()) {
+            return "redirect:/usuarios/cambiar-password?error=campos";
+        }
+
+        if (nueva.length() < 8) {
+            return "redirect:/usuarios/cambiar-password?error=min";
+        }
+
+        if (!nueva.equals(confirmar)) {
+            return "redirect:/usuarios/cambiar-password?error=match";
+        }
+
+        UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+        Usuario usuario = usuarioService.findUsuarioById(principal.getUsuario().getId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!passwordEncoder.matches(actual, usuario.getPasswordHash())) {
+            return "redirect:/usuarios/cambiar-password?error=actual";
+        }
+
+        usuario.setPasswordHash(passwordEncoder.encode(nueva));
+        usuarioService.updateUsuario(usuario);
+
+        return "redirect:/usuarios/cambiar-password?updated=true";
     }
 
 
