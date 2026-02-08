@@ -1,67 +1,68 @@
-
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<!-- Fragmento Footer -->
+
 <footer class="text-white py-4 footer-custom mt-1" th:fragment="footer">
+    <style>
+        .footer-custom {
+            background: linear-gradient(135deg, #005a98 0%, #1f386d 100%);
+            border-top: 1px solid rgba(255,255,255,.18);
+        }
+        .footer-custom a {
+            color: #f2f7ff;
+            transition: color .2s ease;
+        }
+        .footer-custom a:hover {
+            color: #ffd166;
+        }
+    </style>
+
     <div class="container-lg">
         <div class="row gy-4">
-            
-            <!-- Columna 1: Sobre nosotros -->
             <div class="col-md-3 mb-4">
-                <h5 class="fw-bold">
-                    <i class="bi bi-heart-fill me-2"></i>Love Paws
-                </h5>
-                <p>
-                    Conectamos corazones con patas. Ayudamos a nuestros amigos peludos a encontrar un hogar lleno de amor.
-                    <i class="fas fa-cat ms-2"></i>
-                    <i class="fas fa-dog ms-2"></i>
-                </p>
+                <h5 class="fw-bold"><i class="bi bi-heart-fill me-2"></i>Love Paws</h5>
+                <p>Conectamos corazones con patas. Ayudamos a nuestros amigos peludos a encontrar un hogar lleno de amor.
+                    <i class="fas fa-cat ms-2"></i><i class="fas fa-dog ms-2"></i></p>
             </div>
 
-            <!-- Columna 2: Enlaces útiles -->
             <div class="col-md-3 mb-4">
                 <h5 class="fw-bold">Enlaces útiles</h5>
                 <ul class="list-unstyled">
-                    <li><a th:href="@{/}" class="text-white text-decoration-none"><i class="bi bi-house-door-fill me-2"></i>Inicio</a></li>
-                    <li><a th:href="@{/mascotas}" class="text-white text-decoration-none"><i class="bi bi-heart me-2"></i>Catalogo</a></li>
-                    <li><a th:href="@{/nosotros}" class="text-white text-decoration-none"><i class="bi bi-people-fill me-2"></i>Nosotros</a></li>
+                    <li><a th:href="@{/}" class="text-decoration-none"><i class="bi bi-house-door-fill me-2"></i>Inicio</a></li>
+                    <li><a th:href="@{/mascotas}" class="text-decoration-none"><i class="bi bi-heart me-2"></i>Catálogo</a></li>
+                    <li><a th:href="@{/nosotros}" class="text-decoration-none"><i class="bi bi-people-fill me-2"></i>Nosotros</a></li>
+                    <li><a th:href="@{/contacto}" class="text-decoration-none"><i class="bi bi-chat-dots-fill me-2"></i>Contacto</a></li>
 
-                    <!-- Si NO está logueado -->
                     <li th:if="${#authentication == null}">
-                        <a th:href="@{/usuarios/login}" class="text-white text-decoration-none"><i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión</a>
+                        <a th:href="@{/usuarios/login}" class="text-decoration-none"><i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión</a>
                     </li>
                     <li th:if="${#authentication == null}">
-                        <a th:href="@{/usuarios/registro}" class="text-white text-decoration-none"><i class="bi bi-person-plus me-2"></i>Registrarse</a>
+                        <a th:href="@{/usuarios/registro}" class="text-decoration-none"><i class="bi bi-person-plus me-2"></i>Registrarse</a>
                     </li>
-
-                    <!-- Si SÍ está logueado -->
                     <li th:if="${#authentication != null}">
-                        <a th:href="@{/usuarios/perfil}" class="text-white text-decoration-none"><i class="bi bi-person-circle me-2"></i>Mi Perfil</a>
+                        <a th:href="@{/usuarios/perfil}" class="text-decoration-none"><i class="bi bi-person-circle me-2"></i>Mi Perfil</a>
                     </li>
                 </ul>
             </div>
 
-            <!-- Columna 3: Contacto -->
             <div class="col-md-3 mb-4">
                 <h5 class="fw-bold">Contacto</h5>
                 <p><i class="bi bi-envelope me-2"></i>contacto@lovepaws.com</p>
                 <p><i class="bi bi-telephone me-2"></i>+51 987 654 321</p>
                 <p><i class="bi bi-geo-alt me-2"></i>Lima, Perú</p>
             </div>
-	
-            <!-- Columna 4: Redes sociales -->
+
             <div class="col-md-3 mb-4">
                 <h5 class="fw-bold">Síguenos</h5>
                 <div class="d-flex gap-3">
-                    <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="text-white fs-4"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="text-white fs-4"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="fs-4"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="fs-4"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="fs-4"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="fs-4"><i class="bi bi-youtube"></i></a>
                 </div>
             </div>
-
-        </div> <!-- row -->
+        </div>
         <hr class="border-light">
         <p class="text-center mb-0">&copy; 2025 Love Paws. Todos los derechos reservados.</p>
-    </div> <!-- container -->
+    </div>
 </footer>
+</html>
