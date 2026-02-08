@@ -57,6 +57,10 @@ public class MascotaServiceImpl implements MascotaService {
         }
         if (mascota.getEstado() != null) {
             existente.setEstado(mascota.getEstado());
+        } else if (existente.getEstado() == null) {
+            EstadoMascota estado = estadoRepo.findById("DISPONIBLE")
+                    .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+            existente.setEstado(estado);
         }
         if (mascota.getUsuarioCreacion() != null) {
             existente.setUsuarioCreacion(mascota.getUsuarioCreacion());
