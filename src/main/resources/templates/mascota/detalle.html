@@ -14,6 +14,10 @@
     <div class="section-card p-4">
         <a th:href="@{/mascotas}" class="btn btn-outline-secondary btn-sm mb-3">← Volver al catálogo</a>
 
+        <div class="adopcion-hero mb-4">
+            <h1 class="h4 mb-0" th:text="'Solicitud de adopción de ' + ${mascota.nombre}">Solicitud de adopción</h1>
+        </div>
+
         <div class="stepper mb-4">
             <article class="step active">
                 <div class="step-number">1</div>
@@ -91,34 +95,81 @@
                                     <h6 class="section-title">Datos del nuevo hogar</h6>
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label class="form-label">Tipo de vivienda</label>
-                                            <select name="tipoVivienda" class="form-select" required>
-                                                <option value="" selected disabled>Selecciona una opción</option>
-                                                <option value="Casa con patio">Casa con patio</option>
-                                                <option value="Casa sin patio">Casa sin patio</option>
-                                                <option value="Departamento">Departamento</option>
-                                                <option value="Otro">Otro</option>
-                                            </select>
+                                            <label class="form-label">1. ¿Vives en casa o departamento?</label>
+                                            <div class="option-grid">
+                                                <label class="option-card">
+                                                    <input type="radio" name="tipoVivienda" value="Casa con patio" required>
+                                                    <span>Casa con patio</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="tipoVivienda" value="Casa sin patio" required>
+                                                    <span>Casa sin patio</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="tipoVivienda" value="Departamento" required>
+                                                    <span>Departamento</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="tipoVivienda" value="Otro" required>
+                                                    <span>Otro</span>
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">¿Hay niños u otras mascotas?</label>
-                                            <select name="ninosOtraMascotas" class="form-select" required>
-                                                <option value="" selected disabled>Selecciona una opción</option>
-                                                <option value="No">No</option>
-                                                <option value="Niños en casa">Sí, hay niños</option>
-                                                <option value="Otras mascotas">Sí, hay otras mascotas</option>
-                                                <option value="Niños y mascotas">Sí, hay niños y mascotas</option>
-                                            </select>
+                                            <label class="form-label">2. ¿Hay niños u otras mascotas?</label>
+                                            <div class="option-grid">
+                                                <label class="option-card">
+                                                    <input type="radio" name="ninosOtraMascotas" value="No" required>
+                                                    <span>No</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="ninosOtraMascotas" value="Niños en casa" required>
+                                                    <span>Sí, hay niños</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="ninosOtraMascotas" value="Otras mascotas" required>
+                                                    <span>Sí, hay otras mascotas</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="ninosOtraMascotas" value="Niños y mascotas" required>
+                                                    <span>Sí, hay niños y mascotas</span>
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Tiempo disponible al día</label>
-                                            <select name="tiempoDedicado" class="form-select" required>
-                                                <option value="" selected disabled>Selecciona una opción</option>
-                                                <option value="1-2 horas">1-2 horas</option>
-                                                <option value="3-4 horas">3-4 horas</option>
-                                                <option value="5+ horas">Más de 5 horas</option>
-                                                <option value="Disponible la mayor parte del día">Disponible la mayor parte del día</option>
-                                            </select>
+                                            <label class="form-label">3. ¿Cuántas horas al día compartirás con la mascota?</label>
+                                            <div class="option-grid">
+                                                <label class="option-card">
+                                                    <input type="radio" name="tiempoDedicado" value="1-2 horas" required>
+                                                    <span>1-2 horas</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="tiempoDedicado" value="3-4 horas" required>
+                                                    <span>3-4 horas</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="tiempoDedicado" value="5+ horas" required>
+                                                    <span>Más de 5 horas</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="tiempoDedicado" value="Disponible la mayor parte del día" required>
+                                                    <span>Disponible la mayor parte del día</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">4. ¿Puedes cubrir los costos básicos?</label>
+                                            <div class="option-grid">
+                                                <label class="option-card">
+                                                    <input type="radio" name="cubrirCostos" value="Sí" required>
+                                                    <span>Sí, estoy preparado(a)</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="cubrirCostos" value="Necesito orientación" required>
+                                                    <span>Necesito orientación</span>
+                                                </label>
+                                            </div>
+                                            <div class="form-text">Incluye alimentación, vacunas, controles y emergencias.</div>
                                         </div>
                                     </div>
                                 </div>
@@ -128,36 +179,38 @@
                                     <h6 class="section-title">Intereses del adoptante</h6>
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label class="form-label">Experiencia con mascotas</label>
-                                            <select name="experiencia" class="form-select" required>
-                                                <option value="" selected disabled>Selecciona una opción</option>
-                                                <option value="Primera vez">Es mi primera mascota</option>
-                                                <option value="Experiencia previa">Ya he cuidado mascotas antes</option>
-                                                <option value="Actualmente tengo mascotas">Actualmente tengo mascotas</option>
-                                                <option value="Experiencia avanzada">Tengo amplia experiencia</option>
-                                            </select>
+                                            <label class="form-label">5. Experiencia con mascotas</label>
+                                            <div class="option-grid">
+                                                <label class="option-card">
+                                                    <input type="radio" name="experiencia" value="Primera vez" required>
+                                                    <span>Es mi primera mascota</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="experiencia" value="Experiencia previa" required>
+                                                    <span>Ya he cuidado mascotas antes</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="experiencia" value="Actualmente tengo mascotas" required>
+                                                    <span>Actualmente tengo mascotas</span>
+                                                </label>
+                                                <label class="option-card">
+                                                    <input type="radio" name="experiencia" value="Experiencia avanzada" required>
+                                                    <span>Tengo amplia experiencia</span>
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="col-12">
-                                            <label class="form-label">¿Por qué quieres adoptarlo?</label>
+                                            <label class="form-label">6. ¿Por qué quieres adoptarlo?</label>
                                             <textarea name="pqAdoptar" class="form-control" rows="3" minlength="20" maxlength="600" required
                                                       placeholder="Cuéntanos qué te motivó y cómo encaja esta mascota en tu familia."></textarea>
                                         </div>
                                         <div class="col-12">
-                                            <label class="form-label">Plan de cuidado</label>
+                                            <label class="form-label">7. Plan de cuidado</label>
                                             <textarea name="planMascota" class="form-control" rows="3" minlength="20" maxlength="600" required
                                                       placeholder="Describe cómo será su rutina, paseos, alimentación y atención veterinaria."></textarea>
                                         </div>
                                         <div class="col-12">
-                                            <label class="form-label">¿Puedes cubrir los costos básicos?</label>
-                                            <select name="cubrirCostos" class="form-select" required>
-                                                <option value="" selected disabled>Selecciona una opción</option>
-                                                <option value="Sí">Sí, estoy preparado(a)</option>
-                                                <option value="Necesito orientación">Necesito orientación</option>
-                                            </select>
-                                            <div class="form-text">Incluye alimentación, vacunas, controles y emergencias.</div>
-                                        </div>
-                                        <div class="col-12">
-                                            <label class="form-label">Información adicional (opcional)</label>
+                                            <label class="form-label">8. Información adicional (opcional)</label>
                                             <textarea name="infoAdicional" class="form-control" rows="3" maxlength="600"
                                                       placeholder="Si deseas añadir algo más, este es el lugar."></textarea>
                                         </div>

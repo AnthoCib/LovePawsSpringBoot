@@ -2,12 +2,24 @@
     --lp-primary: #0d6efd;
     --lp-soft: #eef4ff;
     --lp-border: #d9e5ff;
+    --lp-dark: #2d3a5f;
+}
+
+.adopcion-hero {
+    background: #3f4f88;
+    color: #fff;
+    padding: 0.85rem 1.25rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.4px;
 }
 
 .stepper {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    position: relative;
 }
 
 .stepper .step {
@@ -59,6 +71,32 @@
     font-weight: 700;
     margin-bottom: .75rem;
     color: #2b2f38;
+}
+
+.option-grid {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.option-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.option-card input {
+    margin: 0;
+}
+
+.option-card:hover {
+    border-color: #b6c7f7;
+    box-shadow: 0 2px 8px rgba(63, 79, 136, 0.12);
 }
 
 
