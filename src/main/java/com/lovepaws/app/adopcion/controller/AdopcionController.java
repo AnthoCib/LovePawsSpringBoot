@@ -31,6 +31,12 @@ public class AdopcionController {
 	private final AdopcionService adopcionService;
 	private final MascotaService mascotaService;
 
+
+	@GetMapping
+	public String flujoAdopcion() {
+		return "adopcion/flujo";
+	}
+
 	// Adoptante: crear solicitud para una mascota
 	@PreAuthorize("hasRole('ADOPTANTE')")
 	@PostMapping("/solicitar")

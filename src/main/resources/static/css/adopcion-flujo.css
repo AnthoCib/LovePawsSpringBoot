@@ -1,0 +1,49 @@
+:root {
+    --lp-primary: #0d6efd;
+    --lp-soft: #eef4ff;
+    --lp-border: #d9e5ff;
+}
+
+.stepper {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.stepper .step {
+    flex: 1 1 200px;
+    background: #fff;
+    border: 1px solid var(--lp-border);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 3px 12px rgba(13, 110, 253, 0.08);
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--lp-soft);
+    color: var(--lp-primary);
+    font-weight: 700;
+    margin-bottom: .5rem;
+}
+
+.step.active {
+    border-color: var(--lp-primary);
+    background: linear-gradient(180deg, #fff, #f7faff);
+}
+
+.page-shell {
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+.section-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e9edf5;
+}
