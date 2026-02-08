@@ -1,6 +1,6 @@
 .contact-wrap {
-<<<<<<< HEAD
     border-radius: 18px;
+    border: 1px solid #e8eef9;
 }
 
 .contact-hero {
@@ -30,9 +30,28 @@
     bottom: 1.25rem;
 }
 
+.contact-intro {
+    border-radius: 14px;
+    background: #f4f8ff;
+    border: 1px solid #e0ebff;
+}
+
 .contact-info {
     border-radius: 14px;
     background: #f4f8ff;
+    border: 1px solid #e0ebff;
+}
+
+.contact-form {
+    border-radius: 14px;
+    border: 1px solid #edf1fb;
+    background: #ffffff;
+}
+
+.paw-icon {
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
 }
 
 .friendly-tag {
@@ -43,9 +62,9 @@
     font-size: .95rem;
 }
 
-.btn-send {
-    padding: .65rem 1.2rem;
-    border-radius: 999px;
+.contact-btn {
+    border-radius: 10px;
+    padding: 0.65rem 1.25rem;
 }
 
 .mini-gallery {
@@ -59,48 +78,4 @@
     height: 96px;
     object-fit: cover;
     border-radius: 10px;
-=======
-  border-radius: 18px;
-  border: 1px solid #e8eef9;
-}
-
-.contact-hero {
-  border-radius: 14px;
-  background: linear-gradient(135deg, #f4f8ff 0%, #eef7ff 100%);
-}
-
-.contact-hero-img {
-  width: 100%;
-  max-height: 220px;
-  object-fit: contain;
-}
-
-.contact-info {
-  border-radius: 14px;
-  background: #f4f8ff;
-  border: 1px solid #e0ebff;
-}
-
-.friendly-form {
-  border-radius: 14px;
-  border: 1px solid #edf1fb;
-  background: #ffffff;
-}
-
-.paw-icon {
-  width: 54px;
-  height: 54px;
-  object-fit: contain;
-}
-
-.contact-btn {
-  border-radius: 10px;
-  padding: 0.65rem 1.25rem;
-}
-
-@media (max-width: 991px) {
-  .contact-hero-img {
-    max-height: 180px;
-  }
->>>>>>> refs/remotes/origin/codex/review-code-for-project-completion
 }
