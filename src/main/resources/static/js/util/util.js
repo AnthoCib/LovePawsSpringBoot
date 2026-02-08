@@ -23,6 +23,30 @@ function togglePassword(btn) {
 }
 
 /**
+ * Alterna la visibilidad de un input de contraseña específico.
+ * @param {string} inputId - ID del input a alternar.
+ * @param {HTMLButtonElement} btn - Botón que dispara la acción.
+ */
+function togglePasswordField(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn ? btn.querySelector('i') : null;
+    const labelId = btn ? btn.getAttribute('data-label-id') : null;
+    const label = labelId ? document.getElementById(labelId) : null;
+
+    if (!input || !icon) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+        if (label) label.textContent = 'Ocultar contraseña';
+    } else {
+        input.type = 'password';
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+        if (label) label.textContent = 'Mostrar contraseña';
+    }
+}
+
+/**
  * Confirma la eliminación de una mascota antes de redirigir
  * @param {number|string} id - ID de la mascota
  */
