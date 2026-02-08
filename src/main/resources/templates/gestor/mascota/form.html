@@ -87,6 +87,12 @@
 						class="form-control" name="foto">
 					<div class="text-danger small" th:text="${fileError}"></div>
 				</div>
+				<div class="col-md-6" th:if="${mascota.fotoUrl != null}">
+					<label class="form-label">Vista previa</label>
+					<img th:src="${mascota.fotoUrl}" alt="Vista previa de mascota"
+						class="img-fluid rounded border"
+						style="max-height: 180px; object-fit: cover;">
+				</div>
 
 			</div>
 
