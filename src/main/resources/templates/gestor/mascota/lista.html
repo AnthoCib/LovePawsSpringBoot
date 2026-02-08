@@ -46,6 +46,7 @@
             <span th:if="${m.fotoUrl == null}">—</span>
           </td>
           <td class="text-end">
+            <a class="btn btn-sm btn-outline-info me-1" th:href="@{'/adopcion/gestor/solicitudes/' + ${m.id}}">Solicitudes</a>
             <a class="btn btn-sm btn-outline-primary me-1" th:href="@{'/gestor/mascotas/editar/' + ${m.id}}">Editar</a>
 
             <form th:action="@{'/gestor/mascotas/eliminar/' + ${m.id}}" method="post" style="display:inline-block" th:onsubmit="return confirm('¿Eliminar esta mascota?');">

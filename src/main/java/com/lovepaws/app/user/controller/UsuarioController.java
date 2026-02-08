@@ -118,33 +118,73 @@ public class UsuarioController {
     /* =========================
        PERFIL
        ========================= */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/perfil")
     public String verPerfil(Model model, Integer id, Authentication auth) {
-        if (id != null) {
-            usuarioService.findUsuarioById(id).ifPresent(u -> model.addAttribute("usuario", u));
-            return "usuario/perfil";
+        if (!(auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal)) {
+            return "redirect:/usuarios/login";
         }
 
-        if (auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal) {
-            usuarioService.findUsuarioById(principal.getUsuario().getId())
-                    .ifPresentOrElse(
-                            u -> model.addAttribute("usuario", u),
-                            () -> model.addAttribute("usuario", new Usuario())
-                    );
-        } else {
-            model.addAttribute("usuario", new Usuario());
-        }
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
+        Integer targetId = (id != null && isAdmin) ? id : principal.getUsuario().getId();
+
+        usuarioService.findUsuarioById(targetId)
+                .ifPresentOrElse(
+                        u -> model.addAttribute("usuario", u),
+                        () -> model.addAttribute("usuario", new Usuario())
+                );
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("isOwnProfile", targetId.equals(principal.getUsuario().getId()));
         return "usuario/perfil";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/perfil")
-    public String updatePerfil(@Valid @ModelAttribute("usuario") Usuario usuario,
-                               BindingResult br) {
-        if (br.hasErrors())
-            return "usuario/perfil";
+    public String updatePerfil(@RequestParam Integer id,
+                               @RequestParam String nombre,
+                               @RequestParam String correo,
+                               @RequestParam String telefono,
+                               @RequestParam String direccion,
+                               @RequestParam(required = false) String fotoUrl,
+                               Authentication auth) {
+
+        if (!(auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal)) {
+            return "redirect:/usuarios/login";
+        }
+
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        Integer usuarioAutenticadoId = principal.getUsuario().getId();
+        if (!isAdmin && !id.equals(usuarioAutenticadoId)) {
+            return "redirect:/usuarios/perfil?error=forbidden";
+        }
+
+        Usuario usuario = usuarioService.findUsuarioById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioService.findByCorreo(correo)
+                .filter(existente -> !existente.getId().equals(id))
+                .isPresent()) {
+            if (isAdmin && !id.equals(usuarioAutenticadoId)) {
+                return "redirect:/usuarios/perfil?id=" + id + "&error=correo";
+            }
+            return "redirect:/usuarios/perfil?error=correo";
+        }
+
+        usuario.setNombre(nombre);
+        usuario.setCorreo(correo);
+        usuario.setTelefono(telefono);
+        usuario.setDireccion(direccion);
+        usuario.setFotoUrl((fotoUrl != null && !fotoUrl.isBlank()) ? fotoUrl : null);
 
         usuarioService.updateUsuario(usuario);
+        if (isAdmin && !id.equals(usuarioAutenticadoId)) {
+            return "redirect:/usuarios/perfil?id=" + id + "&updated";
+        }
         return "redirect:/usuarios/perfil?updated";
     }
 

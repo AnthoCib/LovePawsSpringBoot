@@ -49,6 +49,11 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 	}
 
 	@Override
+	public List<SolicitudAdopcion> listarSolicitudesPendientes() {
+		return solicitudRepo.findByEstado_Id(ESTADO_PENDIENTE);
+	}
+
+	@Override
 	public Optional<SolicitudAdopcion> findSolicitudById(Integer id) {
 		// TODO Auto-generated method stub
 		return solicitudRepo.findById(id);
