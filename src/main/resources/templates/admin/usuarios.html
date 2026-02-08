@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link th:href="@{/css/admin.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="admin-dark">
@@ -161,6 +162,8 @@
 
     </main>
 </div>
+
+<div th:if="${param.created}"><script>Swal.fire({icon:'success',title:'Usuario creado',text:'El usuario fue registrado correctamente.'});</script></div>
 
 </body>
 </html>

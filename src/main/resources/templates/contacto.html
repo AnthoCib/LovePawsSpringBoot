@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Contacto | LovePaws</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link th:href="@{/css/contacto-page.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<main class="container py-5">
+    <section class="bg-white shadow-sm p-4 p-md-5 contact-wrap">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <h1 class="fw-bold mb-3">Contáctanos</h1>
+                <p class="text-muted">¿Tienes dudas del proceso de adopción o necesitas ayuda con tu solicitud?
+                    Escríbenos y te responderemos pronto con la mejor orientación.</p>
+                <div class="contact-info p-3">
+                    <p class="mb-2"><i class="bi bi-envelope me-2"></i>contacto@lovepaws.com</p>
+                    <p class="mb-2"><i class="bi bi-telephone me-2"></i>+51 987 654 321</p>
+                    <p class="mb-0"><i class="bi bi-geo-alt me-2"></i>Lima, Perú</p>
+                </div>
+                <div class="mt-4">
+                    <h2 class="h6 fw-bold">Horarios de atención</h2>
+                    <p class="text-muted mb-1">Lunes a viernes: 9:00 - 18:00</p>
+                    <p class="text-muted mb-0">Sábados: 9:00 - 13:00</p>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <form th:action="@{/contacto}" method="post" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nombre completo</label>
+                        <input type="text" class="form-control" name="nombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,80}"
+                               placeholder="Ej. Ana Pérez" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Correo</label>
+                        <input type="email" class="form-control" name="correo" placeholder="ana@email.com" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Asunto</label>
+                        <input type="text" class="form-control" name="asunto" minlength="4" maxlength="120"
+                               placeholder="Consulta sobre adopción, seguimiento, etc." required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Mensaje</label>
+                        <textarea class="form-control" rows="5" name="mensaje" minlength="10" maxlength="1000"
+                                  placeholder="Cuéntanos en qué podemos ayudarte." required></textarea>
+                        <div class="form-text">Respondemos en un plazo máximo de 48 horas hábiles.</div>
+                    </div>
+                    <div class="col-12 d-grid d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send-fill me-1"></i>Enviar mensaje
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<div th:if="${param.sent}"><script>Swal.fire({icon:'success',title:'Mensaje enviado',text:'Gracias por contactarte con LovePaws.'});</script></div>
+<div th:if="${param.error}"><script>Swal.fire({icon:'warning',title:'Faltan datos',text:'Completa todos los campos del formulario.'});</script></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

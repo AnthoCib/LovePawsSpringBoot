@@ -15,7 +15,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "solicitud_adopcion")
+@Table(name = "solicitud_adopcion",
+       uniqueConstraints = @UniqueConstraint(name = "ux_solicitud_usuario_mascota", columnNames = {"id_usuario", "mascota_id"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

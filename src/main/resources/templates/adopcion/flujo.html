@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Proceso de adopción | LovePaws</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/adopcion-flujo.css}" rel="stylesheet"/>
+</head>
+<body class="page-shell">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container py-5">
+    <div class="section-card p-4 p-md-5 mb-4">
+        <h1 class="fw-bold mb-2">Flujo de solicitud de adopción</h1>
+        <p class="text-muted mb-4">Sigue estos pasos para adoptar de forma responsable y transparente.</p>
+
+        <div class="stepper">
+            <article class="step active">
+                <div class="step-number">1</div>
+                <h2 class="h6">Explora el catálogo</h2>
+                <p class="mb-0 text-muted">Revisa el perfil de cada mascota y encuentra a tu compañero ideal.</p>
+            </article>
+            <article class="step">
+                <div class="step-number">2</div>
+                <h2 class="h6">Envía tu solicitud</h2>
+                <p class="mb-0 text-muted">Completa tu motivo de adopción desde la ficha de la mascota.</p>
+            </article>
+            <article class="step">
+                <div class="step-number">3</div>
+                <h2 class="h6">Evaluación y aprobación</h2>
+                <p class="mb-0 text-muted">El equipo revisa tu solicitud y te notificará el resultado.</p>
+            </article>
+        </div>
+
+        <div class="d-flex gap-2 mt-4 flex-wrap">
+            <a th:href="@{/mascotas}" class="btn btn-primary"><i class="bi bi-search-heart me-1"></i>Ver catálogo</a>
+            <a sec:authorize="hasRole('ADOPTANTE')" th:href="@{/adopcion/mis-adopciones}" class="btn btn-outline-primary">Mis adopciones</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/usuarios/login}" class="btn btn-outline-secondary">Iniciar sesión</a>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

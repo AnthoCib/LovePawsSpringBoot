@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm" th:fragment="gestorNavbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/gestor/dashboard}">🐾 Gestor LovePaws</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#gestorNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="gestorNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+                <li class="nav-item"><a class="nav-link" th:href="@{/gestor/dashboard}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/gestor/mascotas}">Mascotas</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/adopcion/gestor/solicitudes}">Solicitudes</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/mascotas}">Catálogo público</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/usuarios/perfil}">Mi Perfil</a></li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button class="btn btn-outline-light btn-sm" type="submit">Cerrar sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</html>

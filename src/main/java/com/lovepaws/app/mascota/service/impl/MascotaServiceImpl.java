@@ -58,6 +58,14 @@ public class MascotaServiceImpl implements MascotaService {
         return mascotaRepository.findAll();
     }
 
+
+    @Override
+    public List<Mascota> buscarMascotasDisponibles(Integer categoriaId, Integer razaId, Integer edadMax, String q) {
+        String query = (q == null || q.isBlank()) ? null : q.trim();
+        return mascotaRepository.buscarDisponibles(categoriaId, razaId, edadMax, query);
+    }
+
+
     @Override
     public Optional<Mascota> findMascotaById(Integer id) {
         return mascotaRepository.findById(id);

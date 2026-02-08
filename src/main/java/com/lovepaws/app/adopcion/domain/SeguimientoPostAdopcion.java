@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.user.domain.Usuario;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,7 +22,8 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE seguimiento_post_adopcion SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class SeguimientoPostAdopcion {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -34,10 +36,11 @@ public class SeguimientoPostAdopcion {
     @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observaciones;
 
-    @Column(name = "estado_mascota")
-    private String estadoMascota;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estado_id")
+    private EstadoMascota estado;
 
-    private Boolean activo=true;
+    private Boolean activo = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario_creacion")

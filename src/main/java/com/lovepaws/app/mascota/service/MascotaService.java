@@ -14,6 +14,8 @@ public interface MascotaService {
 
 	List<Mascota> listarMascotasDisponibles();
 
+	List<Mascota> buscarMascotasDisponibles(Integer categoriaId, Integer razaId, Integer edadMax, String q);
+
 	List<Mascota> listarMascotas(); // all non-deleted
 
 	Optional<Mascota> findMascotaById(Integer id);

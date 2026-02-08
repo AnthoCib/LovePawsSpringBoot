@@ -3,143 +3,151 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm"
+<nav class="navbar navbar-expand-lg navbar-dark lp-navbar"
      th:fragment="navbar">
 
-    <div class="container">
+    <style>
+        .lp-navbar {
+            background: rgba(0, 90, 152, 0.95);
+            backdrop-filter: saturate(140%) blur(4px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+            position: relative;
+            z-index: 1080;
+        }
 
-        <!-- LOGO -->
-        <a class="navbar-brand fw-bold" th:href="@{/}">
+        .lp-navbar .dropdown-menu {
+            z-index: 1090;
+        }
+
+        .lp-navbar .navbar-brand {
+            font-weight: 700;
+            letter-spacing: .2px;
+        }
+
+        .lp-navbar .nav-link.nav-pill {
+            color: #eef4ff;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: .38rem .85rem;
+            margin: .1rem .12rem;
+            transition: all .2s ease-in-out;
+        }
+
+        .lp-navbar .nav-link.nav-pill:hover,
+        .lp-navbar .nav-link.nav-pill:focus {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.24);
+        }
+
+        .lp-navbar .btn-auth {
+            border: 1px solid rgba(255, 255, 255, .4);
+            border-radius: 999px;
+            color: #fff;
+            background: transparent;
+            padding: .35rem .75rem;
+            font-size: .9rem;
+            transition: all .2s ease-in-out;
+        }
+
+        .lp-navbar .btn-auth:hover,
+        .lp-navbar .btn-auth:focus {
+            background-color: rgba(255, 255, 255, .16);
+            border-color: rgba(255, 255, 255, .72);
+            color: #fff;
+        }
+
+        @media (max-width: 991.98px) {
+            .lp-navbar .navbar-nav {
+                padding-top: .6rem;
+                gap: .35rem;
+            }
+
+            .lp-navbar .nav-link.nav-pill,
+            .lp-navbar .btn-auth {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
             <i class="bi bi-heart-fill"></i> LovePaws
         </a>
 
-        <!-- BOTÓN RESPONSIVE -->
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Mostrar menú">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- MENÚ -->
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav align-items-center text-center">
+            <ul class="navbar-nav align-items-center text-center gap-lg-1">
 
-                <!-- =============================== -->
-                <!-- PUBLICO / ADOPTANTE              -->
-                <!-- =============================== -->
-
-                <li class="nav-item"
-                    sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
-                    <a class="nav-link" th:href="@{/}">Inicio</a>
+                <li class="nav-item" sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
+                    <a class="nav-link nav-pill" th:href="@{/}">Inicio</a>
+                </li>
+                <li class="nav-item" sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
+                    <a class="nav-link nav-pill" th:href="@{/mascotas}">Catálogo</a>
+                </li>
+                <li class="nav-item" sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
+                    <a class="nav-link nav-pill" th:href="@{/nosotros}">Nosotros</a>
+                </li>
+                <li class="nav-item" sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
+                    <a class="nav-link nav-pill" th:href="@{/contacto}">Contacto</a>
                 </li>
 
-                <li class="nav-item"
-                    sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
-                    <a class="nav-link" th:href="@{/mascotas}">Catálogo</a>
+                <li class="nav-item" sec:authorize="hasRole('ADOPTANTE')">
+                    <a class="nav-link nav-pill" th:href="@{/adopcion/mis-adopciones}">Mis Adopciones</a>
                 </li>
 
-                <li class="nav-item"
-                    sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
-                    <a class="nav-link" th:href="@{/nosotros}">Nosotros</a>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link nav-pill" th:href="@{/usuarios/perfil}">Mi Perfil</a>
                 </li>
 
-                <li class="nav-item"
-                    sec:authorize="!hasAnyRole('GESTOR','ADMIN')">
-                    <a class="nav-link" th:href="@{/contacto}">Contacto</a>
+                <li class="nav-item" sec:authorize="hasRole('GESTOR')">
+                    <a class="nav-link nav-pill" th:href="@{/gestor/dashboard}">Dashboard Gestor</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link nav-pill" th:href="@{/admin/dashboard}">Dashboard Admin</a>
                 </li>
 
-                <!-- ADOPTANTE -->
-                <li class="nav-item"
-                    sec:authorize="hasRole('ADOPTANTE')">
-                    <a class="nav-link" th:href="@{/adopciones}">
-                        Mis Adopciones
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="btn btn-auth btn-sm ms-lg-2" th:href="@{/usuarios/login}">
+                        <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="btn btn-auth btn-sm ms-lg-1" th:href="@{/usuarios/registro}">
+                        <i class="bi bi-person-plus"></i> Registrarse
                     </a>
                 </li>
 
-                <li class="nav-item"
-                    sec:authorize="hasRole('ADOPTANTE')">
-                    <a class="nav-link" th:href="@{/perfil/usuario}">
-                        Mi Perfil
-                    </a>
-                </li>
-
-                <!-- =============================== -->
-                <!-- GESTOR                          -->
-                <!-- =============================== -->
-                <li class="nav-item"
-                    sec:authorize="hasRole('GESTOR')">
-                    <a class="nav-link fw-bold"
-                       th:href="@{/gestor/dashboard}">
-                        📊 Dashboard Gestor
-                    </a>
-                </li>
-
-                <!-- =============================== -->
-                <!-- ADMIN                           -->
-                <!-- =============================== -->
-                <li class="nav-item"
-                    sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link fw-bold"
-                       th:href="@{/admin/dashboard}">
-                        🛠️ Dashboard Admin
-                    </a>
-                </li>
-
-                <!-- =============================== -->
-                <!-- INVITADO                        -->
-                <!-- =============================== -->
-                <li class="nav-item"
-                    sec:authorize="isAnonymous()">
-                    <a class="btn btn-light btn-sm ms-lg-3"
-                       th:href="@{/usuarios/procesar-login}">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        Iniciar Sesión
-                    </a>
-                </li>
-
-                <li class="nav-item"
-                    sec:authorize="isAnonymous()">
-                    <a class="btn btn-outline-light btn-sm ms-lg-2"
-                       th:href="@{/usuarios/registro}">
-                        <i class="bi bi-person-plus"></i>
-                        Registrarse
-                    </a>
-                </li>
-
-                <!-- =============================== -->
-                <!-- USUARIO LOGUEADO                -->
-                <!-- =============================== -->
-                <li class="nav-item dropdown"
-                    sec:authorize="isAuthenticated()">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center"
-                       href="#"
-                       data-bs-toggle="dropdown">
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center nav-pill" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-2"></i>
                         <span sec:authentication="name">Usuario</span>
                     </a>
-
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                        <li>
-                            <a class="dropdown-item"
-                               th:href="@{/usuarios/cambiar-password}">
-                                <i class="bi bi-key me-2 text-warning"></i>
-                                Cambiar contraseña
+                        <li sec:authorize="hasRole('ADOPTANTE')">
+                            <a class="dropdown-item" th:href="@{/usuarios/cambiar-password}">
+                                <i class="bi bi-key me-2 text-warning"></i> Cambiar contraseña
                             </a>
                         </li>
-
                         <li><hr class="dropdown-divider"></li>
-
                         <li>
                             <form th:action="@{/logout}" method="post" class="m-0">
                                 <button class="dropdown-item text-danger" type="submit">
-                                    <i class="bi bi-box-arrow-right me-2"></i>
-                                    Cerrar sesión
+                                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
                                 </button>
                             </form>
                         </li>
                     </ul>
                 </li>
-
             </ul>
         </div>
     </div>

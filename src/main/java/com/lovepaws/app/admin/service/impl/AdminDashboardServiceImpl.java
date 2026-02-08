@@ -34,13 +34,13 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 	@Override
 	public long adopcionesPendientes() {
 		// TODO Auto-generated method stub
-		 return adopcionRepo.countByEstadoId("PENDIENTE");
+		 return adopcionRepo.countByEstado_Id("PENDIENTE");
 	}
 
 	@Override
 	public long solicitudesPendientes() {
 		// TODO Auto-generated method stub
-		 return solicitudRepo.countByEstadoId("PENDIENTE");
+		 return solicitudRepo.countByEstado_Id("PENDIENTE");
 	}
 
 }
