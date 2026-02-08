@@ -45,7 +45,7 @@ public class AdopcionApiController {
 		return adopcionService.listarAdopcionesPorUsuario(usuarioId);
 	}
 
-	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PreAuthorize("hasRole('GESTOR')")
 	@PostMapping("/aprobar/{solicitudId}")
 	public String aprobar(@PathVariable Integer solicitudId, Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();

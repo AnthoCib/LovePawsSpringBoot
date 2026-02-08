@@ -26,4 +26,6 @@ public interface SolicitudAdopcionService {
 
 	SolicitudAdopcion rechazarSolicitud(Integer solicitudId, Integer gestorId, String motivo);
 
+	SolicitudAdopcion cancelarSolicitud(Integer solicitudId, Integer usuarioId);
+
 }
