@@ -2,6 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Mis adopciones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -11,7 +12,7 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container py-4">
     <div class="section-card p-4">
-        <div class="d-flex gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/mascotas}" class="btn btn-outline-primary btn-sm">Ver catálogo</a></div>
+        <div class="d-flex flex-wrap gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/mascotas}" class="btn btn-outline-primary btn-sm">Ver catálogo</a></div>
         <h1 class="h4">Historial de adopciones</h1>
 
         <div class="stepper mb-4 mt-3">
@@ -32,6 +33,7 @@
             </article>
         </div>
 
+        <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead>
             <tr>
@@ -53,6 +55,7 @@
             </tr>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 

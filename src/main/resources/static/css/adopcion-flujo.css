@@ -47,3 +47,18 @@
     border-radius: 14px;
     border: 1px solid #e9edf5;
 }
+
+
+@media (max-width: 768px) {
+    .section-card {
+        padding: 1rem !important;
+    }
+
+    .stepper .step {
+        flex: 1 1 100%;
+    }
+
+    .table {
+        font-size: .92rem;
+    }
+}
