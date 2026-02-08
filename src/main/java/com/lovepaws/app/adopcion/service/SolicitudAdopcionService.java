@@ -13,6 +13,8 @@ public interface SolicitudAdopcionService {
 
 	List<SolicitudAdopcion> listarSolicitudesPorUsuario(Integer usuarioId);
 
+	List<SolicitudAdopcion> listarSolicitudesPendientes();
+
 	Optional<SolicitudAdopcion> findSolicitudById(Integer id);
 
 	SolicitudAdopcion updateSolicitud(SolicitudAdopcion solicitud);

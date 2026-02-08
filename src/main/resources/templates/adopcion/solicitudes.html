@@ -12,8 +12,13 @@
 <div th:replace="~{fragments/gestor-navbar :: gestorNavbar}"></div>
 <div class="container py-4">
     <div class="section-card p-4">
-        <div class="d-flex flex-wrap gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/gestor/dashboard}" class="btn btn-outline-primary btn-sm">Dashboard gestor</a></div>
-        <h1 class="h4">Solicitudes de adopción</h1>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a>
+            <a th:href="@{/gestor/dashboard}" class="btn btn-outline-primary btn-sm">Dashboard gestor</a>
+            <a th:href="@{/gestor/mascotas}" class="btn btn-outline-primary btn-sm">CRUD mascotas</a>
+        </div>
+
+        <h1 class="h4" th:text="${vistaGlobal} ? 'Solicitudes de adopción (todas)' : 'Solicitudes de adopción'">Solicitudes de adopción</h1>
         <p th:if="${mascota != null}">Mascota: <strong th:text="${mascota.nombre}"></strong></p>
 
         <div class="stepper mb-4 mt-3">
@@ -39,6 +44,7 @@
             <thead>
             <tr>
                 <th>ID</th>
+                <th>Mascota</th>
                 <th>Adoptante</th>
                 <th>Estado</th>
                 <th>Acción</th>
@@ -47,6 +53,7 @@
             <tbody>
             <tr th:each="s : ${solicitudes}">
                 <td th:text="${s.id}"></td>
+                <td th:text="${s.mascota != null ? s.mascota.nombre : '-'}"></td>
                 <td th:text="${s.usuario != null ? s.usuario.nombre : '-'}"></td>
                 <td th:text="${s.estado != null ? s.estado.id : '-'}"></td>
                 <td>
@@ -57,7 +64,7 @@
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(solicitudes)}">
-                <td colspan="4" class="text-center">No hay solicitudes pendientes.</td>
+                <td colspan="5" class="text-center">No hay solicitudes pendientes.</td>
             </tr>
             </tbody>
         </table>

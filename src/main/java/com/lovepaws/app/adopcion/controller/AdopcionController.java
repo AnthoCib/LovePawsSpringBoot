@@ -63,12 +63,23 @@ public class AdopcionController {
 		return "redirect:/adopcion/mis-adopciones?created";
 	}
 
+	// Gestor: ver todas las solicitudes pendientes
+	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@GetMapping("/gestor/solicitudes")
+	public String verSolicitudesPendientes(Model model) {
+		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPendientes());
+		model.addAttribute("mascota", null);
+		model.addAttribute("vistaGlobal", true);
+		return "adopcion/solicitudes";
+	}
+
 	// Gestor: ver solicitudes pendientes por mascota
 	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
 	@GetMapping("/gestor/solicitudes/{mascotaId}")
 	public String verSolicitudesPorMascota(@PathVariable Integer mascotaId, Model model) {
 		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPorMascota(mascotaId));
 		model.addAttribute("mascota", mascotaService.findMascotaById(mascotaId).orElse(null));
+		model.addAttribute("vistaGlobal", false);
 		return "adopcion/solicitudes";
 	}
 

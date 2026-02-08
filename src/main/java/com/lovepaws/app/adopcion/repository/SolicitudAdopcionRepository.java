@@ -25,5 +25,6 @@ public interface SolicitudAdopcionRepository extends JpaRepository<SolicitudAdop
 	Optional<SolicitudAdopcion> findByIdForUpdate(@Param("id") Integer id);
 
 	long countByEstado_Id(String estadoId);
+	List<SolicitudAdopcion> findByEstado_Id(String estadoId);
 
 }
