@@ -34,16 +34,48 @@
 
         <div class="row g-4">
             <div class="col-md-5">
-                <img th:src="${mascota.fotoUrl != null ? mascota.fotoUrl : '/images/mascotas/mascota-default.jpg'}" class="img-fluid rounded" alt="foto mascota">
+                <div class="card border-0 shadow-sm h-100">
+                    <img th:src="${mascota.fotoUrl != null ? mascota.fotoUrl : '/images/mascotas/mascota-default.jpg'}"
+                         class="card-img-top"
+                         alt="foto mascota"
+                         style="height:100%;object-fit:cover;">
+                </div>
             </div>
             <div class="col-md-7">
-                <h1 class="h3" th:text="${mascota.nombre}">Nombre</h1>
-                <p><strong>Raza:</strong> <span th:text="${mascota.raza != null ? mascota.raza.nombre : '-'}"></span></p>
-                <p><strong>Categoría:</strong> <span th:text="${mascota.categoria != null ? mascota.categoria.nombre : '-'}"></span></p>
-                <p><strong>Edad:</strong> <span th:text="${mascota.edad}"></span> años</p>
-                <p><strong>Sexo:</strong> <span th:text="${mascota.sexo}"></span></p>
-                <p><strong>Descripción:</strong></p>
-                <p th:text="${mascota.descripcion}">Descripción</p>
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <h1 class="h3 mb-0" th:text="${mascota.nombre}">Nombre</h1>
+                            <span class="badge bg-light text-dark" th:text="${mascota.sexo}">Sexo</span>
+                        </div>
+                        <div class="row g-2 mt-2">
+                            <div class="col-sm-6">
+                                <div class="p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Raza</small>
+                                    <strong th:text="${mascota.raza != null ? mascota.raza.nombre : '-'}"></strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Categoría</small>
+                                    <strong th:text="${mascota.categoria != null ? mascota.categoria.nombre : '-'}"></strong>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Edad</small>
+                                    <strong><span th:text="${mascota.edad}"></span> años</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Descripción</h5>
+                        <p class="mb-0 text-muted" th:text="${mascota.descripcion}">Descripción</p>
+                    </div>
+                </div>
 
                 <div sec:authorize="hasRole('ADOPTANTE')" class="card mt-4">
                     <div class="card-body">
