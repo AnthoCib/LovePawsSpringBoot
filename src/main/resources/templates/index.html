@@ -6,24 +6,22 @@
     <title>Love Paws - Inicio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/banner-hero.css}" rel="stylesheet">
     <link th:href="@{/css/home.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <main class="container py-4 py-md-5">
-    <section class="hero-home p-4 p-md-5 mb-4">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-6">
-                <h1 class="display-6 fw-bold mb-3">Adopta con amor, transforma una vida</h1>
-                <p class="lead text-muted mb-4">Conectamos mascotas rescatadas con familias responsables. Encuentra a tu nuevo mejor amigo en pocos pasos.</p>
-                <div class="d-flex flex-wrap gap-2">
-                    <a th:href="@{/mascotas}" class="btn btn-primary"><i class="bi bi-search-heart me-1"></i>Ver catálogo</a>
-                    <a th:href="@{/adopcion}" class="btn btn-outline-primary"><i class="bi bi-diagram-3 me-1"></i>Cómo adoptar</a>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <img th:src="@{/images/Imagenes_PNG/perrito1.png}" class="hero-img" alt="Mascotas en adopción">
+    <section class="lp-hero mb-4">
+        <div class="overlay"></div>
+        <img th:src="@{/images/Imagenes_PNG/perrito1.png}" class="hero-image" alt="Mascotas en adopción">
+        <div class="hero-content text-white">
+            <h1 class="display-6 fw-bold mb-2">Adopta con amor, transforma una vida</h1>
+            <p class="mb-3">Conectamos mascotas rescatadas con familias responsables. Encuentra a tu nuevo mejor amigo en pocos pasos.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a th:href="@{/mascotas}" class="btn btn-light"><i class="bi bi-search-heart me-1"></i>Ver catálogo</a>
+                <a th:href="@{/adopcion}" class="btn btn-outline-light"><i class="bi bi-diagram-3 me-1"></i>Cómo adoptar</a>
             </div>
         </div>
     </section>
