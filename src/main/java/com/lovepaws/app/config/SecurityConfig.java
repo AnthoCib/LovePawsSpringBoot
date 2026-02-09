@@ -51,7 +51,8 @@ public class SecurityConfig {
                 // Rutas protegidas por rol
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/gestor/**").hasAnyRole("GESTOR","ADMIN")
-                .requestMatchers("/mascotas/**").permitAll()
+                .requestMatchers("/adopcion/gestor/**").hasRole("GESTOR")
+                .requestMatchers("/adopcion/mis-adopciones", "/adopcion/solicitar", "/adopcion/cancelar/**").hasRole("ADOPTANTE")
                 .requestMatchers("/mascota/catalogo/**").hasRole("ADOPTANTE")
                 // Todo lo demás requiere login
                 .anyRequest().authenticated()
@@ -73,6 +74,12 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
+            )
+            .exceptionHandling(ex -> ex
+                .accessDeniedHandler((request, response, accessDeniedException) ->
+                    response.sendRedirect("/acceso-denegado"))
+                .authenticationEntryPoint((request, response, authException) ->
+                    response.sendRedirect("/usuarios/login"))
             )
             .csrf(Customizer.withDefaults()) // Mantiene CSRF habilitado
             .authenticationProvider(authenticationProvider());
