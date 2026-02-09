@@ -44,7 +44,7 @@ class UsuarioControllerUnitTest {
         UsuarioPrincipal principal = new UsuarioPrincipal(autenticado, List.of(new SimpleGrantedAuthority("ROLE_ADOPTANTE")));
         Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
 
-        String view = controller.updatePerfil(2, "Nombre Valido", "mail@demo.com", "999888777", "Calle 12345", null, auth);
+        String view = controller.updatePerfil(2, "Nombre Valido", "mail@demo.com", "999888777", "Calle 12345", auth);
 
         assertEquals("redirect:/usuarios/perfil?error=forbidden", view);
     }
@@ -62,7 +62,7 @@ class UsuarioControllerUnitTest {
         target.setId(1);
         when(usuarioService.findUsuarioById(1)).thenReturn(Optional.of(target));
 
-        String view = controller.updatePerfil(1, "Nombre", "correo-invalido", "123", "dir", null, auth);
+        String view = controller.updatePerfil(1, "Nombre", "correo-invalido", "123", "dir", auth);
 
         assertEquals("redirect:/usuarios/perfil?error=formato", view);
     }
