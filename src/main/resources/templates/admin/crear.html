@@ -38,47 +38,68 @@
 
 							<div class="col-md-6">
 								<label class="form-label">Username *</label>
-								<input th:field="*{username}" class="form-control" required>
+								<div class="input-group">
+									<span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+									<input th:field="*{username}" class="form-control" required>
+								</div>
 								<div class="text-danger small" th:errors="*{username}"></div>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-label">Nombre *</label>
-								<input th:field="*{nombre}" class="form-control" required>
+								<div class="input-group">
+									<span class="input-group-text"><i class="bi bi-person"></i></span>
+									<input th:field="*{nombre}" class="form-control" required>
+								</div>
 								<div class="text-danger small" th:errors="*{nombre}"></div>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-label">Correo *</label>
-								<input th:field="*{correo}" type="email" class="form-control" required>
+								<div class="input-group">
+									<span class="input-group-text"><i class="bi bi-envelope"></i></span>
+									<input th:field="*{correo}" type="email" class="form-control" required>
+								</div>
 								<div class="text-danger small" th:errors="*{correo}"></div>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-label">Contraseña *</label>
-								<input th:field="*{passwordHash}" type="password" class="form-control" required>
+								<div class="input-group">
+									<span class="input-group-text"><i class="bi bi-lock"></i></span>
+									<input th:field="*{passwordHash}" type="password" class="form-control" required>
+								</div>
 								<div class="text-danger small" th:errors="*{passwordHash}"></div>
 							</div>
 
 							<div class="col-md-6">
 								<label class="form-label">Teléfono *</label>
-								<input th:field="*{telefono}" class="form-control" required>
+								<div class="input-group">
+									<span class="input-group-text"><i class="bi bi-telephone"></i></span>
+									<input th:field="*{telefono}" class="form-control" required>
+								</div>
 								<div class="text-danger small" th:errors="*{telefono}"></div>
 							</div>
 
 							<div class="col-12">
 								<label class="form-label">Dirección *</label>
-								<input th:field="*{direccion}" class="form-control" required>
+								<div class="input-group">
+									<span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+									<input th:field="*{direccion}" class="form-control" required>
+								</div>
 								<div class="text-danger small" th:errors="*{direccion}"></div>
 							</div>
 
 							<!-- ROL SOLO ADMIN -->
 							<div class="col-md-6" th:if="${isAdmin}">
 								<label class="form-label">Rol *</label>
-								<select th:field="*{rol.id}" class="form-select" required>
-									<option value="">Seleccione...</option>
-									<option th:each="r : ${roles}" th:value="${r.id}" th:text="${r.nombre}"></option>
-								</select>
+								<div class="input-group">
+									<span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+									<select th:field="*{rol.id}" class="form-select" required>
+										<option value="">Seleccione...</option>
+										<option th:each="r : ${roles}" th:value="${r.id}" th:text="${r.nombre}"></option>
+									</select>
+								</div>
 								<div class="text-danger small" th:errors="*{rol.id}"></div>
 							</div>
 
