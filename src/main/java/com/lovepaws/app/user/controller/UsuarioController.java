@@ -1,6 +1,12 @@
 package com.lovepaws.app.user.controller;
 
+<<<<<<< HEAD
+import java.time.LocalDateTime;
+=======
+import java.security.SecureRandom;
+>>>>>>> refs/heads/codex/update-card-and-label-styles
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,13 +20,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.security.UsuarioPrincipal;
+import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.RolService;
 import com.lovepaws.app.user.service.UsuarioService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +43,11 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+<<<<<<< HEAD
+=======
+    private static final String TEMP_PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+>>>>>>> refs/heads/codex/update-card-and-label-styles
 
     /* =========================
        REGISTRO DE USUARIO
@@ -146,7 +160,6 @@ public class UsuarioController {
                                @RequestParam String correo,
                                @RequestParam String telefono,
                                @RequestParam String direccion,
-                               @RequestParam(required = false) String fotoUrl,
                                Authentication auth) {
 
         if (!(auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal)) {
@@ -189,8 +202,6 @@ public class UsuarioController {
         usuario.setCorreo(correo);
         usuario.setTelefono(telefono);
         usuario.setDireccion(direccion);
-        usuario.setFotoUrl((fotoUrl != null && !fotoUrl.isBlank()) ? fotoUrl : null);
-
         usuarioService.updateUsuario(usuario);
         if (isAdmin && !id.equals(usuarioAutenticadoId)) {
             return "redirect:/usuarios/perfil?id=" + id + "&updated";
@@ -200,15 +211,15 @@ public class UsuarioController {
 
 
     /* =========================
-       CAMBIAR CONTRASEÑA (ADOPTANTE)
+       CAMBIAR CONTRASEÑA
        ========================= */
-    @PreAuthorize("hasRole('ADOPTANTE')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/cambiar-password")
     public String cambiarPasswordForm() {
         return "usuario/cambiar-password";
     }
 
-    @PreAuthorize("hasRole('ADOPTANTE')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/cambiar-password")
     public String cambiarPassword(@RequestParam String actual,
                                   @RequestParam String nueva,
@@ -241,6 +252,122 @@ public class UsuarioController {
         return "redirect:/usuarios/cambiar-password?updated=true";
     }
 
+    /* =========================
+       RECUPERAR CONTRASEÑA
+       ========================= */
+    @GetMapping("/recuperar-password")
+    public String recuperarPasswordForm() {
+        return "usuario/recuperar-password";
+    }
+
+    @PostMapping("/recuperar-password")
+<<<<<<< HEAD
+    public String enviarRecuperacion(@RequestParam String correo, HttpServletRequest request) {
+        if (correo == null || correo.isBlank()) {
+            return "redirect:/usuarios/recuperar-password?error=correo";
+        }
+
+        usuarioService.findByCorreo(correo.trim())
+                .ifPresent(usuario -> {
+                    String token = UUID.randomUUID().toString();
+                    usuario.setResetToken(token);
+                    usuario.setResetTokenExpira(LocalDateTime.now().plusMinutes(30));
+                    usuarioService.updateUsuario(usuario);
+
+                    String baseUrl = request.getScheme() + "://" + request.getServerName();
+                    if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+                        baseUrl += ":" + request.getServerPort();
+                    }
+                    String link = baseUrl + "/usuarios/reset-password?token=" + token;
+                    String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
+                            + "<p>Para restablecer tu contraseña haz clic en el siguiente enlace:</p>"
+                            + "<p><a href=\"" + link + "\">Restablecer contraseña</a></p>"
+                            + "<p>Este enlace expirará en 30 minutos.</p>";
+
+                    emailService.enviarCorreo(usuario.getCorreo(), "Recuperación de contraseña", contenido);
+                });
+
+        return "redirect:/usuarios/recuperar-password?sent";
+    }
+
+    @GetMapping("/reset-password")
+    public String resetPasswordForm(@RequestParam(required = false) String token, Model model) {
+        if (token == null || token.isBlank()) {
+            return "redirect:/usuarios/recuperar-password?error=token";
+        }
+
+        boolean tokenValido = usuarioService.findByResetToken(token)
+                .filter(usuario -> usuario.getResetTokenExpira() != null
+                        && usuario.getResetTokenExpira().isAfter(LocalDateTime.now()))
+                .isPresent();
+
+        if (!tokenValido) {
+            return "redirect:/usuarios/recuperar-password?error=token";
+        }
+
+        model.addAttribute("token", token);
+        return "usuario/reset-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestParam String token,
+                                @RequestParam String nueva,
+                                @RequestParam String confirmar) {
+        if (token == null || token.isBlank()) {
+            return "redirect:/usuarios/recuperar-password?error=token";
+        }
+
+        if (nueva == null || nueva.isBlank() || confirmar == null || confirmar.isBlank()) {
+            return "redirect:/usuarios/reset-password?token=" + token + "&error=campos";
+        }
+
+        if (nueva.length() < 8) {
+            return "redirect:/usuarios/reset-password?token=" + token + "&error=min";
+        }
+
+        if (!nueva.equals(confirmar)) {
+            return "redirect:/usuarios/reset-password?token=" + token + "&error=match";
+        }
+
+        Usuario usuario = usuarioService.findByResetToken(token)
+                .filter(u -> u.getResetTokenExpira() != null && u.getResetTokenExpira().isAfter(LocalDateTime.now()))
+                .orElse(null);
+
+        if (usuario == null) {
+            return "redirect:/usuarios/recuperar-password?error=token";
+        }
+
+        usuario.setPasswordHash(passwordEncoder.encode(nueva));
+        usuario.setResetToken(null);
+        usuario.setResetTokenExpira(null);
+        usuarioService.updateUsuario(usuario);
+
+        return "redirect:/usuarios/login?reset=ok";
+=======
+    public String recuperarPassword(@RequestParam String correo) {
+        if (correo == null || !correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            return "redirect:/usuarios/recuperar-password?error=formato";
+        }
+
+        usuarioService.findByCorreo(correo).ifPresent(usuario -> {
+            String tempPassword = generarPasswordTemporal(10);
+            usuario.setPasswordHash(passwordEncoder.encode(tempPassword));
+            usuarioService.updateUsuario(usuario);
+
+            String asunto = "Recuperación de contraseña - LovePaws";
+            String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
+                    + "<p>Generamos una contraseña temporal para que puedas acceder a tu cuenta:</p>"
+                    + "<p><strong>" + tempPassword + "</strong></p>"
+                    + "<p>Te recomendamos iniciar sesión y cambiarla desde el menú de tu perfil.</p>"
+                    + "<p>Equipo LovePaws</p>";
+
+            emailService.enviarCorreo(usuario.getCorreo(), asunto, contenido);
+        });
+
+        return "redirect:/usuarios/recuperar-password?sent";
+>>>>>>> refs/heads/codex/update-card-and-label-styles
+    }
+
 
     /* =========================
        MÉTODOS AUXILIARES
@@ -266,5 +393,15 @@ public class UsuarioController {
         }
 
         model.addAttribute("roles", roles);
+    }
+
+    private String generarPasswordTemporal(int length) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder builder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int idx = random.nextInt(TEMP_PASSWORD_CHARS.length());
+            builder.append(TEMP_PASSWORD_CHARS.charAt(idx));
+        }
+        return builder.toString();
     }
 }

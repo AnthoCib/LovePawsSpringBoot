@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.repository.SeguimientoRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
+import com.lovepaws.app.user.service.AuditoriaService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,12 +18,15 @@ import lombok.RequiredArgsConstructor;
 public class SeguimientoServiceImpl implements SeguimientoService {
 	
 	private final SeguimientoRepository seguimientoRepo;
+	private final AuditoriaService auditoriaService;
 
 	@Override
 	@Transactional
-	public SeguimientoPostAdopcion createSeguimiento(SeguimientoPostAdopcion seguimiento) {
-		// TODO Auto-generated method stub
-		return seguimientoRepo.save(seguimiento);
+	public SeguimientoPostAdopcion createSeguimiento(SeguimientoPostAdopcion seguimiento, Integer usuarioId, String usuarioNombre) {
+		SeguimientoPostAdopcion saved = seguimientoRepo.save(seguimiento);
+		auditoriaService.registrar("seguimiento_post_adopcion", saved.getId(), "CREAR_SEGUIMIENTO", usuarioId,
+				usuarioNombre, "Seguimiento post adopción registrado");
+		return saved;
 	}
 
 	@Override

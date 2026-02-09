@@ -30,7 +30,7 @@
                                  alt="Foto de perfil"
                                  class="img-fluid rounded-circle border"
                                  style="width:140px;height:140px;object-fit:cover;">
-                            <p class="text-muted small mt-2 mb-0">Puedes actualizar la URL de foto.</p>
+                            <p class="text-muted small mt-2 mb-0">Foto de perfil</p>
                         </div>
 
                         <div class="col-12 col-md-8">
@@ -55,10 +55,6 @@
                                     <label class="form-label">Dirección</label>
                                     <input type="text" class="form-control" name="direccion" th:value="${usuario.direccion}" required minlength="5" maxlength="120">
                                 </div>
-                                <div class="col-12">
-                                    <label class="form-label">URL de foto (opcional)</label>
-                                    <input type="url" class="form-control" name="fotoUrl" th:value="${usuario.fotoUrl}">
-                                </div>
                                 <div class="col-12 col-md-6">
                                     <label class="form-label">Rol</label>
                                     <input type="text" class="form-control" th:value="${usuario.rol != null ? usuario.rol.nombre : '-'}" disabled>
@@ -71,7 +67,11 @@
                         </div>
 
                         <div class="col-12 d-flex flex-wrap justify-content-end gap-2 mt-3">
-                            <a sec:authorize="hasRole('ADOPTANTE')" th:href="@{/usuarios/cambiar-password}" class="btn btn-outline-primary">Cambiar contraseña</a>
+<<<<<<< HEAD
+                            <a sec:authorize="isAuthenticated()" th:href="@{/usuarios/cambiar-password}" class="btn btn-outline-primary">Cambiar contraseña</a>
+=======
+                            <a th:href="@{/usuarios/cambiar-password}" class="btn btn-outline-primary">Cambiar contraseña</a>
+>>>>>>> refs/heads/codex/update-card-and-label-styles
                             <button type="submit" class="btn btn-primary">Guardar cambios</button>
                         </div>
                     </form>

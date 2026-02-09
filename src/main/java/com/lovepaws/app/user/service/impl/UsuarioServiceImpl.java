@@ -79,6 +79,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	public Optional<Usuario> findByResetToken(String resetToken) {
+		return usuarioRepo.findByResetToken(resetToken);
+	}
+
+	@Override
 	public void cambiarEstado(Integer usuarioId) {
 		Usuario usuario = usuarioRepo.findById(usuarioId)
 				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

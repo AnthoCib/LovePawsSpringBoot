@@ -78,7 +78,12 @@
 								name="remember-me" id="remember"> <label
 								class="form-check-label" for="remember">Recuérdame</label>
 						</div>
-						<a href="#" class="text-decoration-none mb-6 small">¿Olvidaste
+<<<<<<< HEAD
+						<a th:href="@{/usuarios/recuperar-password}"
+							class="text-decoration-none mb-6 small">¿Olvidaste
+=======
+						<a th:href="@{/usuarios/recuperar-password}" class="text-decoration-none mb-6 small">¿Olvidaste
+>>>>>>> refs/heads/codex/update-card-and-label-styles
 							tu contraseña?</a>
 					</div>
 
@@ -143,6 +148,17 @@
             icon: 'info',
             title: 'Sesión cerrada',
             text: 'Has cerrado sesión correctamente.',
+            confirmButtonColor: '#3085d6'
+        });
+    </script>
+</div>
+
+<div th:if="${param.reset}">
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Contraseña restablecida',
+            text: 'Ya puedes iniciar sesión con tu nueva contraseña.',
             confirmButtonColor: '#3085d6'
         });
     </script>

@@ -23,6 +23,8 @@ public interface UsuarioService {
 
 	Optional<Usuario> findByCorreo(String correo);
 
+	Optional<Usuario> findByResetToken(String resetToken);
+
 	void cambiarEstado(Integer id);
 
 	void cambiarRol(Integer usuarioId, Integer rolId);
