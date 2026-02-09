@@ -20,6 +20,10 @@ INSERT INTO especie (nombre, estado)
 SELECT 'Gato', 1
 WHERE NOT EXISTS (SELECT 1 FROM especie WHERE nombre = 'Gato' AND deleted_at IS NULL);
 
+INSERT INTO especie (nombre, estado)
+SELECT 'Conejo', 1
+WHERE NOT EXISTS (SELECT 1 FROM especie WHERE nombre = 'Conejo' AND deleted_at IS NULL);
+
 -- Categorías
 INSERT INTO categoria (nombre, descripcion, estado)
 SELECT 'Cachorro', 'Mascotas pequeñas, ideal para familias activas', 1
