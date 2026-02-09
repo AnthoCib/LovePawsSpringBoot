@@ -29,16 +29,70 @@
                         <th>Fecha visita</th>
                         <th>Estado mascota</th>
                         <th>Observaciones</th>
+                        <th>Tu respuesta</th>
+                        <th>Acción</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="s : ${seguimientos}">
+                    <tr th:each="s : ${seguimientos}" th:with="respuesta=${respuestasPorSeguimiento[s.id]}">
                         <td th:text="${s.fechaVisita}"></td>
                         <td th:text="${s.estado != null ? s.estado.id : '-'}"></td>
                         <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
+                        <td>
+                            <div th:if="${respuesta != null}">
+                                <div><strong>Salud:</strong> <span th:text="${respuesta.estadoSalud}"></span></div>
+                                <div class="small text-muted" th:text="${respuesta.comentarios != null ? respuesta.comentarios : 'Sin comentarios'}"></div>
+                            </div>
+                            <span class="text-muted" th:if="${respuesta == null}">Pendiente de respuesta</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary"
+                                    type="button"
+                                    th:if="${respuesta == null}"
+                                    data-bs-toggle="collapse"
+                                    th:attr="data-bs-target='#respuestaForm__' + ${s.id}">
+                                Responder
+                            </button>
+                            <span class="text-muted" th:if="${respuesta != null}">Enviado</span>
+                        </td>
+                    </tr>
+                    <tr th:each="s : ${seguimientos}" th:with="respuesta=${respuestasPorSeguimiento[s.id]}" th:if="${respuesta == null}">
+                        <td colspan="5" class="bg-light">
+                            <div class="collapse" th:id="'respuestaForm__' + ${s.id}">
+                                <form th:action="@{'/adopcion/seguimiento/' + ${adopcion.id} + '/respuesta'}" method="post" class="row g-3">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <input type="hidden" name="seguimientoId" th:value="${s.id}"/>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Estado de salud</label>
+                                        <select name="estadoSalud" class="form-select" required>
+                                            <option value="" selected disabled>Selecciona una opción</option>
+                                            <option value="Excelente">Excelente</option>
+                                            <option value="Bueno">Bueno</option>
+                                            <option value="Regular">Regular</option>
+                                            <option value="Requiere atención">Requiere atención</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Comportamiento</label>
+                                        <input type="text" name="comportamiento" class="form-control" placeholder="Ej. tranquilo, juguetón">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Alimentación</label>
+                                        <input type="text" name="alimentacion" class="form-control" placeholder="Ej. come bien, dieta especial">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Comentarios</label>
+                                        <textarea name="comentarios" class="form-control" rows="3" maxlength="600" placeholder="Cuéntanos cómo va la adaptación."></textarea>
+                                    </div>
+                                    <div class="col-12 d-grid d-md-flex justify-content-md-end">
+                                        <button class="btn btn-primary" type="submit">Enviar respuesta</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(seguimientos)}">
-                        <td colspan="3" class="text-center text-muted">Aún no hay visitas registradas.</td>
+                        <td colspan="5" class="text-center text-muted">Aún no hay visitas registradas.</td>
                     </tr>
                     </tbody>
                 </table>
@@ -46,5 +100,20 @@
         </div>
     </div>
 </div>
+
+<div th:if="${param.respuesta == 'ok'}">
+    <script>Swal.fire({icon:'success',title:'Respuesta enviada',text:'Gracias por compartir el seguimiento.'});</script>
+</div>
+<div th:if="${param.duplicate}">
+    <script>Swal.fire({icon:'info',title:'Respuesta ya registrada',text:'Ya enviaste una respuesta para esta visita.'});</script>
+</div>
+<div th:if="${param.error == 'seguimiento'}">
+    <script>Swal.fire({icon:'warning',title:'Seguimiento inválido',text:'No se encontró la visita seleccionada.'});</script>
+</div>
+<div th:if="${param.error == 'form'}">
+    <script>Swal.fire({icon:'warning',title:'Datos incompletos',text:'Selecciona el estado de salud antes de enviar.'});</script>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

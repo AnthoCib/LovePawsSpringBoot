@@ -22,9 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
+import com.lovepaws.app.adopcion.domain.RespuestaSeguimientoAdoptante;
 import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.service.AdopcionService;
+import com.lovepaws.app.adopcion.service.RespuestaSeguimientoAdoptanteService;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
 import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
 import com.lovepaws.app.mascota.domain.Mascota;
@@ -46,6 +48,7 @@ public class AdopcionController {
 	private final MascotaService mascotaService;
 	private final SeguimientoService seguimientoService;
 	private final EstadoMascotaRepository estadoMascotaRepository;
+	private final RespuestaSeguimientoAdoptanteService respuestaSeguimientoService;
 
 	@GetMapping
 	public String flujoAdopcion() {
@@ -201,7 +204,9 @@ public class AdopcionController {
 			return "redirect:/adopcion/mis-adopciones?error=forbidden";
 		}
 		model.addAttribute("adopcion", adopcion);
-		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
+		List<SeguimientoPostAdopcion> seguimientos = seguimientoService.listarPorAdopcion(adopcionId);
+		model.addAttribute("seguimientos", seguimientos);
+		model.addAttribute("respuestasPorSeguimiento", agruparRespuestasPorSeguimiento(adopcionId));
 		return "adopcion/seguimiento";
 	}
 
@@ -215,7 +220,55 @@ public class AdopcionController {
 		model.addAttribute("adopcion", adopcion);
 		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
 		model.addAttribute("estadosMascota", estadoMascotaRepository.findAll());
+		model.addAttribute("respuestasPorSeguimiento", agruparRespuestasPorSeguimiento(adopcionId));
 		return "adopcion/seguimiento-gestor";
+	}
+
+	@PreAuthorize("hasRole('ADOPTANTE')")
+	@PostMapping("/seguimiento/{adopcionId}/respuesta")
+	public String responderSeguimiento(@PathVariable Integer adopcionId,
+	                                   @RequestParam Integer seguimientoId,
+	                                   @RequestParam String estadoSalud,
+	                                   @RequestParam(required = false) String comportamiento,
+	                                   @RequestParam(required = false) String alimentacion,
+	                                   @RequestParam(required = false) String comentarios,
+	                                   Authentication auth) {
+		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+		Integer usuarioId = principal.getUsuario().getId();
+		if (estadoSalud == null || estadoSalud.isBlank()) {
+			return "redirect:/adopcion/seguimiento/" + adopcionId + "?error=form";
+		}
+
+		com.lovepaws.app.adopcion.domain.Adopcion adopcion = adopcionService.findAdopcionById(adopcionId)
+				.filter(a -> a.getUsuarioAdoptante() != null && a.getUsuarioAdoptante().getId().equals(usuarioId))
+				.orElse(null);
+		if (adopcion == null) {
+			return "redirect:/adopcion/mis-adopciones?error=forbidden";
+		}
+
+		SeguimientoPostAdopcion seguimiento = seguimientoService.findById(seguimientoId)
+				.filter(s -> s.getAdopcion() != null && s.getAdopcion().getId().equals(adopcionId))
+				.orElse(null);
+		if (seguimiento == null) {
+			return "redirect:/adopcion/seguimiento/" + adopcionId + "?error=seguimiento";
+		}
+
+		if (respuestaSeguimientoService.buscarUltimaRespuesta(seguimientoId, usuarioId).isPresent()) {
+			return "redirect:/adopcion/seguimiento/" + adopcionId + "?duplicate=true";
+		}
+
+		RespuestaSeguimientoAdoptante respuesta = RespuestaSeguimientoAdoptante.builder()
+				.seguimiento(seguimiento)
+				.adopcion(adopcion)
+				.estadoSalud(estadoSalud)
+				.comportamiento(comportamiento)
+				.alimentacion(alimentacion)
+				.comentarios(comentarios)
+				.usuarioCreacion(principal.getUsuario())
+				.build();
+
+		respuestaSeguimientoService.crearRespuesta(respuesta, usuarioId, principal.getUsuario().getNombre());
+		return "redirect:/adopcion/seguimiento/" + adopcionId + "?respuesta=ok";
 	}
 
 	@PreAuthorize("hasRole('GESTOR')")
@@ -261,5 +314,23 @@ public class AdopcionController {
 
 	private boolean esTextoVacio(String valor) {
 		return valor == null || valor.trim().isBlank();
+	}
+
+	private Map<Integer, RespuestaSeguimientoAdoptante> agruparRespuestasPorSeguimiento(Integer adopcionId) {
+		List<RespuestaSeguimientoAdoptante> respuestas = respuestaSeguimientoService.listarPorAdopcion(adopcionId);
+		Map<Integer, RespuestaSeguimientoAdoptante> mapa = new LinkedHashMap<>();
+		for (RespuestaSeguimientoAdoptante respuesta : respuestas) {
+			Integer seguimientoId = respuesta.getSeguimiento() != null ? respuesta.getSeguimiento().getId() : null;
+			if (seguimientoId != null) {
+				RespuestaSeguimientoAdoptante existente = mapa.get(seguimientoId);
+				if (existente == null
+						|| existente.getFechaRespuesta() == null
+						|| (respuesta.getFechaRespuesta() != null
+								&& respuesta.getFechaRespuesta().isAfter(existente.getFechaRespuesta()))) {
+					mapa.put(seguimientoId, respuesta);
+				}
+			}
+		}
+		return mapa;
 	}
 }

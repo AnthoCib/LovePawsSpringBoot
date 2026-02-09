@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -116,7 +116,7 @@
                     <p class="card-text mb-2"><strong>Edad:</strong> <span th:text="${m.edad}"></span> años</p>
                     <div class="d-flex flex-wrap gap-2">
                         <a class="btn btn-outline-primary btn-sm" th:href="@{'/mascotas/' + ${m.id}}">Ver perfil</a>
-                        <a class="btn btn-success btn-sm" th:href="@{'/mascotas/' + ${m.id} + '?adoptar=true'}">Adoptar</a>
+                        <a class="btn btn-success btn-sm" th:href="@{'/mascotas/' + ${m.id} + '?adoptar=true'}" sec:authorize="hasRole('ADOPTANTE')">ADOPTAR</a>
                     </div>
                 </div>
             </div>

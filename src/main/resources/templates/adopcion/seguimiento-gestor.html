@@ -57,16 +57,24 @@
                         <th>Fecha visita</th>
                         <th>Estado mascota</th>
                         <th>Observaciones</th>
+                        <th>Respuesta adoptante</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="s : ${seguimientos}">
+                    <tr th:each="s : ${seguimientos}" th:with="respuesta=${respuestasPorSeguimiento[s.id]}">
                         <td th:text="${s.fechaVisita}"></td>
                         <td th:text="${s.estado != null ? s.estado.id : '-'}"></td>
                         <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
+                        <td>
+                            <div th:if="${respuesta != null}">
+                                <div><strong>Salud:</strong> <span th:text="${respuesta.estadoSalud}"></span></div>
+                                <div class="small text-muted" th:text="${respuesta.comentarios != null ? respuesta.comentarios : 'Sin comentarios'}"></div>
+                            </div>
+                            <span class="text-muted" th:if="${respuesta == null}">Pendiente</span>
+                        </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(seguimientos)}">
-                        <td colspan="3" class="text-center text-muted">Aún no hay visitas registradas.</td>
+                        <td colspan="4" class="text-center text-muted">Aún no hay visitas registradas.</td>
                     </tr>
                     </tbody>
                 </table>
