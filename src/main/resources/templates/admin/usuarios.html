@@ -99,7 +99,11 @@
                             <form sec:authorize="hasRole('ADMIN')"
                                   th:if="${u.id != #authentication.principal.usuario.id}"
                                   th:action="@{/admin/usuarios/{id}/rol(id=${u.id})}"
-                                  method="post">
+                                  method="post"
+                                  data-confirm="true"
+                                  data-confirm-title="¿Cambiar rol?"
+                                  data-confirm-text="El rol del usuario será actualizado inmediatamente."
+                                  data-confirm-button="Sí, cambiar rol">
 
                                 <input type="hidden"
                                        th:name="${_csrf.parameterName}"
@@ -123,7 +127,11 @@
                             <!-- BLOQUEAR / ACTIVAR (SOLO ADMIN) -->
                             <form sec:authorize="hasRole('ADMIN')"
                                   th:action="@{/admin/usuarios/{id}/estado(id=${u.id})}"
-                                  method="post">
+                                  method="post"
+                                  data-confirm="true"
+                                  th:data-confirm-title="${u.estado != null and u.estado.id == 'ACTIVO'} ? '¿Bloquear usuario?' : '¿Activar usuario?'"
+                                  th:data-confirm-text="${u.estado != null and u.estado.id == 'ACTIVO'} ? 'El usuario no podrá iniciar sesión.' : 'El usuario recuperará el acceso.'"
+                                  th:data-confirm-button="${u.estado != null and u.estado.id == 'ACTIVO'} ? 'Sí, bloquear' : 'Sí, activar'">
 
                                 <input type="hidden"
                                        th:name="${_csrf.parameterName}"
@@ -164,6 +172,7 @@
 </div>
 
 <div th:if="${param.created}"><script>Swal.fire({icon:'success',title:'Usuario creado',text:'El usuario fue registrado correctamente.'});</script></div>
+<script src="/js/util/util.js"></script>
 
 </body>
 </html>
