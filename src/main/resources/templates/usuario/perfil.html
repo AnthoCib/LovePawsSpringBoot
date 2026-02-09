@@ -30,7 +30,7 @@
                                  alt="Foto de perfil"
                                  class="img-fluid rounded-circle border"
                                  style="width:140px;height:140px;object-fit:cover;">
-                            <p class="text-muted small mt-2 mb-0">Puedes actualizar la URL de foto.</p>
+                            <p class="text-muted small mt-2 mb-0">Foto de perfil</p>
                         </div>
 
                         <div class="col-12 col-md-8">
@@ -54,10 +54,6 @@
                                 <div class="col-12">
                                     <label class="form-label">Dirección</label>
                                     <input type="text" class="form-control" name="direccion" th:value="${usuario.direccion}" required minlength="5" maxlength="120">
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">URL de foto (opcional)</label>
-                                    <input type="url" class="form-control" name="fotoUrl" th:value="${usuario.fotoUrl}">
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="form-label">Rol</label>

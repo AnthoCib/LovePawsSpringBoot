@@ -151,7 +151,6 @@ public class UsuarioController {
                                @RequestParam String correo,
                                @RequestParam String telefono,
                                @RequestParam String direccion,
-                               @RequestParam(required = false) String fotoUrl,
                                Authentication auth) {
 
         if (!(auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal)) {
@@ -194,8 +193,6 @@ public class UsuarioController {
         usuario.setCorreo(correo);
         usuario.setTelefono(telefono);
         usuario.setDireccion(direccion);
-        usuario.setFotoUrl((fotoUrl != null && !fotoUrl.isBlank()) ? fotoUrl : null);
-
         usuarioService.updateUsuario(usuario);
         if (isAdmin && !id.equals(usuarioAutenticadoId)) {
             return "redirect:/usuarios/perfil?id=" + id + "&updated";

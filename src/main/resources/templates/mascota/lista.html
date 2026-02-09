@@ -47,7 +47,10 @@
                     <p class="card-text mb-1"><strong>Raza:</strong> <span th:text="${m.raza != null ? m.raza.nombre : '-'}"></span></p>
                     <p class="card-text mb-1"><strong>Categoría:</strong> <span th:text="${m.categoria != null ? m.categoria.nombre : '-'}"></span></p>
                     <p class="card-text mb-2"><strong>Edad:</strong> <span th:text="${m.edad}"></span> años</p>
-                    <a class="btn btn-outline-primary btn-sm" th:href="@{'/mascotas/' + ${m.id}}">Ver perfil</a>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{'/mascotas/' + ${m.id}}">Ver perfil</a>
+                        <a class="btn btn-success btn-sm" th:href="@{'/mascotas/' + ${m.id} + '?adoptar=true'}">Adoptar</a>
+                    </div>
                 </div>
             </div>
         </div>
