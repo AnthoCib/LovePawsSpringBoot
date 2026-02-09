@@ -1,6 +1,8 @@
 package com.lovepaws.app.user.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
@@ -21,6 +24,7 @@ import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.RolService;
 import com.lovepaws.app.user.service.UsuarioService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     /* =========================
        REGISTRO DE USUARIO
@@ -202,13 +207,13 @@ public class UsuarioController {
     /* =========================
        CAMBIAR CONTRASEÑA (ADOPTANTE)
        ========================= */
-    @PreAuthorize("hasRole('ADOPTANTE')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/cambiar-password")
     public String cambiarPasswordForm() {
         return "usuario/cambiar-password";
     }
 
-    @PreAuthorize("hasRole('ADOPTANTE')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/cambiar-password")
     public String cambiarPassword(@RequestParam String actual,
                                   @RequestParam String nueva,
@@ -239,6 +244,98 @@ public class UsuarioController {
         usuarioService.updateUsuario(usuario);
 
         return "redirect:/usuarios/cambiar-password?updated=true";
+    }
+
+    /* =========================
+       RECUPERAR CONTRASEÑA
+       ========================= */
+    @GetMapping("/recuperar-password")
+    public String recuperarPasswordForm() {
+        return "usuario/recuperar-password";
+    }
+
+    @PostMapping("/recuperar-password")
+    public String enviarRecuperacion(@RequestParam String correo, HttpServletRequest request) {
+        if (correo == null || correo.isBlank()) {
+            return "redirect:/usuarios/recuperar-password?error=correo";
+        }
+
+        usuarioService.findByCorreo(correo.trim())
+                .ifPresent(usuario -> {
+                    String token = UUID.randomUUID().toString();
+                    usuario.setResetToken(token);
+                    usuario.setResetTokenExpira(LocalDateTime.now().plusMinutes(30));
+                    usuarioService.updateUsuario(usuario);
+
+                    String baseUrl = request.getScheme() + "://" + request.getServerName();
+                    if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+                        baseUrl += ":" + request.getServerPort();
+                    }
+                    String link = baseUrl + "/usuarios/reset-password?token=" + token;
+                    String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
+                            + "<p>Para restablecer tu contraseña haz clic en el siguiente enlace:</p>"
+                            + "<p><a href=\"" + link + "\">Restablecer contraseña</a></p>"
+                            + "<p>Este enlace expirará en 30 minutos.</p>";
+
+                    emailService.enviarCorreo(usuario.getCorreo(), "Recuperación de contraseña", contenido);
+                });
+
+        return "redirect:/usuarios/recuperar-password?sent";
+    }
+
+    @GetMapping("/reset-password")
+    public String resetPasswordForm(@RequestParam(required = false) String token, Model model) {
+        if (token == null || token.isBlank()) {
+            return "redirect:/usuarios/recuperar-password?error=token";
+        }
+
+        boolean tokenValido = usuarioService.findByResetToken(token)
+                .filter(usuario -> usuario.getResetTokenExpira() != null
+                        && usuario.getResetTokenExpira().isAfter(LocalDateTime.now()))
+                .isPresent();
+
+        if (!tokenValido) {
+            return "redirect:/usuarios/recuperar-password?error=token";
+        }
+
+        model.addAttribute("token", token);
+        return "usuario/reset-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestParam String token,
+                                @RequestParam String nueva,
+                                @RequestParam String confirmar) {
+        if (token == null || token.isBlank()) {
+            return "redirect:/usuarios/recuperar-password?error=token";
+        }
+
+        if (nueva == null || nueva.isBlank() || confirmar == null || confirmar.isBlank()) {
+            return "redirect:/usuarios/reset-password?token=" + token + "&error=campos";
+        }
+
+        if (nueva.length() < 8) {
+            return "redirect:/usuarios/reset-password?token=" + token + "&error=min";
+        }
+
+        if (!nueva.equals(confirmar)) {
+            return "redirect:/usuarios/reset-password?token=" + token + "&error=match";
+        }
+
+        Usuario usuario = usuarioService.findByResetToken(token)
+                .filter(u -> u.getResetTokenExpira() != null && u.getResetTokenExpira().isAfter(LocalDateTime.now()))
+                .orElse(null);
+
+        if (usuario == null) {
+            return "redirect:/usuarios/recuperar-password?error=token";
+        }
+
+        usuario.setPasswordHash(passwordEncoder.encode(nueva));
+        usuario.setResetToken(null);
+        usuario.setResetTokenExpira(null);
+        usuarioService.updateUsuario(usuario);
+
+        return "redirect:/usuarios/login?reset=ok";
     }
 
 

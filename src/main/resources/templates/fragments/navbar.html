@@ -133,7 +133,7 @@
                         <span sec:authentication="name">Usuario</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                        <li sec:authorize="hasRole('ADOPTANTE')">
+                        <li sec:authorize="isAuthenticated()">
                             <a class="dropdown-item" th:href="@{/usuarios/cambiar-password}">
                                 <i class="bi bi-key me-2 text-warning"></i> Cambiar contraseña
                             </a>
