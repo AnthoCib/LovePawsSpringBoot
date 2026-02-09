@@ -1,10 +1,6 @@
 package com.lovepaws.app.user.controller;
 
-<<<<<<< HEAD
 import java.time.LocalDateTime;
-=======
-import java.security.SecureRandom;
->>>>>>> refs/heads/codex/update-card-and-label-styles
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.user.domain.EstadoUsuario;
@@ -44,10 +39,6 @@ public class UsuarioController {
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
-<<<<<<< HEAD
-=======
-    private static final String TEMP_PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
->>>>>>> refs/heads/codex/update-card-and-label-styles
 
     /* =========================
        REGISTRO DE USUARIO
@@ -261,7 +252,6 @@ public class UsuarioController {
     }
 
     @PostMapping("/recuperar-password")
-<<<<<<< HEAD
     public String enviarRecuperacion(@RequestParam String correo, HttpServletRequest request) {
         if (correo == null || correo.isBlank()) {
             return "redirect:/usuarios/recuperar-password?error=correo";
@@ -343,29 +333,6 @@ public class UsuarioController {
         usuarioService.updateUsuario(usuario);
 
         return "redirect:/usuarios/login?reset=ok";
-=======
-    public String recuperarPassword(@RequestParam String correo) {
-        if (correo == null || !correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            return "redirect:/usuarios/recuperar-password?error=formato";
-        }
-
-        usuarioService.findByCorreo(correo).ifPresent(usuario -> {
-            String tempPassword = generarPasswordTemporal(10);
-            usuario.setPasswordHash(passwordEncoder.encode(tempPassword));
-            usuarioService.updateUsuario(usuario);
-
-            String asunto = "Recuperación de contraseña - LovePaws";
-            String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
-                    + "<p>Generamos una contraseña temporal para que puedas acceder a tu cuenta:</p>"
-                    + "<p><strong>" + tempPassword + "</strong></p>"
-                    + "<p>Te recomendamos iniciar sesión y cambiarla desde el menú de tu perfil.</p>"
-                    + "<p>Equipo LovePaws</p>";
-
-            emailService.enviarCorreo(usuario.getCorreo(), asunto, contenido);
-        });
-
-        return "redirect:/usuarios/recuperar-password?sent";
->>>>>>> refs/heads/codex/update-card-and-label-styles
     }
 
 
@@ -395,13 +362,4 @@ public class UsuarioController {
         model.addAttribute("roles", roles);
     }
 
-    private String generarPasswordTemporal(int length) {
-        SecureRandom random = new SecureRandom();
-        StringBuilder builder = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            int idx = random.nextInt(TEMP_PASSWORD_CHARS.length());
-            builder.append(TEMP_PASSWORD_CHARS.charAt(idx));
-        }
-        return builder.toString();
-    }
 }

@@ -54,13 +54,6 @@
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
-=======
-            <div class="col-md-7">
-                <h1 class="h3" th:text="${mascota.nombre}">Nombre</h1>
->>>>>>> refs/heads/codex/update-card-and-label-styles-d7iw97
-
-<<<<<<< HEAD
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Descripción</h5>
@@ -87,56 +80,6 @@
                         </button>
                     </div>
                     <div id="solicitudAdopcion" class="collapse mt-4" th:classappend="${param.adoptar != null} ? ' show' : ''">
-=======
-                <div class="row g-3 pet-info-cards mt-1">
-                    <div class="col-sm-6">
-                        <div class="card info-card h-100">
-                            <div class="card-body">
-                                <span class="meta-label">Raza</span>
-                                <p class="meta-value mb-0" th:text="${mascota.raza != null ? mascota.raza.nombre : '-'}"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="card info-card h-100">
-                            <div class="card-body">
-                                <span class="meta-label">Categoría</span>
-                                <p class="meta-value mb-0" th:text="${mascota.categoria != null ? mascota.categoria.nombre : '-'}"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="card info-card h-100">
-                            <div class="card-body">
-                                <span class="meta-label">Edad</span>
-                                <p class="meta-value mb-0"><span th:text="${mascota.edad}"></span> años</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="card info-card h-100">
-                            <div class="card-body">
-                                <span class="meta-label">Sexo</span>
-                                <p class="meta-value mb-0" th:text="${mascota.sexo}"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card info-card">
-                            <div class="card-body">
-                                <span class="meta-label">Descripción</span>
-                                <p class="mb-0" th:text="${mascota.descripcion}">Descripción</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div sec:authorize="hasRole('ADOPTANTE')" class="card adoption-card mt-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Solicitar adopción</h5>
-                        <p class="text-muted small mb-4">Queremos asegurarnos de que cada mascota llegue a un hogar ideal.
-                            Completa estos datos para conocer mejor tu situación y plan de cuidado.</p>
->>>>>>> refs/heads/codex/update-card-and-label-styles-d7iw97
                         <form th:action="@{/adopcion/solicitar}" method="post" class="row g-3">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                             <input type="hidden" name="mascota.id" th:value="${mascota.id}"/>
@@ -167,11 +110,7 @@
                                     <option value="Experiencia avanzada">Tengo amplia experiencia</option>
                                 </select>
                             </div>
-<<<<<<< HEAD
-                            <div class="col-6">
-=======
                             <div class="col-md-6">
->>>>>>> refs/heads/codex/update-card-and-label-styles-d7iw97
                                 <label class="form-label lp-label">¿Hay niños u otras mascotas?</label>
                                 <select name="ninosOtraMascotas" class="form-select" required>
                                     <option value="" selected disabled>Selecciona una opción</option>
@@ -181,11 +120,7 @@
                                     <option value="Niños y mascotas">Sí, hay niños y mascotas</option>
                                 </select>
                             </div>
-<<<<<<< HEAD
-                            <div class="col-6">
-=======
                             <div class="col-md-6">
->>>>>>> refs/heads/codex/update-card-and-label-styles-d7iw97
                                 <label class="form-label lp-label">Tiempo disponible al día</label>
                                 <select name="tiempoDedicado" class="form-select" required>
                                     <option value="" selected disabled>Selecciona una opción</option>

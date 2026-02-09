@@ -7,83 +7,11 @@
      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<<<<<<< HEAD
-    <style>
-        .catalog-banner {
-            position: relative;
-            border-radius: 24px;
-            overflow: hidden;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.6), rgba(245, 158, 11, 0.35)),
-                        url('/images/mascotas/mascota-default.jpg') center/cover no-repeat;
-            min-height: 220px;
-        }
-        .catalog-banner::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.35));
-        }
-        .catalog-banner .banner-content {
-            position: relative;
-            z-index: 2;
-        }
-        .catalog-stat {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-        }
-    </style>
-=======
     <link th:href="@{/css/banner-hero.css}" rel="stylesheet"/>
->>>>>>> refs/heads/codex/update-card-and-label-styles-d7iw97
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container py-4">
-<<<<<<< HEAD
-    <section class="catalog-banner d-flex align-items-center p-4 p-md-5 mb-4 text-white">
-        <div class="banner-content">
-            <span class="badge text-bg-light text-dark mb-2">Catálogo LovePaws</span>
-            <h1 class="h3 fw-bold mb-2">Encuentra a tu nuevo mejor amigo</h1>
-            <p class="mb-0">Filtra por raza, edad o categoría y conoce a cada mascota antes de iniciar tu solicitud.</p>
-        </div>
-    </section>
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="catalog-stat p-3 h-100">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-paw-fill text-warning fs-4"></i>
-                    <div>
-                        <div class="fw-semibold">Mascotas cuidadas</div>
-                        <small class="text-muted">Procesos responsables y seguros.</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="catalog-stat p-3 h-100">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-heart-fill text-danger fs-4"></i>
-                    <div>
-                        <div class="fw-semibold">Adopciones con seguimiento</div>
-                        <small class="text-muted">Te acompañamos después del match.</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="catalog-stat p-3 h-100">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-shield-check text-success fs-4"></i>
-                    <div>
-                        <div class="fw-semibold">Hogares verificados</div>
-                        <small class="text-muted">Validamos cada solicitud.</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-=======
     <section class="lp-hero mb-4">
         <div class="overlay"></div>
         <img th:src="@{/images/mascotas/luna.jpg}" alt="Mascotas en adopción" class="hero-image">
@@ -92,7 +20,6 @@
             <p class="mb-0">Encuentra a tu compañero ideal y conoce su historia antes de enviar tu solicitud.</p>
         </div>
     </section>
->>>>>>> refs/heads/codex/update-card-and-label-styles-d7iw97
     <div class="d-flex gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/}" class="btn btn-outline-primary btn-sm">Inicio</a></div>
 
     <form method="get" th:action="@{/mascotas}" class="row g-2 mb-4">

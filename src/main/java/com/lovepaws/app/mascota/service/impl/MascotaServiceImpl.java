@@ -47,24 +47,10 @@ public class MascotaServiceImpl implements MascotaService {
         existente.setEdad(mascota.getEdad());
         existente.setDescripcion(mascota.getDescripcion());
         existente.setSexo(mascota.getSexo());
-        existente.setFotoUrl(mascota.getFotoUrl());
 
         if (mascota.getCategoria() != null) {
             existente.setCategoria(mascota.getCategoria());
         }
-<<<<<<< HEAD
-        Mascota existente = exists.get();
-        if (mascota.getEstado() == null) {
-            mascota.setEstado(existente.getEstado());
-        }
-        if (mascota.getUsuarioCreacion() == null) {
-            mascota.setUsuarioCreacion(existente.getUsuarioCreacion());
-        }
-        if (mascota.getFotoUrl() == null || mascota.getFotoUrl().isBlank()) {
-            mascota.setFotoUrl(existente.getFotoUrl());
-        }
-        return mascotaRepository.save(mascota);
-=======
         if (mascota.getRaza() != null) {
             existente.setRaza(mascota.getRaza());
         }
@@ -78,9 +64,10 @@ public class MascotaServiceImpl implements MascotaService {
         if (mascota.getUsuarioCreacion() != null) {
             existente.setUsuarioCreacion(mascota.getUsuarioCreacion());
         }
-
+        if (mascota.getFotoUrl() != null && !mascota.getFotoUrl().isBlank()) {
+            existente.setFotoUrl(mascota.getFotoUrl());
+        }
         return mascotaRepository.save(existente);
->>>>>>> refs/heads/codex/update-card-and-label-styles-d7iw97
     }
 
     @Override
