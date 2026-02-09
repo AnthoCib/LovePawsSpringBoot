@@ -36,49 +36,56 @@
 
 						<div class="row g-3">
 
-							<div class="col-md-6">
-								<label class="form-label">Username *</label>
+							<div class="col-md-6 position-relative">
+								<label class="form-label">Username <span>*</span></label>
 								<input th:field="*{username}" class="form-control" required>
+								<i class="bi bi-person-circle form-icon"></i>
 								<div class="text-danger small" th:errors="*{username}"></div>
 							</div>
 
-							<div class="col-md-6">
-								<label class="form-label">Nombre *</label>
+							<div class="col-md-6 position-relative">
+								<label class="form-label">Nombre <span>*</span></label>
 								<input th:field="*{nombre}" class="form-control" required>
+								<i class="bi bi-person-fill form-icon"></i>
 								<div class="text-danger small" th:errors="*{nombre}"></div>
 							</div>
 
-							<div class="col-md-6">
-								<label class="form-label">Correo *</label>
+							<div class="col-md-6 position-relative">
+								<label class="form-label">Correo <span>*</span></label>
 								<input th:field="*{correo}" type="email" class="form-control" required>
+								<i class="bi bi-envelope-fill form-icon"></i>
 								<div class="text-danger small" th:errors="*{correo}"></div>
 							</div>
 
-							<div class="col-md-6">
-								<label class="form-label">Contraseña *</label>
+							<div class="col-md-6 position-relative">
+								<label class="form-label">Contraseña <span>*</span></label>
 								<input th:field="*{passwordHash}" type="password" class="form-control" required>
+								<i class="bi bi-lock-fill form-icon"></i>
 								<div class="text-danger small" th:errors="*{passwordHash}"></div>
 							</div>
 
-							<div class="col-md-6">
-								<label class="form-label">Teléfono *</label>
+							<div class="col-md-6 position-relative">
+								<label class="form-label">Teléfono <span>*</span></label>
 								<input th:field="*{telefono}" class="form-control" required>
+								<i class="bi bi-telephone-fill form-icon"></i>
 								<div class="text-danger small" th:errors="*{telefono}"></div>
 							</div>
 
-							<div class="col-12">
-								<label class="form-label">Dirección *</label>
+							<div class="col-12 position-relative">
+								<label class="form-label">Dirección <span>*</span></label>
 								<input th:field="*{direccion}" class="form-control" required>
+								<i class="bi bi-geo-alt-fill form-icon"></i>
 								<div class="text-danger small" th:errors="*{direccion}"></div>
 							</div>
 
 							<!-- ROL SOLO ADMIN -->
-							<div class="col-md-6" th:if="${isAdmin}">
-								<label class="form-label">Rol *</label>
+							<div class="col-md-6 position-relative" th:if="${isAdmin}">
+								<label class="form-label">Rol <span>*</span></label>
 								<select th:field="*{rol.id}" class="form-select" required>
 									<option value="">Seleccione...</option>
 									<option th:each="r : ${roles}" th:value="${r.id}" th:text="${r.nombre}"></option>
 								</select>
+								<i class="bi bi-people-fill form-icon"></i>
 								<div class="text-danger small" th:errors="*{rol.id}"></div>
 							</div>
 
