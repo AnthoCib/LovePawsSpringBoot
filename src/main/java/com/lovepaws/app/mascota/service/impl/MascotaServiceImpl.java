@@ -45,6 +45,16 @@ public class MascotaServiceImpl implements MascotaService {
         if (exists.isEmpty()) {
             throw new RuntimeException("Mascota no existe con id: " + mascota.getId());
         }
+        Mascota existente = exists.get();
+        if (mascota.getEstado() == null) {
+            mascota.setEstado(existente.getEstado());
+        }
+        if (mascota.getUsuarioCreacion() == null) {
+            mascota.setUsuarioCreacion(existente.getUsuarioCreacion());
+        }
+        if (mascota.getFotoUrl() == null || mascota.getFotoUrl().isBlank()) {
+            mascota.setFotoUrl(existente.getFotoUrl());
+        }
         return mascotaRepository.save(mascota);
     }
 
