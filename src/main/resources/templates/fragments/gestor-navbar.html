@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm" th:fragment="gestorNavbar">
+<nav class="navbar navbar-expand-lg navbar-dark lp-navbar" th:fragment="gestorNavbar">
+    <style>
+        .lp-navbar {
+            background: rgba(0, 90, 152, 0.95);
+            backdrop-filter: saturate(140%) blur(4px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+            position: relative;
+            z-index: 1080;
+        }
+    </style>
     <div class="container">
         <a class="navbar-brand fw-bold" th:href="@{/gestor/dashboard}">🐾 Gestor LovePaws</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#gestorNav">
