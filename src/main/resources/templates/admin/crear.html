@@ -36,61 +36,104 @@
 
 						<div class="row g-3">
 
+<<<<<<< HEAD
 							<div class="col-md-6">
 								<label class="form-label">Username *</label>
 								<div class="input-group">
 									<span class="input-group-text"><i class="bi bi-person-badge"></i></span>
 									<input th:field="*{username}" class="form-control" required>
 								</div>
+=======
+							<div class="col-md-6 position-relative">
+								<i class="bi bi-person-circle form-icon"></i>
+								<label class="form-label">Username <span>*</span></label>
+								<input th:field="*{username}" class="form-control" required>
+>>>>>>> refs/remotes/origin/codex/fix-missing-icons-in-user-creation-form
 								<div class="text-danger small" th:errors="*{username}"></div>
 							</div>
 
+<<<<<<< HEAD
 							<div class="col-md-6">
 								<label class="form-label">Nombre *</label>
 								<div class="input-group">
 									<span class="input-group-text"><i class="bi bi-person"></i></span>
 									<input th:field="*{nombre}" class="form-control" required>
 								</div>
+=======
+							<div class="col-md-6 position-relative">
+								<i class="bi bi-person-fill form-icon"></i>
+								<label class="form-label">Nombre <span>*</span></label>
+								<input th:field="*{nombre}" class="form-control" required>
+>>>>>>> refs/remotes/origin/codex/fix-missing-icons-in-user-creation-form
 								<div class="text-danger small" th:errors="*{nombre}"></div>
 							</div>
 
+<<<<<<< HEAD
 							<div class="col-md-6">
 								<label class="form-label">Correo *</label>
 								<div class="input-group">
 									<span class="input-group-text"><i class="bi bi-envelope"></i></span>
 									<input th:field="*{correo}" type="email" class="form-control" required>
 								</div>
+=======
+							<div class="col-md-6 position-relative">
+								<i class="bi bi-envelope-fill form-icon"></i>
+								<label class="form-label">Correo <span>*</span></label>
+								<input th:field="*{correo}" type="email" class="form-control" required>
+>>>>>>> refs/remotes/origin/codex/fix-missing-icons-in-user-creation-form
 								<div class="text-danger small" th:errors="*{correo}"></div>
 							</div>
 
+<<<<<<< HEAD
 							<div class="col-md-6">
 								<label class="form-label">Contraseña *</label>
 								<div class="input-group">
 									<span class="input-group-text"><i class="bi bi-lock"></i></span>
 									<input th:field="*{passwordHash}" type="password" class="form-control" required>
 								</div>
+=======
+							<div class="col-md-6 position-relative">
+								<i class="bi bi-lock-fill form-icon"></i>
+								<label class="form-label">Contraseña <span>*</span></label>
+								<input th:field="*{passwordHash}" type="password" class="form-control" required>
+>>>>>>> refs/remotes/origin/codex/fix-missing-icons-in-user-creation-form
 								<div class="text-danger small" th:errors="*{passwordHash}"></div>
 							</div>
 
+<<<<<<< HEAD
 							<div class="col-md-6">
 								<label class="form-label">Teléfono *</label>
 								<div class="input-group">
 									<span class="input-group-text"><i class="bi bi-telephone"></i></span>
 									<input th:field="*{telefono}" class="form-control" required>
 								</div>
+=======
+							<div class="col-md-6 position-relative">
+								<i class="bi bi-telephone-fill form-icon"></i>
+								<label class="form-label">Teléfono <span>*</span></label>
+								<input th:field="*{telefono}" class="form-control" required>
+>>>>>>> refs/remotes/origin/codex/fix-missing-icons-in-user-creation-form
 								<div class="text-danger small" th:errors="*{telefono}"></div>
 							</div>
 
+<<<<<<< HEAD
 							<div class="col-12">
 								<label class="form-label">Dirección *</label>
 								<div class="input-group">
 									<span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
 									<input th:field="*{direccion}" class="form-control" required>
 								</div>
+=======
+							<div class="col-12 position-relative">
+								<i class="bi bi-geo-alt-fill form-icon"></i>
+								<label class="form-label">Dirección <span>*</span></label>
+								<input th:field="*{direccion}" class="form-control" required>
+>>>>>>> refs/remotes/origin/codex/fix-missing-icons-in-user-creation-form
 								<div class="text-danger small" th:errors="*{direccion}"></div>
 							</div>
 
 							<!-- ROL SOLO ADMIN -->
+<<<<<<< HEAD
 							<div class="col-md-6" th:if="${isAdmin}">
 								<label class="form-label">Rol *</label>
 								<div class="input-group">
@@ -100,6 +143,15 @@
 										<option th:each="r : ${roles}" th:value="${r.id}" th:text="${r.nombre}"></option>
 									</select>
 								</div>
+=======
+							<div class="col-md-6 position-relative" th:if="${isAdmin}">
+								<i class="bi bi-people-fill form-icon"></i>
+								<label class="form-label">Rol <span>*</span></label>
+								<select th:field="*{rol.id}" class="form-select" required>
+									<option value="">Seleccione...</option>
+									<option th:each="r : ${roles}" th:value="${r.id}" th:text="${r.nombre}"></option>
+								</select>
+>>>>>>> refs/remotes/origin/codex/fix-missing-icons-in-user-creation-form
 								<div class="text-danger small" th:errors="*{rol.id}"></div>
 							</div>
 
