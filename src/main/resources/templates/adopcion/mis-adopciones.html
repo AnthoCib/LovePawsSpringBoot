@@ -23,6 +23,7 @@
                     <th>ID</th>
                     <th>Mascota</th>
                     <th>Estado</th>
+                    <th>Ruta</th>
                     <th>Acción</th>
                 </tr>
                 </thead>
@@ -31,6 +32,7 @@
                     <td th:text="${s.id}"></td>
                     <td th:text="${s.mascota != null ? s.mascota.nombre : '-'}"></td>
                     <td><span class="badge text-bg-warning" th:text="${s.estado.id}"></span></td>
+                    <td><span class="text-muted">En evaluación por gestor</span></td>
                     <td>
                         <form th:action="@{'/adopcion/cancelar/' + ${s.id}}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -39,7 +41,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(solicitudes)}">
-                    <td colspan="4" class="text-center">No tienes solicitudes registradas.</td>
+                    <td colspan="5" class="text-center">No tienes solicitudes registradas.</td>
                 </tr>
                 </tbody>
             </table>
@@ -54,6 +56,7 @@
                 <th>Mascota</th>
                 <th>Estado</th>
                 <th>Fecha</th>
+                <th>Seguimiento</th>
             </tr>
             </thead>
             <tbody>
@@ -62,9 +65,14 @@
                 <td th:text="${a.mascota != null ? a.mascota.nombre : '-'}"></td>
                 <td th:text="${a.estado != null ? a.estado.id : '-'}"></td>
                 <td th:text="${a.fechaAdopcion}"></td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" th:href="@{'/adopcion/seguimiento/' + ${a.id}}">
+                        Ver seguimiento
+                    </a>
+                </td>
             </tr>
             <tr th:if="${#lists.isEmpty(adopciones)}">
-                <td colspan="4" class="text-center">Aún no tienes adopciones registradas.</td>
+                <td colspan="5" class="text-center">Aún no tienes adopciones registradas.</td>
             </tr>
             </tbody>
         </table>

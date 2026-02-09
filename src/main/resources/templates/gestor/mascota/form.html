@@ -16,7 +16,7 @@
 </head>
 
 <body class="bg-light">
-	<div th:replace="~{fragments/gestor-navbar :: gestorNavbar}"></div>
+	<div th:replace="~{fragments/navbar :: navbar}"></div>
 
 	<div class="container py-4">
 
@@ -30,12 +30,8 @@
 			th:action="@{${mascota.id == null} ? '/gestor/mascotas/guardar' : '/gestor/mascotas/actualizar'}"
 			method="post" enctype="multipart/form-data" th:object="${mascota}">
 
-<<<<<<< HEAD
-        <input type="hidden" th:field="*{id}"/>
-        <input type="hidden" th:field="*{fotoUrl}"/>
-=======
 			<input type="hidden" th:field="*{id}" />
->>>>>>> refs/remotes/origin/codex/generate-adoption-request-form
+			<input type="hidden" th:field="*{fotoUrl}" />
 
 			<div class="row g-3">
 
@@ -70,23 +66,6 @@
 					<div class="text-danger small" th:errors="*{categoria}"></div>
 				</div>
 
-<<<<<<< HEAD
-            <div class="col-md-6">
-                <label class="form-label">Foto</label>
-                <input type="file" class="form-control" name="foto" accept="image/*" onchange="previewNuevaFoto(event)">
-            </div>
-
-            <div class="col-md-6" th:if="${mascota.id != null}">
-                <label class="form-label">Imagen actual</label>
-                <div class="border rounded p-2 bg-white text-center">
-                    <img id="previewActual"
-                         th:src="${mascota.fotoUrl != null ? mascota.fotoUrl : '/images/mascotas/mascota-default.jpg'}"
-                         alt="Imagen actual de la mascota"
-                         style="max-height:220px; width:auto; max-width:100%; object-fit:cover; border-radius:8px;"/>
-                </div>
-                <small class="text-muted">Si subes una nueva foto, esta vista previa se actualizará.</small>
-            </div>
-=======
 				<div class="col-md-6">
 					<label class="form-label">Raza</label> <select class="form-select"
 						th:field="*{raza.id}" required>
@@ -96,7 +75,6 @@
 					</select>
 					<div class="text-danger small" th:errors="*{raza}"></div>
 				</div>
->>>>>>> refs/remotes/origin/codex/generate-adoption-request-form
 
 				<div class="col-12">
 					<label class="form-label">Descripción</label>
@@ -106,25 +84,24 @@
 
 				<div class="col-md-6">
 					<label class="form-label">Foto</label> <input type="file"
-						class="form-control" name="foto">
+						class="form-control" name="foto" accept="image/*"
+						onchange="previewNuevaFoto(event)">
 					<div class="text-danger small" th:text="${fileError}"></div>
+				</div>
+
+				<div class="col-md-6" th:if="${mascota.id != null}">
+					<label class="form-label">Imagen actual</label>
+					<div class="border rounded p-2 bg-white text-center">
+						<img id="previewActual"
+							 th:src="${mascota.fotoUrl != null ? mascota.fotoUrl : '/images/mascotas/mascota-default.jpg'}"
+							 alt="Imagen actual de la mascota"
+							 style="max-height:220px; width:auto; max-width:100%; object-fit:cover; border-radius:8px;"/>
+					</div>
+					<small class="text-muted">Si subes una nueva foto, esta vista previa se actualizará.</small>
 				</div>
 
 			</div>
 
-<<<<<<< HEAD
-</div>
-
-<script>
-function previewNuevaFoto(event) {
-    const [file] = event.target.files;
-    const preview = document.getElementById('previewActual');
-    if (file && preview) {
-        preview.src = URL.createObjectURL(file);
-    }
-}
-</script>
-=======
 			<button class="btn btn-primary mt-4 w-100" type="submit">
 				<i class="bi bi-save"></i> <span
 					th:text="${mascota.id == null ? 'Guardar Mascota' : 'Actualizar Mascota'}"></span>
@@ -138,8 +115,15 @@ function previewNuevaFoto(event) {
 
 	</div>
 
-
->>>>>>> refs/remotes/origin/codex/generate-adoption-request-form
+	<script>
+	function previewNuevaFoto(event) {
+	    const [file] = event.target.files;
+	    const preview = document.getElementById('previewActual');
+	    if (file && preview) {
+	        preview.src = URL.createObjectURL(file);
+	    }
+	}
+	</script>
 
 </body>
 </html>

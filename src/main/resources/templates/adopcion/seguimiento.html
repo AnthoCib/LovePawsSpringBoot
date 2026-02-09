@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Seguimiento de adopción</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <h1 class="h5 mb-0">Seguimiento de adopción</h1>
+                <a th:href="@{/adopcion/mis-adopciones}" class="btn btn-outline-secondary btn-sm">Volver</a>
+            </div>
+
+            <div class="mb-3">
+                <strong>Mascota:</strong> <span th:text="${adopcion.mascota != null ? adopcion.mascota.nombre : '-'}"></span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>Fecha visita</th>
+                        <th>Estado mascota</th>
+                        <th>Observaciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="s : ${seguimientos}">
+                        <td th:text="${s.fechaVisita}"></td>
+                        <td th:text="${s.estado != null ? s.estado.id : '-'}"></td>
+                        <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(seguimientos)}">
+                        <td colspan="3" class="text-center text-muted">Aún no hay visitas registradas.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

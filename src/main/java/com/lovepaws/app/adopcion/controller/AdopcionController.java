@@ -14,11 +14,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.service.AdopcionService;
+import com.lovepaws.app.adopcion.service.SeguimientoService;
 import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
 import com.lovepaws.app.mascota.domain.Mascota;
+import com.lovepaws.app.mascota.domain.EstadoMascota;
+import com.lovepaws.app.mascota.repository.EstadoMascotaRepository;
 import com.lovepaws.app.mascota.service.MascotaService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.user.domain.Usuario;
@@ -33,6 +44,8 @@ public class AdopcionController {
 	private final SolicitudAdopcionService solicitudService;
 	private final AdopcionService adopcionService;
 	private final MascotaService mascotaService;
+	private final SeguimientoService seguimientoService;
+	private final EstadoMascotaRepository estadoMascotaRepository;
 
 	@GetMapping
 	public String flujoAdopcion() {
@@ -119,6 +132,13 @@ public class AdopcionController {
 	}
 
 	@PreAuthorize("hasRole('GESTOR')")
+	@GetMapping("/gestor/adopciones")
+	public String verAdopcionesGestor(Model model) {
+		model.addAttribute("adopciones", adopcionService.listarAdopciones());
+		return "adopcion/adopciones-gestor";
+	}
+
+	@PreAuthorize("hasRole('GESTOR')")
 	@PostMapping("/gestor/aprobar/{solicitudId}")
 	public String aprobarSolicitud(@PathVariable Integer solicitudId, Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
@@ -158,9 +178,76 @@ public class AdopcionController {
 	public String misAdopciones(Model model, Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
 		Integer usuarioId = principal.getUsuario().getId();
-		model.addAttribute("adopciones", adopcionService.listarAdopcionesPorUsuario(usuarioId));
+		List<com.lovepaws.app.adopcion.domain.Adopcion> adopciones = adopcionService.listarAdopcionesPorUsuario(usuarioId);
+		model.addAttribute("adopciones", adopciones);
 		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPorUsuario(usuarioId));
+		Map<Integer, List<SeguimientoPostAdopcion>> seguimientosPorAdopcion = new LinkedHashMap<>();
+		for (com.lovepaws.app.adopcion.domain.Adopcion adopcion : adopciones) {
+			seguimientosPorAdopcion.put(adopcion.getId(), seguimientoService.listarPorAdopcion(adopcion.getId()));
+		}
+		model.addAttribute("seguimientosPorAdopcion", seguimientosPorAdopcion);
 		return "adopcion/mis-adopciones";
+	}
+
+	@PreAuthorize("hasRole('ADOPTANTE')")
+	@GetMapping("/seguimiento/{adopcionId}")
+	public String verSeguimientoAdoptante(@PathVariable Integer adopcionId, Model model, Authentication auth) {
+		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+		Integer usuarioId = principal.getUsuario().getId();
+		com.lovepaws.app.adopcion.domain.Adopcion adopcion = adopcionService.findAdopcionById(adopcionId)
+				.filter(a -> a.getUsuarioAdoptante() != null && a.getUsuarioAdoptante().getId().equals(usuarioId))
+				.orElse(null);
+		if (adopcion == null) {
+			return "redirect:/adopcion/mis-adopciones?error=forbidden";
+		}
+		model.addAttribute("adopcion", adopcion);
+		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
+		return "adopcion/seguimiento";
+	}
+
+	@PreAuthorize("hasRole('GESTOR')")
+	@GetMapping("/gestor/seguimiento/{adopcionId}")
+	public String verSeguimientoGestor(@PathVariable Integer adopcionId, Model model) {
+		com.lovepaws.app.adopcion.domain.Adopcion adopcion = adopcionService.findAdopcionById(adopcionId).orElse(null);
+		if (adopcion == null) {
+			return "redirect:/gestor/dashboard?error=adopcion";
+		}
+		model.addAttribute("adopcion", adopcion);
+		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
+		model.addAttribute("estadosMascota", estadoMascotaRepository.findAll());
+		return "adopcion/seguimiento-gestor";
+	}
+
+	@PreAuthorize("hasRole('GESTOR')")
+	@PostMapping("/gestor/seguimiento/{adopcionId}")
+	public String crearSeguimiento(@PathVariable Integer adopcionId,
+	                               @RequestParam String fechaVisita,
+	                               @RequestParam(required = false) String observaciones,
+	                               @RequestParam(required = false) String estadoId,
+	                               Authentication auth) {
+		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+		com.lovepaws.app.adopcion.domain.Adopcion adopcion = adopcionService.findAdopcionById(adopcionId).orElse(null);
+		if (adopcion == null) {
+			return "redirect:/gestor/dashboard?error=adopcion";
+		}
+		LocalDateTime fecha;
+		try {
+			fecha = LocalDateTime.parse(fechaVisita, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+		} catch (DateTimeParseException ex) {
+			return "redirect:/adopcion/gestor/seguimiento/" + adopcionId + "?error=fecha";
+		}
+
+		SeguimientoPostAdopcion seguimiento = new SeguimientoPostAdopcion();
+		seguimiento.setAdopcion(adopcion);
+		seguimiento.setFechaVisita(fecha);
+		seguimiento.setObservaciones(observaciones);
+		seguimiento.setUsuarioCreacion(principal.getUsuario());
+		if (estadoId != null && !estadoId.isBlank()) {
+			EstadoMascota estadoMascota = estadoMascotaRepository.findById(estadoId).orElse(null);
+			seguimiento.setEstado(estadoMascota);
+		}
+		seguimientoService.createSeguimiento(seguimiento, principal.getUsuario().getId(), principal.getUsuario().getUsername());
+		return "redirect:/adopcion/gestor/seguimiento/" + adopcionId + "?created";
 	}
 
 	private boolean camposSolicitudIncompletos(SolicitudAdopcion solicitud) {

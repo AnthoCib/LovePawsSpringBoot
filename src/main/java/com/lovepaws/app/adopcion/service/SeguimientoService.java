@@ -7,7 +7,7 @@ import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 
 public interface SeguimientoService {
 
-	SeguimientoPostAdopcion createSeguimiento(SeguimientoPostAdopcion seguimiento);
+	SeguimientoPostAdopcion createSeguimiento(SeguimientoPostAdopcion seguimiento, Integer usuarioId, String usuarioNombre);
 
 	List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId);
 

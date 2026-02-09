@@ -12,7 +12,7 @@
     <link th:href="@{/css/admin.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
-<div th:replace="~{fragments/gestor-navbar :: gestorNavbar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <main class="container py-5">
     <div class="d-flex gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/}" class="btn btn-outline-primary btn-sm">Inicio</a></div>
@@ -79,6 +79,11 @@
                     <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                        th:href="@{/adopcion/gestor/solicitudes}">
                         Gestionar solicitudes de adopción
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                       th:href="@{/adopcion/gestor/adopciones}">
+                        Seguimiento post adopción
                         <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
