@@ -89,10 +89,10 @@ public class Usuario implements UserDetails {
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 
-	@Transient
+	@Column(name = "reset_token")
 	private String resetToken;
 
-	@Transient
+	@Column(name = "reset_token_expira")
 	private LocalDateTime resetTokenExpira;
 
 	@Override
