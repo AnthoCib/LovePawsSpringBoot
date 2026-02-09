@@ -67,11 +67,24 @@
     border: 1px solid #e9edf5;
 }
 
+<<<<<<< HEAD
 .pet-attribute {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin-bottom: 0.65rem;
+=======
+.info-card {
+    border-radius: 16px;
+    border: 1px solid var(--lp-border);
+    background: #fff;
+    box-shadow: 0 12px 20px rgba(13, 110, 253, 0.12);
+}
+
+.info-card .card-body {
+    display: grid;
+    gap: 0.5rem;
+>>>>>>> refs/heads/codex/update-card-and-label-styles-d7iw97
 }
 
 .meta-label {
