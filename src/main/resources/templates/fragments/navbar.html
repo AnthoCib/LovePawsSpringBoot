@@ -7,12 +7,45 @@
      th:fragment="navbar">
 
     <style>
+        :root {
+            --lp-primary: #3f558f;
+            --lp-primary-dark: #2f4478;
+            --lp-accent: #22a06b;
+            --lp-bg-soft: #f5f7fc;
+        }
+
+        body {
+            background-color: var(--lp-bg-soft);
+        }
+
         .lp-navbar {
-            background: rgba(0, 90, 152, 0.95);
+            background: linear-gradient(135deg, var(--lp-primary) 0%, var(--lp-primary-dark) 100%);
             backdrop-filter: saturate(140%) blur(4px);
             box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
             position: relative;
             z-index: 1080;
+        }
+
+        .btn-primary {
+            background-color: var(--lp-primary);
+            border-color: var(--lp-primary);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: var(--lp-primary-dark);
+            border-color: var(--lp-primary-dark);
+        }
+
+        .btn-success {
+            background-color: var(--lp-accent);
+            border-color: var(--lp-accent);
+        }
+
+        .btn-success:hover,
+        .btn-success:focus {
+            background-color: #1a8a5c;
+            border-color: #1a8a5c;
         }
 
         .lp-navbar .dropdown-menu {
