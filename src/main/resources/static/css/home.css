@@ -1,5 +1,5 @@
 .hero-home {
-  background: linear-gradient(135deg, #f5f9ff 0%, #fffaf0 100%);
+  background: linear-gradient(135deg, #eef2fb 0%, #f5f7fc 100%);
   border-radius: 18px;
 }
 .hero-home .hero-img {
@@ -21,7 +21,7 @@
 }
 .home-card img { height: 210px; object-fit: cover; }
 .home-cta {
-  background: linear-gradient(120deg, #005a98, #2c7fc1);
+  background: linear-gradient(120deg, #3f558f, #2f4478);
   color: #fff;
   border-radius: 16px;
 }
