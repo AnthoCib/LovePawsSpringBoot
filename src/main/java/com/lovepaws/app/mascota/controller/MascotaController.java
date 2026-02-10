@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,6 +39,7 @@ public class MascotaController {
 							 @RequestParam(required = false) Integer razaId,
 							 @RequestParam(required = false) Integer edadMax,
 							 @RequestParam(required = false) String q,
+							 Authentication authentication,
 							 Model model) {
 		model.addAttribute("mascotas", mascotaService.buscarMascotasDisponibles(categoriaId, razaId, edadMax, q));
 		model.addAttribute("categorias", categoriaRepository.findAll());
@@ -46,6 +48,15 @@ public class MascotaController {
 		model.addAttribute("razaId", razaId);
 		model.addAttribute("edadMax", edadMax);
 		model.addAttribute("q", q);
+
+		boolean autenticado = authentication != null && authentication.isAuthenticated()
+				&& authentication.getAuthorities().stream().noneMatch(a -> "ROLE_ANONYMOUS".equals(a.getAuthority()));
+		boolean esGestorOAdmin = autenticado && authentication.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.anyMatch(r -> "ROLE_GESTOR".equals(r) || "ROLE_ADMIN".equals(r));
+		model.addAttribute("esGestorOAdmin", esGestorOAdmin);
+		model.addAttribute("esAutenticado", autenticado);
+
 		return "mascota/lista";
 	}
 
