@@ -53,6 +53,23 @@ public class AdopcionController {
 	}
 
 	@PreAuthorize("hasRole('ADOPTANTE')")
+	@GetMapping("/solicitud/{mascotaId}")
+	public String formularioSolicitud(@PathVariable Integer mascotaId, Model model, Authentication auth) {
+		Mascota mascota = mascotaService.findMascotaById(mascotaId).orElse(null);
+		if (mascota == null || mascota.getEstado() == null || !"DISPONIBLE".equalsIgnoreCase(mascota.getEstado().getId())) {
+			return "redirect:/mascotas?error=estado-mascota";
+		}
+		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+		Usuario usuario = principal.getUsuario();
+		SolicitudAdopcion solicitud = new SolicitudAdopcion();
+		solicitud.setMascota(mascota);
+		model.addAttribute("solicitud", solicitud);
+		model.addAttribute("mascota", mascota);
+		model.addAttribute("usuario", usuario);
+		return "adopcion/solicitud-form";
+	}
+
+	@PreAuthorize("hasRole('ADOPTANTE')")
 	@PostMapping("/solicitar")
 	public String solicitarAdopcion(@ModelAttribute("solicitud") @Validated SolicitudAdopcion solicitud,
 			BindingResult br, Authentication auth) {
