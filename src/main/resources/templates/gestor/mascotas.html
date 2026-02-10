@@ -1,11 +1,4 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head><title>Gestión de Mascotas</title></head>
-<body>
-<h2>Panel del Gestor 🐾</h2>
-<p>Gestión de mascotas y solicitudes de adopción.</p>
-<a th:href="@{/logout}">Cerrar sesión</a>
-<!DOCTYPE html>
 <html lang="es"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -25,7 +18,17 @@
 
 <div class="container py-4">
 
-    <h2 class="fw-bold mb-4">🐾 Gestión de Mascotas</h2>
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">🐾 Gestión de Mascotas</h2>
+            <p class="text-muted mb-0">Gestión de mascotas y solicitudes de adopción</p>
+        </div>
+
+        <a th:href="@{/logout}" class="btn btn-outline-danger btn-sm">
+            Cerrar sesión
+        </a>
+    </div>
 
     <a href="/admin/dashboard" class="btn btn-outline-secondary mb-3">
         ← Volver
@@ -46,10 +49,8 @@
 
                 <div class="card-body">
 
-                    <!-- NOMBRE -->
                     <h5 class="card-title" th:text="${m.nombre}">Nombre</h5>
 
-                    <!-- CATEGORIA / RAZA -->
                     <p class="text-muted mb-1">
                         <i class="bi bi-tags"></i>
                         <span th:text="${m.categoria != null ? m.categoria.nombre : 'Sin categoría'}"></span>
@@ -57,7 +58,6 @@
                         <span th:text="${m.raza != null ? m.raza.nombre : 'Sin raza'}"></span>
                     </p>
 
-                    <!-- USUARIO -->
                     <p class="text-muted mb-2">
                         <i class="bi bi-person"></i>
                         Publicado por
@@ -65,21 +65,20 @@
                     </p>
 
                     <!-- ESTADO -->
-                
-                <span class="badge bg-success"
-				      th:if="${m.estado != null and m.estado.id == 'DISPONIBLE'}">
-				    DISPONIBLE
-				</span>
-				
-				<span class="badge bg-warning text-dark"
-				      th:if="${m.estado != null and m.estado.id == 'NO_DISPONIBLE'}">
-				    NO DISPONIBLE
-				</span>
-				
-				<span class="badge bg-secondary"
-				      th:if="${m.estado != null and m.estado.id == 'ADOPTADA'}">
-				    ADOPTADA
-				</span>
+                    <span class="badge bg-success"
+                          th:if="${m.estado != null and m.estado.id == 'DISPONIBLE'}">
+                        DISPONIBLE
+                    </span>
+
+                    <span class="badge bg-warning text-dark"
+                          th:if="${m.estado != null and m.estado.id == 'NO_DISPONIBLE'}">
+                        NO DISPONIBLE
+                    </span>
+
+                    <span class="badge bg-secondary"
+                          th:if="${m.estado != null and m.estado.id == 'ADOPTADA'}">
+                        ADOPTADA
+                    </span>
 
                 </div>
 
@@ -87,14 +86,12 @@
                 <div class="card-footer bg-transparent border-0">
                     <div class="d-grid gap-2">
 
-                        <!-- EDITAR -->
                         <a th:href="@{/gestor/mascotas/editar/{id}(id=${m.id})}"
                            class="btn btn-outline-warning btn-sm"
                            sec:authorize="hasAnyRole('GESTOR','ADMIN')">
                             ✏️ Editar
                         </a>
 
-                        <!-- ELIMINAR (solo GESTOR) -->
                         <form th:action="@{/gestor/mascotas/eliminar/{id}(id=${m.id})}"
                               method="post"
                               sec:authorize="hasRole('GESTOR')">
@@ -122,10 +119,6 @@
 
     </div>
 </div>
-
-</body>
-</html>
-
 
 </body>
 </html>
