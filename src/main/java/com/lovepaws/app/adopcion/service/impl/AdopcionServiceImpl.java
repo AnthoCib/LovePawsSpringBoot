@@ -62,15 +62,39 @@ public class AdopcionServiceImpl implements AdopcionService {
 		SolicitudAdopcion solicitud = solicitudRepo.findByIdForUpdate(solicitudId)
 				.orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
 
+		if (solicitud.getEstado() == null || solicitud.getEstado().getId() == null) {
+			throw new IllegalStateException("Solicitud sin estado válido");
+		}
+
 		if (!"PENDIENTE".equals(solicitud.getEstado().getId())) {
 			throw new IllegalStateException("Solicitud no está pendiente");
+		}
+
+		if (solicitud.getMascota() == null || solicitud.getMascota().getId() == null) {
+			throw new IllegalStateException("Solicitud sin mascota asociada");
+		}
+
+		if (solicitud.getUsuario() == null || solicitud.getUsuario().getId() == null) {
+			throw new IllegalStateException("Solicitud sin adoptante asociado");
+		}
+
+		if (adopcionRepo.existsBySolicitud_Id(solicitud.getId())) {
+			throw new IllegalStateException("La solicitud ya tiene una adopción registrada");
 		}
 
 		Mascota mascota = mascotaRepo.findByIdForUpdate(solicitud.getMascota().getId())
 				.orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
 
+		if (mascota.getEstado() == null || mascota.getEstado().getId() == null) {
+			throw new IllegalStateException("Mascota sin estado válido");
+		}
+
 		if (!"DISPONIBLE".equals(mascota.getEstado().getId())) {
 			throw new IllegalStateException("Mascota no disponible");
+		}
+
+		if (!adopcionRepo.findByMascotaId(mascota.getId()).isEmpty()) {
+			throw new IllegalStateException("La mascota ya cuenta con una adopción registrada");
 		}
 
 		EstadoAdopcion estadoAdopcion = new EstadoAdopcion();

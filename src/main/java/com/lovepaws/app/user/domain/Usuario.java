@@ -57,6 +57,7 @@ public class Usuario implements UserDetails {
   
     /*@Transient
     private Integer rolId;*/
+	@Column(name = "foto_url")
 	private String fotoUrl;
 
 	@NotBlank(message = "La direccion es obligatoria")
@@ -87,6 +88,12 @@ public class Usuario implements UserDetails {
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+
+	@Column(name = "reset_token")
+	private String resetToken;
+
+	@Column(name = "reset_token_expira")
+	private LocalDateTime resetTokenExpira;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

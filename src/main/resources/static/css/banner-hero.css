@@ -1,0 +1,26 @@
+.lp-hero {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    min-height: 240px;
+}
+
+.lp-hero .hero-image {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+}
+
+.lp-hero .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, rgba(63, 85, 143, 0.82), rgba(47, 68, 120, 0.5));
+}
+
+.lp-hero .hero-content {
+    position: absolute;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 1.25rem;
+}

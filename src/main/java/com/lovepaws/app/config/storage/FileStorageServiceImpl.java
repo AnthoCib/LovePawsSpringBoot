@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
 
-    @Value("${app.uploads.dir:src/main/resources/static/uploads}")
+    @Value("${app.uploads.dir:uploads}")
     private String uploadsDirPath;
 
     @Value("${app.upload.max-size-bytes:2097152}") // 2MB por defecto

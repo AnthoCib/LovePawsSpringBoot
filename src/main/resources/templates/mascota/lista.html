@@ -7,12 +7,20 @@
      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link th:href="@{/css/banner-hero.css}" rel="stylesheet"/>
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container py-4">
+    <section class="lp-hero mb-4">
+        <div class="overlay"></div>
+        <img th:src="@{/images/mascotas/luna.jpg}" alt="Mascotas en adopción" class="hero-image">
+        <div class="hero-content text-white">
+            <h1 class="fw-bold mb-2">Mascotas en adopción</h1>
+            <p class="mb-0">Encuentra a tu compañero ideal y conoce su historia antes de enviar tu solicitud.</p>
+        </div>
+    </section>
     <div class="d-flex gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/}" class="btn btn-outline-primary btn-sm">Inicio</a></div>
-    <h1 class="h3 mb-3">Mascotas en adopción</h1>
 
     <form method="get" th:action="@{/mascotas}" class="row g-2 mb-4">
         <div class="col-md-3">
@@ -47,7 +55,12 @@
                     <p class="card-text mb-1"><strong>Raza:</strong> <span th:text="${m.raza != null ? m.raza.nombre : '-'}"></span></p>
                     <p class="card-text mb-1"><strong>Categoría:</strong> <span th:text="${m.categoria != null ? m.categoria.nombre : '-'}"></span></p>
                     <p class="card-text mb-2"><strong>Edad:</strong> <span th:text="${m.edad}"></span> años</p>
-                    <a class="btn btn-outline-primary btn-sm" th:href="@{'/mascotas/' + ${m.id}}">Ver perfil</a>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{'/mascotas/' + ${m.id}}">Ver perfil</a>
+                        <a th:if="${!esGestorOAdmin and esAutenticado}" class="btn btn-success btn-sm" th:href="@{'/adopcion/solicitud/' + ${m.id}}">Adoptar</a>
+                        <a th:if="${!esGestorOAdmin and !esAutenticado}" class="btn btn-success btn-sm" th:href="@{/usuarios/login}">Adoptar</a>
+                        <button th:if="${esGestorOAdmin}" class="btn btn-success btn-sm" type="button" disabled title="Los gestores/admin solo pueden gestionar mascotas.">Adoptar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -62,6 +75,6 @@
 <div th:if="${param.duplicate}"><script>Swal.fire({icon:'warning',title:'Solicitud ya registrada',text:'Ya tienes una solicitud para esta mascota.'});</script></div>
 <div th:if="${param.error == 'estado-mascota'}"><script>Swal.fire({icon:'warning',title:'Mascota no disponible',text:'Solo se puede solicitar adopción de mascotas DISPONIBLES.'});</script></div>
 <div th:if="${param.error == 'mascota-ocupada'}"><script>Swal.fire({icon:'warning',title:'Mascota en proceso',text:'Esta mascota ya tiene una solicitud activa.'});</script></div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

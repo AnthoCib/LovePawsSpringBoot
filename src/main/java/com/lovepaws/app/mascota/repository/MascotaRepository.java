@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface MascotaRepository extends JpaRepository<Mascota, Integer> {
 
+	
 	List<Mascota> findByEstado_Id(String estadoId);
 
 	@Query("""

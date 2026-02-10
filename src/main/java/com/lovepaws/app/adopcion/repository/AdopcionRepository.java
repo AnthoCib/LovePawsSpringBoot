@@ -12,6 +12,8 @@ public interface AdopcionRepository  extends JpaRepository<Adopcion, Integer>{
 
 	List<Adopcion> findByMascotaId(Integer mascotaId);
 
+	boolean existsBySolicitud_Id(Integer solicitudId);
+
 	long countByEstado_Id(String estadoId);
 
 }

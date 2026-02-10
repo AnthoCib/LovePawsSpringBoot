@@ -40,12 +40,34 @@ public class MascotaServiceImpl implements MascotaService {
 
     @Override
     public Mascota updateMascota(Mascota mascota) {
-        // Opcional: validar existencia antes de actualizar
-        Optional<Mascota> exists = mascotaRepository.findById(mascota.getId());
-        if (exists.isEmpty()) {
-            throw new RuntimeException("Mascota no existe con id: " + mascota.getId());
+        Mascota existente = mascotaRepository.findById(mascota.getId())
+                .orElseThrow(() -> new RuntimeException("Mascota no existe con id: " + mascota.getId()));
+
+        existente.setNombre(mascota.getNombre());
+        existente.setEdad(mascota.getEdad());
+        existente.setDescripcion(mascota.getDescripcion());
+        existente.setSexo(mascota.getSexo());
+
+        if (mascota.getCategoria() != null) {
+            existente.setCategoria(mascota.getCategoria());
         }
-        return mascotaRepository.save(mascota);
+        if (mascota.getRaza() != null) {
+            existente.setRaza(mascota.getRaza());
+        }
+        if (mascota.getEstado() != null) {
+            existente.setEstado(mascota.getEstado());
+        } else if (existente.getEstado() == null) {
+            EstadoMascota estado = estadoRepo.findById("DISPONIBLE")
+                    .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+            existente.setEstado(estado);
+        }
+        if (mascota.getUsuarioCreacion() != null) {
+            existente.setUsuarioCreacion(mascota.getUsuarioCreacion());
+        }
+        if (mascota.getFotoUrl() != null && !mascota.getFotoUrl().isBlank()) {
+            existente.setFotoUrl(mascota.getFotoUrl());
+        }
+        return mascotaRepository.save(existente);
     }
 
     @Override
