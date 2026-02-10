@@ -13,6 +13,7 @@
         .lp-step.active .num { background:#3f558f; }
         .lp-section { display:none; }
         .lp-section.active { display:block; }
+        .lp-question { margin-bottom: 1rem; }
     </style>
 </head>
 <body class="bg-light">
@@ -33,11 +34,23 @@
             <div class="col-6 col-lg-3 lp-step active" data-step="1"><span class="num">1</span><div>Datos del contacto</div></div>
             <div class="col-6 col-lg-3 lp-step" data-step="2"><span class="num">2</span><div>Datos del hogar</div></div>
             <div class="col-6 col-lg-3 lp-step" data-step="3"><span class="num">3</span><div>Intereses del adoptante</div></div>
-            <div class="col-6 col-lg-3 lp-step" data-step="4"><span class="num">4</span><div>Resumen</div></div>
+            <div class="col-6 col-lg-3 lp-step" data-step="4"><span class="num">4</span><div>Cuidados y compromiso</div></div>
         </div>
 
         <section class="lp-section active" data-step="1">
             <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Solicitante</label>
+                    <input class="form-control" type="text" th:value="${usuario != null ? usuario.nombre : ''}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Celular</label>
+                    <input class="form-control" type="text" th:value="${usuario != null ? usuario.telefono : ''}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Correo electrónico</label>
+                    <input class="form-control" type="email" th:value="${usuario != null ? usuario.correo : ''}" readonly>
+                </div>
                 <div class="col-md-6">
                     <label class="form-label">¿Por qué deseas tener una mascota?</label>
                     <textarea class="form-control" name="pqAdoptar" rows="4" minlength="20" maxlength="600" required></textarea>
@@ -77,6 +90,14 @@
                         <option>Niños y mascotas</option>
                     </select>
                 </div>
+                <div class="col-12">
+                    <label class="form-label">¿Con qué frecuencia saldrá a pasear la mascota? ¿Quién será el encargado?</label>
+                    <textarea class="form-control" name="extraPaseos" rows="3" required></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">¿A qué ambientes de su vivienda tiene permitido ingresar la mascota?</label>
+                    <textarea class="form-control" name="extraAmbientes" rows="3" required></textarea>
+                </div>
             </div>
         </section>
 
@@ -105,27 +126,70 @@
                     <label class="form-label">Describe tu plan de cuidado de la mascota</label>
                     <textarea class="form-control" name="planMascota" rows="4" minlength="20" maxlength="600" required></textarea>
                 </div>
+                <div class="col-12">
+                    <label class="form-label">Cuando estés fuera de casa, ¿dónde estará tu mascota?</label>
+                    <textarea class="form-control" name="extraFueraCasa" rows="3" required></textarea>
+                </div>
             </div>
         </section>
 
         <section class="lp-section" data-step="4">
             <div class="row g-3">
-                <div class="col-12">
-                    <label class="form-label">Información adicional (opcional)</label>
-                    <textarea class="form-control" name="infoAdicional" rows="4" maxlength="600"></textarea>
+                <div class="col-md-6 lp-question">
+                    <label class="form-label d-block">¿Podrá cuidar a su mascota de aquí a un año?</label>
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="extraCuidarUnAnio" value="Sí" required><label class="form-check-label">Sí</label></div>
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="extraCuidarUnAnio" value="No" required><label class="form-check-label">No</label></div>
+                </div>
+                <div class="col-md-6 lp-question">
+                    <label class="form-label d-block">¿Y de aquí a cinco o diez años?</label>
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="extraCuidarDiezAnios" value="Sí" required><label class="form-check-label">Sí</label></div>
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="extraCuidarDiezAnios" value="No" required><label class="form-check-label">No</label></div>
+                </div>
+                <div class="col-md-6 lp-question">
+                    <label class="form-label">¿Qué harás con tu mascota si sales de viaje algunas semanas?</label>
+                    <textarea class="form-control" name="extraViajeSemanas" rows="2" required></textarea>
+                </div>
+                <div class="col-md-6 lp-question">
+                    <label class="form-label">¿Qué harás con tu mascota si sales de viaje uno o más meses?</label>
+                    <textarea class="form-control" name="extraViajeMeses" rows="2" required></textarea>
+                </div>
+                <div class="col-md-6 lp-question">
+                    <label class="form-label">¿Qué harías si por descuido la mascota escapa de casa?</label>
+                    <textarea class="form-control" name="extraEscape" rows="2" required></textarea>
+                </div>
+                <div class="col-md-6 lp-question">
+                    <label class="form-label">¿Qué harás si muestra un problema de comportamiento?</label>
+                    <textarea class="form-control" name="extraComportamiento" rows="2" required></textarea>
                 </div>
                 <div class="col-12">
-                    <div class="alert alert-info mb-0">
-                        Al enviar, tu solicitud quedará en estado <strong>PENDIENTE</strong> para revisión del gestor.
+                    <label class="form-label">Información adicional (opcional)</label>
+                    <textarea class="form-control" name="infoAdicional" id="infoAdicional" rows="3" maxlength="1200"></textarea>
+                </div>
+
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body row g-3 align-items-center">
+                            <div class="col-md-7">
+                                <h2 class="h4 mb-2">Resultados de la solicitud</h2>
+                                <p class="mb-1">Te enviaremos un correo con el detalle de la solicitud de adopción.</p>
+                                <p class="mb-1">Una vez aceptada por parte del albergue, se te notificará por correo electrónico.</p>
+                                <p class="mb-0">También te indicaremos los siguientes pasos para concluir el proceso.</p>
+                            </div>
+                            <div class="col-md-5 text-center">
+                                <div class="display-1 text-success">✓</div>
+                                <div class="fw-semibold">¡Gracias por adoptar con responsabilidad!</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <div class="d-flex gap-2 mt-4">
+            <a class="btn btn-outline-secondary" th:href="@{'/mascotas/' + ${mascota.id}}">Cancelar</a>
             <button class="btn btn-outline-secondary" type="button" id="prevBtn">Atrás</button>
             <button class="btn btn-primary" type="button" id="nextBtn">Siguiente</button>
-            <button class="btn btn-success ms-auto d-none" type="submit" id="submitBtn">Enviar solicitud</button>
+            <button class="btn btn-success ms-auto d-none" type="submit" id="submitBtn">Finalizar</button>
         </div>
     </form>
 </div>
@@ -137,6 +201,7 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('solicitudForm');
     let current = 0;
 
     const update = () => {
@@ -167,6 +232,22 @@
     prevBtn.addEventListener('click', () => {
         current = Math.max(current - 1, 0);
         update();
+    });
+
+    form.addEventListener('submit', () => {
+        const info = document.getElementById('infoAdicional');
+        const extra = [
+            'Ambientes permitidos: ' + (form.extraAmbientes?.value || '-'),
+            'Paseos y encargado: ' + (form.extraPaseos?.value || '-'),
+            'Fuera de casa: ' + (form.extraFueraCasa?.value || '-'),
+            'Cuidará en 1 año: ' + (form.extraCuidarUnAnio?.value || '-'),
+            'Cuidará en 5-10 años: ' + (form.extraCuidarDiezAnios?.value || '-'),
+            'Plan viaje semanas: ' + (form.extraViajeSemanas?.value || '-'),
+            'Plan viaje meses: ' + (form.extraViajeMeses?.value || '-'),
+            'Acción ante escape: ' + (form.extraEscape?.value || '-'),
+            'Manejo de comportamiento: ' + (form.extraComportamiento?.value || '-')
+        ].join('\n');
+        info.value = (info.value ? info.value + '\n\n' : '') + '[Detalle ampliado]\n' + extra;
     });
 
     update();
