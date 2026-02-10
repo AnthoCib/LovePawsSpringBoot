@@ -71,13 +71,9 @@
                                 Queremos asegurarnos de que cada mascota llegue a un hogar ideal. Completa estos datos para conocer mejor tu situación y plan de cuidado.
                             </p>
                         </div>
-                        <button class="btn btn-success"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#solicitudAdopcion"
-                                th:attr="aria-expanded=${param.adoptar != null}">
+                        <a class="btn btn-success" th:href="@{'/adopcion/solicitud/' + ${mascota.id}}">
                             Adoptar
-                        </button>
+                        </a>
                     </div>
                     <div id="solicitudAdopcion" class="collapse mt-4" th:classappend="${param.adoptar != null} ? ' show' : ''">
                         <form th:action="@{/adopcion/solicitar}" method="post" class="row g-3">

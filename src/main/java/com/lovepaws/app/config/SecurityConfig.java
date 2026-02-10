@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/gestor/**").hasAnyRole("GESTOR","ADMIN")
                 .requestMatchers("/adopcion/gestor/**").hasRole("GESTOR")
-                .requestMatchers("/adopcion/mis-adopciones", "/adopcion/solicitar", "/adopcion/cancelar/**").hasRole("ADOPTANTE")
+                .requestMatchers("/adopcion/mis-adopciones", "/adopcion/solicitar", "/adopcion/cancelar/**", "/adopcion/solicitud/**").hasRole("ADOPTANTE")
                 .requestMatchers("/mascota/catalogo/**").hasRole("ADOPTANTE")
                 // Todo lo demás requiere login
                 .anyRequest().authenticated()
