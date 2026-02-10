@@ -61,17 +61,10 @@ public class MascotaController {
 	}
 
 	@GetMapping("/mascotas/{id}")
-	public String detalleMascota(@PathVariable Integer id, Authentication authentication, Model model) {
+	public String detalleMascota(@PathVariable Integer id, Model model) {
 		Mascota mascota = mascotaService.findMascotaById(id)
 				.orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
-		boolean autenticado = authentication != null && authentication.isAuthenticated()
-				&& authentication.getAuthorities().stream().noneMatch(a -> "ROLE_ANONYMOUS".equals(a.getAuthority()));
-		boolean esGestorOAdmin = autenticado && authentication.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority)
-				.anyMatch(r -> "ROLE_GESTOR".equals(r) || "ROLE_ADMIN".equals(r));
 		model.addAttribute("mascota", mascota);
-		model.addAttribute("esAutenticado", autenticado);
-		model.addAttribute("esGestorOAdmin", esGestorOAdmin);
 		return "mascota/detalle";
 	}
 

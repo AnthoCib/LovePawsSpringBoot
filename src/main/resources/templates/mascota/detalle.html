@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,9 +55,9 @@
                         <h2 class="h5 mb-1">¿Deseas adoptarlo?</h2>
                         <p class="text-muted small mb-0">Completa el formulario para iniciar la evaluación de adopción.</p>
                     </div>
-                    <a th:if="${!esGestorOAdmin and esAutenticado}" class="btn btn-success" th:href="@{'/adopcion/solicitud/' + ${mascota.id}}">Adoptar</a>
-                    <a th:if="${!esGestorOAdmin and !esAutenticado}" class="btn btn-success" th:href="@{/usuarios/login}">Adoptar</a>
-                    <button th:if="${esGestorOAdmin}" class="btn btn-success" type="button" disabled>Adoptar</button>
+                    <a sec:authorize="hasRole('ADOPTANTE')" class="btn btn-success" th:href="@{'/adopcion/solicitud/' + ${mascota.id}}">Adoptar</a>
+                    <button sec:authorize="hasAnyRole('GESTOR','ADMIN')" class="btn btn-success" type="button" disabled>Adoptar</button>
+                    <a sec:authorize="isAnonymous()" class="btn btn-success" th:href="@{/usuarios/login}">Adoptar</a>
                 </div>
             </div>
         </div>
