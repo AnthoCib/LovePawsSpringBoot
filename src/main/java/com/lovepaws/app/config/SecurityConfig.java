@@ -46,7 +46,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 //  Recursos estáticos y rutas públicas
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/webjars/**").permitAll()
                 .requestMatchers("/", "/index", "/home", "/usuarios/registro", "/usuarios/recuperar-password", "/usuarios/reset-password", "/login", "/registro", "/mascotas/**", "/nosotros", "/contacto", "/adopcion").permitAll()
                 // Rutas protegidas por rol
                 .requestMatchers("/admin/**").hasRole("ADMIN")
