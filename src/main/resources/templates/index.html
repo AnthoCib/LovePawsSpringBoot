@@ -26,19 +26,21 @@
         </div>
     </section>
 
-    <section class="row g-3 mb-4">
-        <div class="col-md-4"><div class="metric-card p-3"><h2 class="h5 mb-1">+500</h2><p class="text-muted mb-0">Mascotas adoptadas</p></div></div>
-        <div class="col-md-4"><div class="metric-card p-3"><h2 class="h5 mb-1">+120</h2><p class="text-muted mb-0">Voluntarios activos</p></div></div>
-        <div class="col-md-4"><div class="metric-card p-3"><h2 class="h5 mb-1">24/7</h2><p class="text-muted mb-0">Seguimiento y soporte</p></div></div>
+    <section class="row g-3 mb-4 fx-fade-in" style="animation-delay:.04s;">
+        <div class="col-md-4 fx-fade-in fx-stagger-1"><div class="metric-card p-3"><h2 class="h5 mb-1">+500</h2><p class="text-muted mb-0">Mascotas adoptadas</p></div></div>
+        <div class="col-md-4 fx-fade-in fx-stagger-2"><div class="metric-card p-3"><h2 class="h5 mb-1">+120</h2><p class="text-muted mb-0">Voluntarios activos</p></div></div>
+        <div class="col-md-4 fx-fade-in fx-stagger-3"><div class="metric-card p-3"><h2 class="h5 mb-1">24/7</h2><p class="text-muted mb-0">Seguimiento y soporte</p></div></div>
     </section>
 
-    <section class="mb-4">
+    <section class="mb-4 fx-fade-in">
         <h2 class="h4 fw-bold mb-3">¿Qué puedes hacer en LovePaws?</h2>
         <div class="row g-4">
             <div class="col-md-4">
                 <article class="home-card h-100">
-                    <img th:src="@{/images/mascotas/luna.jpg}" alt="Adopta">
-                    <div class="p-3">
+                    <div class="home-card-media">
+                        <img th:src="@{/images/mascotas/luna.jpg}" alt="Adopta">
+                    </div>
+                    <div class="p-3 home-card-content">
                         <h3 class="h6"><i class="bi bi-search-heart me-2"></i>Explorar mascotas</h3>
                         <p class="text-muted small">Filtra por raza, categoría y edad para encontrar tu compañero ideal.</p>
                     </div>
@@ -46,8 +48,10 @@
             </div>
             <div class="col-md-4">
                 <article class="home-card h-100">
-                    <img th:src="@{/images/mascotas/max.jpg}" alt="Solicita">
-                    <div class="p-3">
+                    <div class="home-card-media">
+                        <img th:src="@{/images/mascotas/max.jpg}" alt="Solicita">
+                    </div>
+                    <div class="p-3 home-card-content">
                         <h3 class="h6"><i class="bi bi-file-earmark-check me-2"></i>Solicitar adopción</h3>
                         <p class="text-muted small">Envía tu solicitud y sigue su estado desde tu panel de adopciones.</p>
                     </div>
@@ -55,12 +59,28 @@
             </div>
             <div class="col-md-4">
                 <article class="home-card h-100">
-                    <img th:src="@{/images/Imagenes_PNG/comunidad.png}" alt="Comunidad">
-                    <div class="p-3">
+                    <div class="home-card-media">
+                        <img th:src="@{/images/Imagenes_PNG/comunidad.png}" alt="Comunidad">
+                    </div>
+                    <div class="p-3 home-card-content">
                         <h3 class="h6"><i class="bi bi-people-fill me-2"></i>Unirte a la comunidad</h3>
                         <p class="text-muted small">Forma parte de historias de rescate, cuidado y adopción responsable.</p>
                     </div>
                 </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-4 fx-fade-in" style="animation-delay:.12s;">
+        <div class="home-video card border-0 shadow-sm p-3 p-md-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                <h2 class="h4 fw-bold mb-0">Video de presentación</h2>
+                <span class="badge text-bg-dark">LovePaws</span>
+            </div>
+            <div class="ratio ratio-16x9 rounded overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/j5a0jTc9S10" title="Presentación LovePaws"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen></iframe>
             </div>
         </div>
     </section>

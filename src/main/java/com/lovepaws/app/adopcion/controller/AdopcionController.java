@@ -53,6 +53,23 @@ public class AdopcionController {
 	}
 
 	@PreAuthorize("hasRole('ADOPTANTE')")
+	@GetMapping("/solicitud/{mascotaId}")
+	public String formularioSolicitud(@PathVariable Integer mascotaId, Model model, Authentication auth) {
+		Mascota mascota = mascotaService.findMascotaById(mascotaId).orElse(null);
+		if (mascota == null || mascota.getEstado() == null || !"DISPONIBLE".equalsIgnoreCase(mascota.getEstado().getId())) {
+			return "redirect:/mascotas?error=estado-mascota";
+		}
+		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+		Usuario usuario = principal.getUsuario();
+		SolicitudAdopcion solicitud = new SolicitudAdopcion();
+		solicitud.setMascota(mascota);
+		model.addAttribute("solicitud", solicitud);
+		model.addAttribute("mascota", mascota);
+		model.addAttribute("usuario", usuario);
+		return "adopcion/solicitud-form";
+	}
+
+	@PreAuthorize("hasRole('ADOPTANTE')")
 	@PostMapping("/solicitar")
 	public String solicitarAdopcion(@ModelAttribute("solicitud") @Validated SolicitudAdopcion solicitud,
 			BindingResult br, Authentication auth) {
@@ -181,10 +198,15 @@ public class AdopcionController {
 		List<com.lovepaws.app.adopcion.domain.Adopcion> adopciones = adopcionService.listarAdopcionesPorUsuario(usuarioId);
 		model.addAttribute("adopciones", adopciones);
 		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPorUsuario(usuarioId));
+		Map<Integer, Integer> adopcionIdPorSolicitud = new LinkedHashMap<>();
 		Map<Integer, List<SeguimientoPostAdopcion>> seguimientosPorAdopcion = new LinkedHashMap<>();
 		for (com.lovepaws.app.adopcion.domain.Adopcion adopcion : adopciones) {
+			if (adopcion.getSolicitud() != null && adopcion.getSolicitud().getId() != null) {
+				adopcionIdPorSolicitud.put(adopcion.getSolicitud().getId(), adopcion.getId());
+			}
 			seguimientosPorAdopcion.put(adopcion.getId(), seguimientoService.listarPorAdopcion(adopcion.getId()));
 		}
+		model.addAttribute("adopcionIdPorSolicitud", adopcionIdPorSolicitud);
 		model.addAttribute("seguimientosPorAdopcion", seguimientosPorAdopcion);
 		return "adopcion/mis-adopciones";
 	}
@@ -236,11 +258,14 @@ public class AdopcionController {
 		} catch (DateTimeParseException ex) {
 			return "redirect:/adopcion/gestor/seguimiento/" + adopcionId + "?error=fecha";
 		}
+		if (adopcion.getFechaAdopcion() != null && fecha.isBefore(adopcion.getFechaAdopcion())) {
+			return "redirect:/adopcion/gestor/seguimiento/" + adopcionId + "?error=fecha-min";
+		}
 
 		SeguimientoPostAdopcion seguimiento = new SeguimientoPostAdopcion();
 		seguimiento.setAdopcion(adopcion);
 		seguimiento.setFechaVisita(fecha);
-		seguimiento.setObservaciones(observaciones);
+		seguimiento.setObservaciones(observaciones != null ? observaciones.trim() : null);
 		seguimiento.setUsuarioCreacion(principal.getUsuario());
 		if (estadoId != null && !estadoId.isBlank()) {
 			EstadoMascota estadoMascota = estadoMascotaRepository.findById(estadoId).orElse(null);

@@ -1,0 +1,23 @@
+/* Animaciones para dashboards (gestor/admin) */
+.dash-fade-up {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: dashFadeUp .55s ease forwards;
+}
+.delay-1 { animation-delay: .06s; }
+.delay-2 { animation-delay: .14s; }
+.delay-3 { animation-delay: .22s; }
+.delay-4 { animation-delay: .30s; }
+.delay-5 { animation-delay: .38s; }
+.delay-6 { animation-delay: .46s; }
+
+@keyframes dashFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dash-glow:hover {
+  box-shadow: 0 16px 34px rgba(31, 41, 55, 0.16) !important;
+}

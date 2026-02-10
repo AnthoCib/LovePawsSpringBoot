@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.lovepaws.app.config.storage.FileStorageService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.user.domain.EstadoUsuario;
@@ -39,6 +41,7 @@ public class UsuarioController {
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final FileStorageService fileStorageService;
 
     /* =========================
        REGISTRO DE USUARIO
@@ -151,6 +154,7 @@ public class UsuarioController {
                                @RequestParam String correo,
                                @RequestParam String telefono,
                                @RequestParam String direccion,
+                               @RequestParam(value = "foto", required = false) MultipartFile foto,
                                Authentication auth) {
 
         if (!(auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal)) {
@@ -193,6 +197,19 @@ public class UsuarioController {
         usuario.setCorreo(correo);
         usuario.setTelefono(telefono);
         usuario.setDireccion(direccion);
+
+        if (foto != null && !foto.isEmpty()) {
+            try {
+                String fotoUrl = fileStorageService.store(foto);
+                usuario.setFotoUrl(fotoUrl);
+            } catch (RuntimeException ex) {
+                if (isAdmin && !id.equals(usuarioAutenticadoId)) {
+                    return "redirect:/usuarios/perfil?id=" + id + "&error=foto";
+                }
+                return "redirect:/usuarios/perfil?error=foto";
+            }
+        }
+
         usuarioService.updateUsuario(usuario);
         if (isAdmin && !id.equals(usuarioAutenticadoId)) {
             return "redirect:/usuarios/perfil?id=" + id + "&updated";
