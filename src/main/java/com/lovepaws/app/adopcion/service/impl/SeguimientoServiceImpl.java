@@ -30,14 +30,14 @@ public class SeguimientoServiceImpl implements SeguimientoService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId) {
-		// TODO Auto-generated method stub
-		return seguimientoRepo.findByAdopcionId(adopcionId);
+		return seguimientoRepo.findByAdopcionIdOrderByFechaVisitaDesc(adopcionId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<SeguimientoPostAdopcion> findById(Integer id) {
-		// TODO Auto-generated method stub
 		return seguimientoRepo.findById(id);
 	}
 
