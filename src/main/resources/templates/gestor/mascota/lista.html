@@ -31,13 +31,13 @@
             <h5 class="card-title mb-0" th:text="${m.nombre}">Firulais</h5>
 
             <span class="badge text-bg-success" th:if="${m.estado != null and m.estado.id == 'DISPONIBLE'}"
-                  th:text="${m.estado.nombre != null ? m.estado.nombre : m.estado.id}">DISPONIBLE</span>
+                  th:text="${m.estado.nombre != null ? m.estado.descripcion : m.estado.id}">DISPONIBLE</span>
             <span class="badge text-bg-warning" th:if="${m.estado != null and m.estado.id == 'NO_DISPONIBLE'}"
-                  th:text="${m.estado.nombre != null ? m.estado.nombre : m.estado.id}">NO DISPONIBLE</span>
+                  th:text="${m.estado.nombre != null ? m.estado.descripcion : m.estado.id}">NO DISPONIBLE</span>
             <span class="badge text-bg-primary" th:if="${m.estado != null and m.estado.id == 'ADOPTADA'}"
-                  th:text="${m.estado.nombre != null ? m.estado.nombre : m.estado.id}">ADOPTADA</span>
+                  th:text="${m.estado.descripcion!= null ? m.estado.descripcion : m.estado.id}">ADOPTADA</span>
             <span class="badge text-bg-info" th:if="${m.estado != null and m.estado.id == 'EN_TRATAMIENTO'}"
-                  th:text="${m.estado.nombre != null ? m.estado.nombre : m.estado.id}">EN TRATAMIENTO</span>
+                  th:text="${m.estado.descripcion != null ? m.estado.descripcion : m.estado.id}">EN TRATAMIENTO</span>
             <span class="badge text-bg-secondary"
                   th:if="${m.estado == null or (m.estado.id != 'DISPONIBLE' and m.estado.id != 'NO_DISPONIBLE' and m.estado.id != 'ADOPTADA' and m.estado.id != 'EN_TRATAMIENTO')}"
                   th:text="${m.estado != null ? (m.estado.descripcion != null ? m.estado.descripcion : m.estado.id) : '-'}">-</span>
