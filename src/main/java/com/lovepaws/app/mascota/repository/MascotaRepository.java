@@ -15,7 +15,7 @@ public interface MascotaRepository extends JpaRepository<Mascota, Integer> {
 	@Query("""
 			SELECT m
 			FROM Mascota m
-			JOIN FETCH m.estadoMascota
+			JOIN FETCH m.estado
 			""")
 	List<Mascota> findByEstado_Id(String estadoId);
 
