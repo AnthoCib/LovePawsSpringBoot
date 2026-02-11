@@ -22,6 +22,13 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE seguimiento_post_adopcion SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class SeguimientoPostAdopcion {
+
+    // Estado simplificado para tracking post-adopción solicitado por frontend.
+    public enum EstadoMascotaSeguimiento {
+        BIEN,
+        ATENCION_VETERINARIA,
+        RETORNADO
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -39,6 +46,10 @@ public class SeguimientoPostAdopcion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id")
     private EstadoMascota estado;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_mascota_tracking", length = 40)
+    private EstadoMascotaSeguimiento estadoMascota;
 
     private Boolean activo = true;
 
