@@ -23,6 +23,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguimientoAdoptanteService {
 
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.List<RespuestaSeguimientoResponseDTO> listarPorAdopcion(Integer adopcionId) {
+        return respuestaRepository.findByAdopcion_Id(adopcionId).stream().map(this::toDto).toList();
+    }
+
     private final RespuestaSeguimientoAdoptanteRepository respuestaRepository;
     private final SeguimientoRepository seguimientoRepository;
     private final AdopcionRepository adopcionRepository;

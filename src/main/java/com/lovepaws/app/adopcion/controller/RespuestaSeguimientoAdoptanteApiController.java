@@ -1,8 +1,11 @@
 package com.lovepaws.app.adopcion.controller;
 
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoRequestDTO;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoResponseDTO;
+import com.lovepaws.app.adopcion.service.AdopcionService;
 import com.lovepaws.app.adopcion.service.RespuestaSeguimientoAdoptanteService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 
@@ -27,6 +31,28 @@ import lombok.RequiredArgsConstructor;
 public class RespuestaSeguimientoAdoptanteApiController {
 
     private final RespuestaSeguimientoAdoptanteService respuestaService;
+    private final AdopcionService adopcionService;
+
+    // Lista respuestas por adopción para seguimiento del adoptante o revisión del gestor.
+    @PreAuthorize("hasAnyRole('ADOPTANTE','GESTOR','ADMIN')")
+    @GetMapping("/adopcion/{adopcionId}")
+    public List<RespuestaSeguimientoResponseDTO> listarPorAdopcion(@PathVariable Integer adopcionId,
+                                                                   Authentication auth) {
+        UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+        boolean esGestorOAdmin = auth.getAuthorities().stream().anyMatch(a ->
+                "ROLE_GESTOR".equals(a.getAuthority()) || "ROLE_ADMIN".equals(a.getAuthority()));
+
+        if (!esGestorOAdmin) {
+            Integer adoptanteId = adopcionService.findAdopcionById(adopcionId)
+                    .map(a -> a.getUsuarioAdoptante() != null ? a.getUsuarioAdoptante().getId() : null)
+                    .orElseThrow(() -> new IllegalArgumentException("Adopción no encontrada"));
+            if (adoptanteId == null || !adoptanteId.equals(principal.getUsuario().getId())) {
+                throw new IllegalArgumentException("No autorizado para ver respuestas de esta adopción");
+            }
+        }
+
+        return respuestaService.listarPorAdopcion(adopcionId);
+    }
 
     // Registro de respuesta del adoptante con foto opcional.
     @PreAuthorize("hasAnyRole('ADOPTANTE','GESTOR','ADMIN')")
