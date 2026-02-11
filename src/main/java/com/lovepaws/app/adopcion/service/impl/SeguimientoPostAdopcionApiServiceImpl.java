@@ -7,11 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SeguimientoRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
+import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.user.domain.Usuario;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         seguimiento.setAdopcion(adopcion);
         seguimiento.setFechaVisita(request.getFechaSeguimiento());
         seguimiento.setObservaciones(request.getNotas() != null ? request.getNotas().trim() : null);
-        seguimiento.setEstadoMascota(request.getEstadoMascota());
+        seguimiento.setEstado(mapearEstadoTracking(request.getEstadoMascota()));
 
         // Relación con Usuario: guardamos el gestor creador cuando llega su id autenticado.
         if (gestorId != null) {
@@ -46,12 +48,11 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
 
     @Override
     @Transactional(readOnly = true)
-    public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(
-            SeguimientoPostAdopcion.EstadoMascotaSeguimiento estadoMascota) {
+    public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoMascotaTracking estadoMascota) {
 
         List<SeguimientoPostAdopcion> data = (estadoMascota == null)
                 ? seguimientoRepository.findAllByOrderByFechaVisitaDesc()
-                : seguimientoRepository.findByEstadoMascotaOrderByFechaVisitaDesc(estadoMascota);
+                : seguimientoRepository.findByEstado_IdOrderByFechaVisitaDesc(mapearEstadoId(estadoMascota));
 
         return data.stream().map(this::toDto).toList();
     }
@@ -67,7 +68,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         existente.setAdopcion(adopcion);
         existente.setFechaVisita(request.getFechaSeguimiento());
         existente.setObservaciones(request.getNotas() != null ? request.getNotas().trim() : null);
-        existente.setEstadoMascota(request.getEstadoMascota());
+        existente.setEstado(mapearEstadoTracking(request.getEstadoMascota()));
 
         return toDto(seguimientoRepository.save(existente));
     }
@@ -77,14 +78,42 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
                 .orElseThrow(() -> new IllegalArgumentException("Adopción no encontrada"));
 
         String estado = adopcion.getEstado() != null ? adopcion.getEstado().getId() : null;
-        // Regla solicitada: no se permite seguimiento para adopciones no confirmadas.
-        if (!"APROBADA".equalsIgnoreCase(estado) && !"CONFIRMADA".equalsIgnoreCase(estado)) {
-            throw new IllegalStateException("Solo se pueden registrar seguimientos para adopciones confirmadas");
+        // Con base en el catálogo actual de BD solo APROBADA es estado confirmado para seguimiento.
+        if (!"APROBADA".equalsIgnoreCase(estado)) {
+            throw new IllegalStateException("Solo se pueden registrar seguimientos para adopciones aprobadas");
         }
         return adopcion;
     }
 
+    private EstadoMascota mapearEstadoTracking(EstadoMascotaTracking tracking) {
+        EstadoMascota estado = new EstadoMascota();
+        estado.setId(mapearEstadoId(tracking));
+        return estado;
+    }
+
+    // Mapea el tracking funcional a los estados reales existentes en tabla estado_mascota.
+    private String mapearEstadoId(EstadoMascotaTracking tracking) {
+        return switch (tracking) {
+            case BIEN -> "ADOPTADA";
+            case ATENCION_VETERINARIA -> "NO_DISPONIBLE";
+            case RETORNADO -> "DISPONIBLE";
+        };
+    }
+
+    private EstadoMascotaTracking mapearTrackingDesdeEstadoId(String estadoId) {
+        if (estadoId == null) {
+            return null;
+        }
+        return switch (estadoId.toUpperCase()) {
+            case "ADOPTADA" -> EstadoMascotaTracking.BIEN;
+            case "NO_DISPONIBLE" -> EstadoMascotaTracking.ATENCION_VETERINARIA;
+            case "DISPONIBLE" -> EstadoMascotaTracking.RETORNADO;
+            default -> null;
+        };
+    }
+
     private SeguimientoPostAdopcionResponseDTO toDto(SeguimientoPostAdopcion s) {
+        String estadoId = s.getEstado() != null ? s.getEstado().getId() : null;
         return SeguimientoPostAdopcionResponseDTO.builder()
                 .id(s.getId())
                 .adopcionId(s.getAdopcion() != null ? s.getAdopcion().getId() : null)
@@ -93,7 +122,8 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
                 .gestorId(s.getUsuarioCreacion() != null ? s.getUsuarioCreacion().getId() : null)
                 .fechaSeguimiento(s.getFechaVisita())
                 .notas(s.getObservaciones())
-                .estadoMascota(s.getEstadoMascota())
+                .estadoMascota(mapearTrackingDesdeEstadoId(estadoId))
+                .estadoMascotaId(estadoId)
                 .fechaCreacion(s.getFechaCreacion())
                 .fechaActualizacion(s.getFechaModificacion())
                 .build();

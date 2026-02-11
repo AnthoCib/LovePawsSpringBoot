@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
@@ -50,7 +50,7 @@ public class SeguimientoPostAdopcionApiController {
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     @GetMapping
     public List<SeguimientoPostAdopcionResponseDTO> listar(
-            @RequestParam(required = false) SeguimientoPostAdopcion.EstadoMascotaSeguimiento estadoMascota) {
+            @RequestParam(required = false) EstadoMascotaTracking estadoMascota) {
         return seguimientoApiService.listarSeguimientos(estadoMascota);
     }
 

@@ -2,8 +2,6 @@ package com.lovepaws.app.adopcion.dto;
 
 import java.time.LocalDateTime;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +15,8 @@ public class SeguimientoPostAdopcionResponseDTO {
     private Integer gestorId;
     private LocalDateTime fechaSeguimiento;
     private String notas;
-    private SeguimientoPostAdopcion.EstadoMascotaSeguimiento estadoMascota;
+    private EstadoMascotaTracking estadoMascota;
+    private String estadoMascotaId;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 }

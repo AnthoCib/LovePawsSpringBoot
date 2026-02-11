@@ -2,8 +2,6 @@ package com.lovepaws.app.adopcion.dto;
 
 import java.time.LocalDateTime;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -19,5 +17,5 @@ public class SeguimientoPostAdopcionRequestDTO {
     private String notas;
 
     @NotNull(message = "estadoMascota es obligatorio")
-    private SeguimientoPostAdopcion.EstadoMascotaSeguimiento estadoMascota;
+    private EstadoMascotaTracking estadoMascota;
 }

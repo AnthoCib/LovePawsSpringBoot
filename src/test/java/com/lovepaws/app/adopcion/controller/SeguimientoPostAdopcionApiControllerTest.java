@@ -21,7 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
@@ -45,12 +45,12 @@ class SeguimientoPostAdopcionApiControllerTest {
         request.setAdopcionId(10);
         request.setFechaSeguimiento(LocalDateTime.of(2026, 2, 10, 10, 30));
         request.setNotas("Mascota estable");
-        request.setEstadoMascota(SeguimientoPostAdopcion.EstadoMascotaSeguimiento.BIEN);
+        request.setEstadoMascota(EstadoMascotaTracking.BIEN);
 
         SeguimientoPostAdopcionResponseDTO response = SeguimientoPostAdopcionResponseDTO.builder()
                 .id(1)
                 .adopcionId(10)
-                .estadoMascota(SeguimientoPostAdopcion.EstadoMascotaSeguimiento.BIEN)
+                .estadoMascota(EstadoMascotaTracking.BIEN)
                 .build();
 
         when(seguimientoApiService.crearSeguimiento(any(SeguimientoPostAdopcionRequestDTO.class), any()))
@@ -70,10 +70,10 @@ class SeguimientoPostAdopcionApiControllerTest {
         SeguimientoPostAdopcionResponseDTO item = SeguimientoPostAdopcionResponseDTO.builder()
                 .id(2)
                 .adopcionId(11)
-                .estadoMascota(SeguimientoPostAdopcion.EstadoMascotaSeguimiento.ATENCION_VETERINARIA)
+                .estadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA)
                 .build();
 
-        when(seguimientoApiService.listarSeguimientos(eq(SeguimientoPostAdopcion.EstadoMascotaSeguimiento.ATENCION_VETERINARIA)))
+        when(seguimientoApiService.listarSeguimientos(eq(EstadoMascotaTracking.ATENCION_VETERINARIA)))
                 .thenReturn(List.of(item));
 
         mockMvc.perform(get("/api/seguimientos-post-adopcion")
@@ -89,12 +89,12 @@ class SeguimientoPostAdopcionApiControllerTest {
         request.setAdopcionId(12);
         request.setFechaSeguimiento(LocalDateTime.of(2026, 2, 11, 9, 15));
         request.setNotas("Se detectó control veterinario");
-        request.setEstadoMascota(SeguimientoPostAdopcion.EstadoMascotaSeguimiento.ATENCION_VETERINARIA);
+        request.setEstadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA);
 
         SeguimientoPostAdopcionResponseDTO response = SeguimientoPostAdopcionResponseDTO.builder()
                 .id(3)
                 .adopcionId(12)
-                .estadoMascota(SeguimientoPostAdopcion.EstadoMascotaSeguimiento.ATENCION_VETERINARIA)
+                .estadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA)
                 .build();
 
         when(seguimientoApiService.actualizarSeguimiento(eq(3), any(SeguimientoPostAdopcionRequestDTO.class)))
