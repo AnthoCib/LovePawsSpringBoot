@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
@@ -30,6 +33,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	private final UsuarioRepository usuarioRepo;
 	private final RolRepository rolRepo;
 	private final EstadoUsuarioRepository estadoUsuarioRepo;
+	private final EmailService emailService;
+	private static final Logger logger = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 
 	@Override
 	@Transactional
@@ -180,7 +185,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	@Transactional
-	public boolean solicitarRecuperacionPassword(String correo) {
+	public boolean solicitarRecuperacionPassword(String correo, String baseUrl) {
 		if (correo == null || correo.isBlank()) {
 			return false;
 		}
@@ -189,9 +194,23 @@ public class UsuarioServiceImpl implements UsuarioService {
 			return false;
 		}
 		Usuario usuario = usuarioOpt.get();
-		usuario.setResetToken(UUID.randomUUID().toString());
+		String tokenSeguro = UUID.randomUUID().toString();
+		usuario.setResetToken(tokenSeguro);
 		usuario.setResetTokenExpira(LocalDateTime.now().plusMinutes(30));
-		usuarioRepo.save(usuario);
+		usuarioRepo.saveAndFlush(usuario);
+
+		String link = baseUrl + "/usuarios/reset-password?token=" + tokenSeguro;
+		String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
+				+ "<p>Para restablecer tu contraseña haz clic en el siguiente enlace:</p>"
+				+ "<p><a href=\"" + link + "\">Restablecer contraseña</a></p>"
+				+ "<p>Este enlace expirará en 30 minutos.</p>";
+
+		try {
+			emailService.enviarCorreo(usuario.getCorreo(), "Recuperación de contraseña", contenido);
+			logger.info("Token de recuperación generado para usuario {}", usuario.getId());
+		} catch (Exception e) {
+			logger.error("No se pudo enviar correo de recuperación para usuario {}", usuario.getId(), e);
+		}
 		return true;
 	}
 
@@ -200,10 +219,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		if (token == null || token.isBlank()) {
 			return false;
 		}
-		return usuarioRepo.findByResetToken(token)
-				.filter(usuario -> usuario.getResetTokenExpira() != null
-						&& usuario.getResetTokenExpira().isAfter(LocalDateTime.now()))
-				.isPresent();
+		return usuarioRepo.findByResetTokenAndResetTokenExpiraAfter(token, LocalDateTime.now()).isPresent();
 	}
 
 	@Override
@@ -222,15 +238,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 			throw new IllegalArgumentException("Las contraseñas no coinciden");
 		}
 
-		Usuario usuario = usuarioRepo.findByResetToken(token)
-				.filter(u -> u.getResetTokenExpira() != null && u.getResetTokenExpira().isAfter(LocalDateTime.now()))
+		Usuario usuario = usuarioRepo.findByResetTokenAndResetTokenExpiraAfter(token, LocalDateTime.now())
 				.orElseThrow(() -> new IllegalArgumentException("Token inválido o expirado"));
 
 		usuario.setPasswordHash(passwordEncoder.encode(nueva));
 		// Invalida token luego de uso, conforme requerimiento.
 		usuario.setResetToken(null);
 		usuario.setResetTokenExpira(null);
-		usuarioRepo.save(usuario);
+		usuarioRepo.saveAndFlush(usuario);
+		logger.info("Password restablecida para usuario {}. Token invalidado.", usuario.getId());
 	}
 
 }

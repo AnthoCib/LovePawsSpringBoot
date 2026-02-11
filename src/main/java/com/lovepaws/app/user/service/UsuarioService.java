@@ -30,7 +30,7 @@ public interface UsuarioService {
 	void cambiarRol(Integer usuarioId, Integer rolId);
 
 	// Flujo de recuperación de contraseña
-	boolean solicitarRecuperacionPassword(String correo);
+	boolean solicitarRecuperacionPassword(String correo, String baseUrl);
 
 	boolean tokenResetValido(String token);
 

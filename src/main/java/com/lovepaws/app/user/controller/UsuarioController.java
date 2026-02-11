@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lovepaws.app.config.storage.FileStorageService;
 import com.lovepaws.app.security.UsuarioPrincipal;
-import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
 import com.lovepaws.app.user.domain.Usuario;
@@ -38,7 +37,6 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
     private final FileStorageService fileStorageService;
 
     /* =========================
@@ -272,22 +270,11 @@ public class UsuarioController {
             return "redirect:/usuarios/recuperar-password?error=correo";
         }
 
-        boolean enviado = usuarioService.solicitarRecuperacionPassword(correo.trim());
-        if (enviado) {
-            usuarioService.findByCorreo(correo.trim()).ifPresent(usuario -> {
-                String baseUrl = request.getScheme() + "://" + request.getServerName();
-                if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-                    baseUrl += ":" + request.getServerPort();
-                }
-                String link = baseUrl + "/usuarios/reset-password?token=" + usuario.getResetToken();
-                String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
-                        + "<p>Para restablecer tu contraseña haz clic en el siguiente enlace:</p>"
-                        + "<p><a href=\"" + link + "\">Restablecer contraseña</a></p>"
-                        + "<p>Este enlace expirará en 30 minutos.</p>";
-                // Envío real o simulado según configuración de EmailService.
-                emailService.enviarCorreo(usuario.getCorreo(), "Recuperación de contraseña", contenido);
-            });
+        String baseUrl = request.getScheme() + "://" + request.getServerName();
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+            baseUrl += ":" + request.getServerPort();
         }
+        usuarioService.solicitarRecuperacionPassword(correo.trim(), baseUrl);
 
         return "redirect:/usuarios/recuperar-password?sent";
     }
