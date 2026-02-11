@@ -10,4 +10,9 @@ public interface SeguimientoRepository extends JpaRepository<SeguimientoPostAdop
 
 	List<SeguimientoPostAdopcion> findByAdopcionIdOrderByFechaVisitaDesc(Integer adopcionId);
 
+
+	List<SeguimientoPostAdopcion> findAllByOrderByFechaVisitaDesc();
+
+	List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaVisitaDesc(String estadoId);
+
 }
