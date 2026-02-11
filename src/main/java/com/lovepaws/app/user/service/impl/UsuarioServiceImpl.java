@@ -3,12 +3,16 @@ package com.lovepaws.app.user.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
@@ -29,6 +33,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	private final UsuarioRepository usuarioRepo;
 	private final RolRepository rolRepo;
 	private final EstadoUsuarioRepository estadoUsuarioRepo;
+	private final EmailService emailService;
+	private static final Logger logger = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 
 	@Override
 	@Transactional
@@ -173,6 +179,74 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuario.setDeletedAt(null);
 
 		usuarioRepo.save(usuario);
+	}
+
+
+
+	@Override
+	@Transactional
+	public boolean solicitarRecuperacionPassword(String correo, String baseUrl) {
+		if (correo == null || correo.isBlank()) {
+			return false;
+		}
+		Optional<Usuario> usuarioOpt = usuarioRepo.findByCorreo(correo.trim());
+		if (usuarioOpt.isEmpty()) {
+			return false;
+		}
+		Usuario usuario = usuarioOpt.get();
+		String tokenSeguro = UUID.randomUUID().toString();
+		usuario.setResetToken(tokenSeguro);
+		usuario.setResetTokenExpira(LocalDateTime.now().plusHours(1));
+		usuarioRepo.saveAndFlush(usuario);
+
+		String link = baseUrl + "/usuarios/reset-password?token=" + tokenSeguro;
+		String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
+				+ "<p>Para restablecer tu contraseña haz clic en el siguiente enlace:</p>"
+				+ "<p><a href=\"" + link + "\">Restablecer contraseña</a></p>"
+				+ "<p>Este enlace expirará en 1 hora.</p>";
+
+		try {
+			emailService.enviarCorreo(usuario.getCorreo(), "Recuperación de contraseña", contenido);
+			logger.info("Token de recuperación generado para usuario {}", usuario.getId());
+		} catch (Exception e) {
+			logger.error("No se pudo enviar correo de recuperación para usuario {}", usuario.getId(), e);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean tokenResetValido(String token) {
+		if (token == null || token.isBlank()) {
+			return false;
+		}
+		return usuarioRepo.findByResetTokenAndResetTokenExpiraAfter(token, LocalDateTime.now()).isPresent();
+	}
+
+	@Override
+	@Transactional
+	public void restablecerPassword(String token, String nueva, String confirmar) {
+		if (token == null || token.isBlank()) {
+			throw new IllegalArgumentException("Token inválido");
+		}
+		if (nueva == null || nueva.isBlank() || confirmar == null || confirmar.isBlank()) {
+			throw new IllegalArgumentException("Completa los campos de contraseña");
+		}
+		if (nueva.length() < 8) {
+			throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+		}
+		if (!nueva.equals(confirmar)) {
+			throw new IllegalArgumentException("Las contraseñas no coinciden");
+		}
+
+		Usuario usuario = usuarioRepo.findByResetTokenAndResetTokenExpiraAfter(token, LocalDateTime.now())
+				.orElseThrow(() -> new IllegalArgumentException("Token inválido o expirado"));
+
+		usuario.setPasswordHash(passwordEncoder.encode(nueva));
+		// Invalida token luego de uso, conforme requerimiento.
+		usuario.setResetToken(null);
+		usuario.setResetTokenExpira(null);
+		usuarioRepo.saveAndFlush(usuario);
+		logger.info("Password restablecida para usuario {}. Token invalidado.", usuario.getId());
 	}
 
 }

@@ -1,5 +1,9 @@
 .hero-home {
+<<<<<<< HEAD
   background: linear-gradient(135deg, #eef2fb 0%, #f5f7fc 100%);
+=======
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+>>>>>>> refs/heads/codex/review-codebase-for-issues-and-tasks-x2afkg
   border-radius: 18px;
 }
 .hero-home .hero-img {
@@ -9,12 +13,16 @@
   border-radius: 16px;
 }
 .metric-card {
-  border: 1px solid #e9eef8;
+  border: 1px solid #E2E8F0;
   border-radius: 14px;
   background: #fff;
 }
 .home-card {
+<<<<<<< HEAD
   border: 1px solid #e5e7eb;
+=======
+  border: 1px solid #E2E8F0;
+>>>>>>> refs/heads/codex/review-codebase-for-issues-and-tasks-x2afkg
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 8px 22px rgba(0, 0, 0, .08);
@@ -27,7 +35,11 @@
 .home-card-media {
   height: 215px;
   overflow: hidden;
+<<<<<<< HEAD
   background: #eef2ff;
+=======
+  background: #E2E8F0;
+>>>>>>> refs/heads/codex/review-codebase-for-issues-and-tasks-x2afkg
 }
 .home-card img {
   width: 100%;
@@ -39,7 +51,11 @@
   background: #fff;
 }
 .home-cta {
+<<<<<<< HEAD
   background: linear-gradient(120deg, #3f558f, #2f4478);
+=======
+  background: linear-gradient(120deg, #1E293B, #334155);
+>>>>>>> refs/heads/codex/review-codebase-for-issues-and-tasks-x2afkg
   color: #fff;
   border-radius: 16px;
 }
@@ -58,4 +74,29 @@
 @media (max-width: 768px) {
   .home-card-media { height: 180px; }
   .hero-home { border-radius: 12px; }
+}
+
+
+.lp-hero {
+  animation: heroFloat 4.8s ease-in-out infinite;
+}
+.metric-card {
+  transition: transform .26s ease, box-shadow .26s ease;
+}
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px rgba(17,24,39,.12);
+}
+.home-video iframe {
+  transition: transform .35s ease;
+}
+.home-video:hover iframe {
+  transform: scale(1.01);
+}
+.fx-stagger-1 { animation-delay: .08s; }
+.fx-stagger-2 { animation-delay: .16s; }
+.fx-stagger-3 { animation-delay: .24s; }
+@keyframes heroFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }

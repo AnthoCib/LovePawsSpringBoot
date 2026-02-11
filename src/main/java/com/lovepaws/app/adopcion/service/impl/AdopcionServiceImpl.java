@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
@@ -13,7 +15,7 @@ import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SolicitudAdopcionRepository;
 import com.lovepaws.app.adopcion.service.AdopcionService;
-import com.lovepaws.app.mail.EmailService;
+import com.lovepaws.app.adopcion.service.NotificacionEmailService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.mascota.repository.MascotaRepository;
@@ -30,7 +32,7 @@ public class AdopcionServiceImpl implements AdopcionService {
 	private final AdopcionRepository adopcionRepo;
 	private final SolicitudAdopcionRepository solicitudRepo;
 	private final MascotaRepository mascotaRepo;
-	private final EmailService emailService;
+	private final NotificacionEmailService notificacionEmailService;
 	private final AuditoriaService auditoriaService;
 
 	@Override
@@ -124,22 +126,33 @@ public class AdopcionServiceImpl implements AdopcionService {
 		mascota.setEstado(estadoMascota);
 		mascotaRepo.save(mascota);
 
-		auditoriaService.registrar("solicitud_adopcion", solicitud.getId(), "APROBAR_SOLICITUD", gestorId, "GESTOR",
-				"Solicitud aprobada y mascota actualizada a ADOPTADA");
-		auditoriaService.registrar("adopcion", saved.getId(), "CREAR_ADOPCION", gestorId, "GESTOR",
-				"Adopción registrada en historial");
+		auditoriaService.registrar("solicitud_adopcion", solicitud.getId(), "UPDATE", gestorId, "GESTOR",
+				"Solicitud cambiada a APROBADA y mascota cambiada a ADOPTADA");
+		auditoriaService.registrar("adopcion", saved.getId(), "UPDATE", gestorId, "GESTOR",
+				"Estado de adopción establecido en APROBADA");
 
-		enviarCorreoCambioEstado(solicitud, "APROBADA");
+		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(solicitud);
+		notificacionEmailService.enviarCorreoAprobacion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
 		return saved;
 	}
 
-	@Async
-	void enviarCorreoCambioEstado(SolicitudAdopcion solicitud, String estado) {
-		try {
-			emailService.enviarCorreo(solicitud.getUsuario().getCorreo(), "Cambio de estado de solicitud",
-					"Hola " + solicitud.getUsuario().getNombre() + ", tu solicitud para "
-							+ solicitud.getMascota().getNombre() + " ahora está en estado " + estado + ".");
-		} catch (Exception ignored) {
+	private DatosCorreoSolicitud extraerDatosCorreo(SolicitudAdopcion solicitud) {
+		if (solicitud == null || solicitud.getUsuario() == null || solicitud.getMascota() == null) {
+			return new DatosCorreoSolicitud(null, null, null);
 		}
+		return new DatosCorreoSolicitud(
+				solicitud.getUsuario().getCorreo(),
+				solicitud.getUsuario().getNombre(),
+				solicitud.getMascota().getNombre()
+		);
 	}
+
+	@Getter
+	@AllArgsConstructor
+	private static class DatosCorreoSolicitud {
+		private final String correoDestino;
+		private final String nombreUsuario;
+		private final String nombreMascota;
+	}
+
 }

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE seguimiento_post_adopcion SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class SeguimientoPostAdopcion {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -39,6 +40,7 @@ public class SeguimientoPostAdopcion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id")
     private EstadoMascota estado;
+
 
     private Boolean activo = true;
 

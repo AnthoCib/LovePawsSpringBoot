@@ -34,7 +34,7 @@
                     <label class="form-label">Estado de la mascota</label>
                     <select name="estadoId" class="form-select">
                         <option value="">Sin cambio</option>
-                        <option th:each="e : ${estadosMascota}" th:value="${e.id}" th:text="${e.nombre != null ? e.nombre : e.id}"></option>
+                        <option th:each="e : ${estadosMascota}" th:value="${e.id}" th:text="${e.descripcion != null ? e.descripcion : e.id}"></option>
                     </select>
                 </div>
                 <div class="col-12">
@@ -63,7 +63,11 @@
                     <tbody>
                     <tr th:each="s : ${seguimientos}">
                         <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+<<<<<<< HEAD
                         <td th:text="${s.estado != null ? (s.estado.nombre != null ? s.estado.nombre : s.estado.id) : '-'}"></td>
+=======
+                        <td th:text="${s.estado != null ? (s.estado.descripcion != null ? s.estado.descripcion : s.estado.id) : '-'}"></td>
+>>>>>>> refs/heads/codex/review-codebase-for-issues-and-tasks-x2afkg
                         <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(seguimientos)}">
