@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
@@ -13,7 +12,7 @@ import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SolicitudAdopcionRepository;
 import com.lovepaws.app.adopcion.service.AdopcionService;
-import com.lovepaws.app.mail.EmailService;
+import com.lovepaws.app.adopcion.service.NotificacionEmailService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.mascota.repository.MascotaRepository;
@@ -30,7 +29,7 @@ public class AdopcionServiceImpl implements AdopcionService {
 	private final AdopcionRepository adopcionRepo;
 	private final SolicitudAdopcionRepository solicitudRepo;
 	private final MascotaRepository mascotaRepo;
-	private final EmailService emailService;
+	private final NotificacionEmailService notificacionEmailService;
 	private final AuditoriaService auditoriaService;
 
 	@Override
@@ -129,17 +128,8 @@ public class AdopcionServiceImpl implements AdopcionService {
 		auditoriaService.registrar("adopcion", saved.getId(), "UPDATE", gestorId, "GESTOR",
 				"Estado de adopción establecido en APROBADA");
 
-		enviarCorreoCambioEstado(solicitud, "APROBADA");
+		notificacionEmailService.notificarSolicitudAprobada(solicitud);
 		return saved;
 	}
 
-	@Async
-	void enviarCorreoCambioEstado(SolicitudAdopcion solicitud, String estado) {
-		try {
-			emailService.enviarCorreo(solicitud.getUsuario().getCorreo(), "Cambio de estado de solicitud",
-					"Hola " + solicitud.getUsuario().getNombre() + ", tu solicitud para "
-							+ solicitud.getMascota().getNombre() + " ahora está en estado " + estado + ".");
-		} catch (Exception ignored) {
-		}
-	}
 }
