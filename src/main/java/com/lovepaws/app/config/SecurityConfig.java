@@ -46,13 +46,13 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 //  Recursos estáticos y rutas públicas
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/webjars/**").permitAll()
                 .requestMatchers("/", "/index", "/home", "/usuarios/registro", "/usuarios/recuperar-password", "/usuarios/reset-password", "/login", "/registro", "/mascotas/**", "/nosotros", "/contacto", "/adopcion").permitAll()
                 // Rutas protegidas por rol
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/gestor/**").hasAnyRole("GESTOR","ADMIN")
                 .requestMatchers("/adopcion/gestor/**").hasRole("GESTOR")
-                .requestMatchers("/adopcion/mis-adopciones", "/adopcion/solicitar", "/adopcion/cancelar/**").hasRole("ADOPTANTE")
+                .requestMatchers("/adopcion/mis-adopciones", "/adopcion/solicitar", "/adopcion/cancelar/**", "/adopcion/solicitud/**").hasRole("ADOPTANTE")
                 .requestMatchers("/mascota/catalogo/**").hasRole("ADOPTANTE")
                 // Todo lo demás requiere login
                 .anyRequest().authenticated()

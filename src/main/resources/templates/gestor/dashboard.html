@@ -10,13 +10,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
           rel="stylesheet">
     <link th:href="@{/css/admin.css}" rel="stylesheet">
+    <link th:href="@{/css/dashboard-animations.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <main class="container py-5">
     <div class="d-flex gap-2 mb-3"><a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Volver</a><a th:href="@{/}" class="btn btn-outline-primary btn-sm">Inicio</a></div>
-    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between mb-4">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between mb-4 dash-fade-up delay-1">
         <div>
             <h2 class="fw-bold mb-1">Dashboard del Gestor</h2>
             <p class="text-muted mb-0">
@@ -33,7 +34,7 @@
 
     <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="stat-card">
+            <div class="stat-card dash-fade-up dash-glow delay-2">
                 <div class="stat-icon bg-primary-subtle text-primary">
                     <i class="bi bi-house-heart-fill"></i>
                 </div>
@@ -42,7 +43,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="stat-card">
+            <div class="stat-card dash-fade-up dash-glow delay-3">
                 <div class="stat-icon bg-success-subtle text-success">
                     <i class="bi bi-check-circle-fill"></i>
                 </div>
@@ -51,7 +52,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="stat-card">
+            <div class="stat-card dash-fade-up dash-glow delay-4">
                 <div class="stat-icon bg-warning-subtle text-warning">
                     <i class="bi bi-hourglass-split"></i>
                 </div>
@@ -63,7 +64,7 @@
 
     <div class="row g-4">
         <div class="col-lg-7">
-            <div class="card section-card shadow-sm p-4 h-100">
+            <div class="card section-card shadow-sm p-4 h-100 dash-fade-up delay-5">
                 <h5 class="fw-bold mb-3">Acciones rápidas (CRUD y adopciones)</h5>
                 <div class="list-group list-group-flush">
                     <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
@@ -86,11 +87,16 @@
                         Seguimiento post adopción
                         <i class="bi bi-arrow-right"></i>
                     </a>
+                    <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                       th:href="@{/gestor/seguimientos-post-adopcion}">
+                        Tracking API/tabla de seguimientos
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         </div>
         <div class="col-lg-5">
-            <div class="card section-card shadow-sm p-4 h-100">
+            <div class="card section-card shadow-sm p-4 h-100 dash-fade-up delay-6">
                 <h5 class="fw-bold mb-3">Consejos de gestión</h5>
                 <ul class="list-unstyled mb-0 text-muted">
                     <li class="mb-3">

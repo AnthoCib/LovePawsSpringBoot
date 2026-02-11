@@ -4,9 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +11,7 @@ import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.repository.SolicitudAdopcionRepository;
 import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
-import com.lovepaws.app.mail.EmailService;
+import com.lovepaws.app.adopcion.service.NotificacionEmailService;
 import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.mascota.repository.MascotaRepository;
 import com.lovepaws.app.user.domain.Usuario;
@@ -27,11 +24,9 @@ import lombok.RequiredArgsConstructor;
 public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 
 	private final SolicitudAdopcionRepository solicitudRepo;
-	private final EmailService emailService;
+	private final NotificacionEmailService notificacionEmailService;
 	private final MascotaRepository mascotaRepository;
 	private final AuditoriaService auditoriaService;
-	private static final Logger logger = LoggerFactory.getLogger(SolicitudAdopcionServiceImpl.class);
-
 	private static final String ESTADO_PENDIENTE = "PENDIENTE";
 	private static final String ESTADO_APROBADA = "APROBADA";
 	private static final String ESTADO_RECHAZADA = "RECHAZADA";
@@ -70,7 +65,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		String usuarioNombre = saved.getUsuario() != null ? saved.getUsuario().getNombre() : "Sistema";
 		auditoriaService.registrar("solicitud_adopcion", saved.getId(), "CREAR_SOLICITUD", usuarioId, usuarioNombre,
 				"Solicitud creada para mascota " + (saved.getMascota() != null ? saved.getMascota().getId() : "-"));
-		enviarCorreoRecepcion(saved);
+		notificacionEmailService.notificarRecepcionSolicitud(saved);
 		return saved;
 	}
 
@@ -125,9 +120,9 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		solicitud.setInfoAdicional("Aprobada por gestor ID: " + gestorId);
 
 		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
-		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "CAMBIO_ESTADO", gestorId,
+		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
 				"GESTOR", "Estado cambiado a APROBADA");
-		enviarCorreoAprobacion(solicitudActualizada);
+		notificacionEmailService.notificarSolicitudAprobada(solicitudActualizada);
 
 		return solicitudActualizada;
 	}
@@ -149,9 +144,9 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		solicitud.setInfoAdicional(motivo);
 
 		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
-		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "CAMBIO_ESTADO", gestorId,
+		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
 				"GESTOR", "Estado cambiado a RECHAZADA. Motivo: " + motivo);
-		enviarCorreoRechazo(solicitudActualizada, motivo);
+		notificacionEmailService.notificarSolicitudRechazada(solicitudActualizada, motivo);
 
 		return solicitudActualizada;
 	}
@@ -176,71 +171,10 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		SolicitudAdopcion updated = solicitudRepo.save(solicitud);
 
 		Usuario u = updated.getUsuario();
-		auditoriaService.registrar("solicitud_adopcion", updated.getId(), "CAMBIO_ESTADO", usuarioId,
+		auditoriaService.registrar("solicitud_adopcion", updated.getId(), "UPDATE", usuarioId,
 				u != null ? u.getNombre() : "USUARIO", "Estado cambiado a CANCELADA");
-		enviarCorreoCancelacion(updated);
+		notificacionEmailService.notificarSolicitudCancelada(updated);
 		return updated;
 	}
 
-	@Async
-	private void enviarCorreoRecepcion(SolicitudAdopcion solicitud) {
-		try {
-			Usuario usuario = solicitud.getUsuario();
-			if (usuario == null || usuario.getCorreo() == null) {
-				return;
-			}
-			String asunto = "Hemos recibido tu solicitud de adopción";
-			String contenido = "Hola " + usuario.getNombre() + ",\n\n"
-					+ "Confirmamos la recepción de tu solicitud para adoptar a "
-					+ solicitud.getMascota().getNombre() + ".\n"
-					+ "Te mantendremos informado sobre el estado de la solicitud.\n\n"
-					+ "Gracias por confiar en LovePaws.\nEquipo LovePaws";
-			emailService.enviarCorreo(usuario.getCorreo(), asunto, contenido);
-		} catch (Exception e) {
-			logger.error("Error enviando correo de recepción", e);
-		}
-	}
-
-	@Async
-	private void enviarCorreoAprobacion(SolicitudAdopcion solicitud) {
-		try {
-			String emailUsuario = solicitud.getUsuario().getCorreo();
-			String asunto = "Tu solicitud de adopción ha sido aprobada";
-			String contenido = "Hola " + solicitud.getUsuario().getNombre() + ",\n\n"
-					+ "Tu solicitud para adoptar la mascota " + solicitud.getMascota().getNombre()
-					+ " ha sido aprobada. ¡Gracias por usar Lovepaws!\n\nSaludos,\nEquipo Lovepaws";
-
-			emailService.enviarCorreo(emailUsuario, asunto, contenido);
-		} catch (Exception e) {
-			logger.error("Error enviando correo de aprobación", e);
-		}
-	}
-
-	@Async
-	private void enviarCorreoRechazo(SolicitudAdopcion solicitud, String motivo) {
-		try {
-			String emailUsuario = solicitud.getUsuario().getCorreo();
-			String asunto = "Tu solicitud de adopción ha sido rechazada";
-			String contenido = "Hola " + solicitud.getUsuario().getNombre() + ",\n\n"
-					+ "Lamentamos informarte que tu solicitud para adoptar la mascota "
-					+ solicitud.getMascota().getNombre() + " ha sido rechazada.\n"
-					+ "Motivo: " + motivo + "\n\nGracias por usar Lovepaws.\nSaludos,\nEquipo Lovepaws";
-
-			emailService.enviarCorreo(emailUsuario, asunto, contenido);
-		} catch (Exception e) {
-			logger.error("Error enviando correo de rechazo", e);
-		}
-	}
-
-	@Async
-	private void enviarCorreoCancelacion(SolicitudAdopcion solicitud) {
-		try {
-			emailService.enviarCorreo(solicitud.getUsuario().getCorreo(),
-					"Solicitud de adopción cancelada",
-					"Hola " + solicitud.getUsuario().getNombre() + ", tu solicitud para "
-							+ solicitud.getMascota().getNombre() + " fue cancelada correctamente.");
-		} catch (Exception e) {
-			logger.error("Error enviando correo de cancelación", e);
-		}
-	}
 }

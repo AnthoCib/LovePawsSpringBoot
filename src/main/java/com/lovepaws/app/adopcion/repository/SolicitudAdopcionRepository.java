@@ -31,4 +31,8 @@ public interface SolicitudAdopcionRepository extends JpaRepository<SolicitudAdop
 	long countByEstado_Id(String estadoId);
 	List<SolicitudAdopcion> findByEstado_Id(String estadoId);
 
+	List<SolicitudAdopcion> findByEstado_IdOrderByFechaSolicitudDesc(String estadoId);
+
+	List<SolicitudAdopcion> findAllByOrderByFechaSolicitudDesc();
+
 }

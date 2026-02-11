@@ -28,4 +28,11 @@ public interface UsuarioService {
 	void cambiarEstado(Integer id);
 
 	void cambiarRol(Integer usuarioId, Integer rolId);
+
+	// Flujo de recuperación de contraseña
+	boolean solicitarRecuperacionPassword(String correo, String baseUrl);
+
+	boolean tokenResetValido(String token);
+
+	void restablecerPassword(String token, String nueva, String confirmar);
 }

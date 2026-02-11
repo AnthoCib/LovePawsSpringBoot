@@ -1,8 +1,6 @@
 package com.lovepaws.app.user.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -15,9 +13,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.lovepaws.app.config.storage.FileStorageService;
 import com.lovepaws.app.security.UsuarioPrincipal;
-import com.lovepaws.app.mail.EmailService;
 import com.lovepaws.app.user.domain.EstadoUsuario;
 import com.lovepaws.app.user.domain.Rol;
 import com.lovepaws.app.user.domain.Usuario;
@@ -38,7 +37,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
+    private final FileStorageService fileStorageService;
 
     /* =========================
        REGISTRO DE USUARIO
@@ -151,6 +150,7 @@ public class UsuarioController {
                                @RequestParam String correo,
                                @RequestParam String telefono,
                                @RequestParam String direccion,
+                               @RequestParam(value = "foto", required = false) MultipartFile foto,
                                Authentication auth) {
 
         if (!(auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal)) {
@@ -193,6 +193,19 @@ public class UsuarioController {
         usuario.setCorreo(correo);
         usuario.setTelefono(telefono);
         usuario.setDireccion(direccion);
+
+        if (foto != null && !foto.isEmpty()) {
+            try {
+                String fotoUrl = fileStorageService.store(foto);
+                usuario.setFotoUrl(fotoUrl);
+            } catch (RuntimeException ex) {
+                if (isAdmin && !id.equals(usuarioAutenticadoId)) {
+                    return "redirect:/usuarios/perfil?id=" + id + "&error=foto";
+                }
+                return "redirect:/usuarios/perfil?error=foto";
+            }
+        }
+
         usuarioService.updateUsuario(usuario);
         if (isAdmin && !id.equals(usuarioAutenticadoId)) {
             return "redirect:/usuarios/perfil?id=" + id + "&updated";
@@ -257,25 +270,11 @@ public class UsuarioController {
             return "redirect:/usuarios/recuperar-password?error=correo";
         }
 
-        usuarioService.findByCorreo(correo.trim())
-                .ifPresent(usuario -> {
-                    String token = UUID.randomUUID().toString();
-                    usuario.setResetToken(token);
-                    usuario.setResetTokenExpira(LocalDateTime.now().plusMinutes(30));
-                    usuarioService.updateUsuario(usuario);
-
-                    String baseUrl = request.getScheme() + "://" + request.getServerName();
-                    if (request.getServerPort() != 80 && request.getServerPort() != 443) {
-                        baseUrl += ":" + request.getServerPort();
-                    }
-                    String link = baseUrl + "/usuarios/reset-password?token=" + token;
-                    String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
-                            + "<p>Para restablecer tu contraseña haz clic en el siguiente enlace:</p>"
-                            + "<p><a href=\"" + link + "\">Restablecer contraseña</a></p>"
-                            + "<p>Este enlace expirará en 30 minutos.</p>";
-
-                    emailService.enviarCorreo(usuario.getCorreo(), "Recuperación de contraseña", contenido);
-                });
+        String baseUrl = request.getScheme() + "://" + request.getServerName();
+        if (request.getServerPort() != 80 && request.getServerPort() != 443) {
+            baseUrl += ":" + request.getServerPort();
+        }
+        usuarioService.solicitarRecuperacionPassword(correo.trim(), baseUrl);
 
         return "redirect:/usuarios/recuperar-password?sent";
     }
@@ -286,10 +285,7 @@ public class UsuarioController {
             return "redirect:/usuarios/recuperar-password?error=token";
         }
 
-        boolean tokenValido = usuarioService.findByResetToken(token)
-                .filter(usuario -> usuario.getResetTokenExpira() != null
-                        && usuario.getResetTokenExpira().isAfter(LocalDateTime.now()))
-                .isPresent();
+        boolean tokenValido = usuarioService.tokenResetValido(token);
 
         if (!tokenValido) {
             return "redirect:/usuarios/recuperar-password?error=token";
@@ -303,36 +299,22 @@ public class UsuarioController {
     public String resetPassword(@RequestParam String token,
                                 @RequestParam String nueva,
                                 @RequestParam String confirmar) {
-        if (token == null || token.isBlank()) {
+        try {
+            usuarioService.restablecerPassword(token, nueva, confirmar);
+            return "redirect:/usuarios/login?reset=ok";
+        } catch (IllegalArgumentException ex) {
+            String msg = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
+            if (msg.contains("coinciden")) {
+                return "redirect:/usuarios/reset-password?token=" + token + "&error=match";
+            }
+            if (msg.contains("8 caracteres")) {
+                return "redirect:/usuarios/reset-password?token=" + token + "&error=min";
+            }
+            if (msg.contains("campos")) {
+                return "redirect:/usuarios/reset-password?token=" + token + "&error=campos";
+            }
             return "redirect:/usuarios/recuperar-password?error=token";
         }
-
-        if (nueva == null || nueva.isBlank() || confirmar == null || confirmar.isBlank()) {
-            return "redirect:/usuarios/reset-password?token=" + token + "&error=campos";
-        }
-
-        if (nueva.length() < 8) {
-            return "redirect:/usuarios/reset-password?token=" + token + "&error=min";
-        }
-
-        if (!nueva.equals(confirmar)) {
-            return "redirect:/usuarios/reset-password?token=" + token + "&error=match";
-        }
-
-        Usuario usuario = usuarioService.findByResetToken(token)
-                .filter(u -> u.getResetTokenExpira() != null && u.getResetTokenExpira().isAfter(LocalDateTime.now()))
-                .orElse(null);
-
-        if (usuario == null) {
-            return "redirect:/usuarios/recuperar-password?error=token";
-        }
-
-        usuario.setPasswordHash(passwordEncoder.encode(nueva));
-        usuario.setResetToken(null);
-        usuario.setResetTokenExpira(null);
-        usuarioService.updateUsuario(usuario);
-
-        return "redirect:/usuarios/login?reset=ok";
     }
 
 

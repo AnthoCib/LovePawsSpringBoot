@@ -7,12 +7,48 @@
      th:fragment="navbar">
 
     <style>
+        :root {
+            --lp-primary: #1f2937;
+            --lp-primary-dark: #111827;
+            --lp-accent: #22c55e;
+            --lp-cta: #f59e0b;
+            --lp-bg-soft: #f5f7fc;
+        }
+
+        body {
+            background-color: var(--lp-bg-soft);
+        }
+
         .lp-navbar {
-            background: rgba(0, 90, 152, 0.95);
+            background: linear-gradient(135deg, var(--lp-primary) 0%, var(--lp-primary-dark) 100%);
             backdrop-filter: saturate(140%) blur(4px);
             box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
             position: relative;
             z-index: 1080;
+        }
+
+        .btn-primary {
+            background-color: var(--lp-cta);
+            border-color: var(--lp-cta);
+            color: #111827;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #d97706;
+            border-color: #d97706;
+            color: #fff;
+        }
+
+        .btn-success {
+            background-color: var(--lp-accent);
+            border-color: var(--lp-accent);
+        }
+
+        .btn-success:hover,
+        .btn-success:focus {
+            background-color: #1a8a5c;
+            border-color: #1a8a5c;
         }
 
         .lp-navbar .dropdown-menu {
@@ -25,7 +61,7 @@
         }
 
         .lp-navbar .nav-link.nav-pill {
-            color: #eef4ff;
+            color: #f3f4f6;
             border: 1px solid transparent;
             border-radius: 999px;
             padding: .38rem .85rem;
