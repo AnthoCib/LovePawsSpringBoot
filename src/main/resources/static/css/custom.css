@@ -1,0 +1,161 @@
+:root {
+  --lp-blue-main: #2563EB;
+  --lp-blue-deep: #1D4ED8;
+  --lp-blue-soft: #EFF6FF;
+  --lp-blue-soft-2: #DBEAFE;
+  --lp-blue-link-hover: #60A5FA;
+  --lp-green-action: #22C55E;
+  --lp-bg: #F9FAFB;
+  --lp-text: #0F172A;
+  --lp-text-muted: #475569;
+}
+
+body {
+  background-color: var(--lp-bg) !important;
+  color: var(--lp-text);
+}
+
+.text-muted,
+.text-secondary {
+  color: var(--lp-text-muted) !important;
+}
+
+/* Navbar */
+.lp-navbar {
+  background: linear-gradient(135deg, var(--lp-blue-main), var(--lp-blue-deep)) !important;
+}
+
+.lp-navbar .nav-link.nav-pill:hover,
+.lp-navbar .nav-link.nav-pill:focus,
+.lp-navbar .btn-auth:hover,
+.lp-navbar .btn-auth:focus {
+  background-color: rgba(96, 165, 250, 0.28) !important;
+  border-color: rgba(191, 219, 254, 0.9) !important;
+  color: #fff !important;
+}
+
+/* Footer */
+.footer-custom {
+  background: linear-gradient(135deg, var(--lp-blue-main), var(--lp-blue-deep)) !important;
+}
+
+.footer-custom,
+.footer-custom p,
+.footer-custom a,
+.footer-custom h5,
+.footer-custom h6,
+.footer-custom li {
+  color: #ffffff !important;
+}
+
+.footer-custom a:hover {
+  color: var(--lp-blue-link-hover) !important;
+}
+
+/* Buttons */
+.btn-success,
+.btn-adoptar,
+.btn-primary {
+  background-color: var(--lp-green-action);
+  border-color: var(--lp-green-action);
+  color: #ffffff;
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-adoptar:hover,
+.btn-adoptar:focus,
+.btn-adoptar:active {
+  background-color: #16A34A !important;
+  border-color: #16A34A !important;
+  color: #fff !important;
+}
+
+.btn-outline-secondary {
+  color: var(--lp-blue-deep);
+  border-color: #93C5FD;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active {
+  background-color: var(--lp-blue-main) !important;
+  border-color: var(--lp-blue-main) !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-primary {
+  color: var(--lp-blue-main);
+  border-color: var(--lp-blue-main);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--lp-blue-main) !important;
+  border-color: var(--lp-blue-main) !important;
+  color: #fff !important;
+}
+
+a:hover,
+.nav-link:hover,
+.list-group-item-action:hover {
+  color: var(--lp-blue-link-hover) !important;
+}
+
+/* Dashboard + Admin areas */
+.admin-dark,
+.admin-content,
+.content,
+.main,
+main.container {
+  background-color: var(--lp-blue-soft) !important;
+}
+
+.sidebar {
+  background: linear-gradient(180deg, var(--lp-blue-main), var(--lp-blue-deep)) !important;
+}
+
+.sidebar .nav-link,
+.sidebar a {
+  color: #DBEAFE !important;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active,
+.sidebar a:hover,
+.sidebar a.active {
+  background-color: rgba(219, 234, 254, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.card,
+.stat-card,
+.section-card,
+.metric-card,
+.mascota-card {
+  background-color: #ffffff !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08) !important;
+}
+
+.card:hover,
+.stat-card:hover,
+.metric-card:hover,
+.mascota-card:hover {
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.14) !important;
+}
+
+.badge.text-bg-dark,
+.badge.text-bg-primary {
+  background-color: var(--lp-blue-main) !important;
+}
+
+.badge.text-bg-info {
+  background-color: var(--lp-blue-soft-2) !important;
+  color: var(--lp-blue-deep) !important;
+}
