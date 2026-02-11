@@ -3,6 +3,7 @@ package com.lovepaws.app.user.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -172,6 +173,63 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuario.setFechaCreacion(LocalDateTime.now());
 		usuario.setDeletedAt(null);
 
+		usuarioRepo.save(usuario);
+	}
+
+
+
+	@Override
+	@Transactional
+	public boolean solicitarRecuperacionPassword(String correo) {
+		if (correo == null || correo.isBlank()) {
+			return false;
+		}
+		Optional<Usuario> usuarioOpt = usuarioRepo.findByCorreo(correo.trim());
+		if (usuarioOpt.isEmpty()) {
+			return false;
+		}
+		Usuario usuario = usuarioOpt.get();
+		usuario.setResetToken(UUID.randomUUID().toString());
+		usuario.setResetTokenExpira(LocalDateTime.now().plusMinutes(30));
+		usuarioRepo.save(usuario);
+		return true;
+	}
+
+	@Override
+	public boolean tokenResetValido(String token) {
+		if (token == null || token.isBlank()) {
+			return false;
+		}
+		return usuarioRepo.findByResetToken(token)
+				.filter(usuario -> usuario.getResetTokenExpira() != null
+						&& usuario.getResetTokenExpira().isAfter(LocalDateTime.now()))
+				.isPresent();
+	}
+
+	@Override
+	@Transactional
+	public void restablecerPassword(String token, String nueva, String confirmar) {
+		if (token == null || token.isBlank()) {
+			throw new IllegalArgumentException("Token inválido");
+		}
+		if (nueva == null || nueva.isBlank() || confirmar == null || confirmar.isBlank()) {
+			throw new IllegalArgumentException("Completa los campos de contraseña");
+		}
+		if (nueva.length() < 8) {
+			throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+		}
+		if (!nueva.equals(confirmar)) {
+			throw new IllegalArgumentException("Las contraseñas no coinciden");
+		}
+
+		Usuario usuario = usuarioRepo.findByResetToken(token)
+				.filter(u -> u.getResetTokenExpira() != null && u.getResetTokenExpira().isAfter(LocalDateTime.now()))
+				.orElseThrow(() -> new IllegalArgumentException("Token inválido o expirado"));
+
+		usuario.setPasswordHash(passwordEncoder.encode(nueva));
+		// Invalida token luego de uso, conforme requerimiento.
+		usuario.setResetToken(null);
+		usuario.setResetTokenExpira(null);
 		usuarioRepo.save(usuario);
 	}
 

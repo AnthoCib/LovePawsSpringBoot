@@ -124,10 +124,10 @@ public class AdopcionServiceImpl implements AdopcionService {
 		mascota.setEstado(estadoMascota);
 		mascotaRepo.save(mascota);
 
-		auditoriaService.registrar("solicitud_adopcion", solicitud.getId(), "APROBAR_SOLICITUD", gestorId, "GESTOR",
-				"Solicitud aprobada y mascota actualizada a ADOPTADA");
-		auditoriaService.registrar("adopcion", saved.getId(), "CREAR_ADOPCION", gestorId, "GESTOR",
-				"Adopción registrada en historial");
+		auditoriaService.registrar("solicitud_adopcion", solicitud.getId(), "UPDATE", gestorId, "GESTOR",
+				"Solicitud cambiada a APROBADA y mascota cambiada a ADOPTADA");
+		auditoriaService.registrar("adopcion", saved.getId(), "UPDATE", gestorId, "GESTOR",
+				"Estado de adopción establecido en APROBADA");
 
 		enviarCorreoCambioEstado(solicitud, "APROBADA");
 		return saved;

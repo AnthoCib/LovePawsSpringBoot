@@ -125,7 +125,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		solicitud.setInfoAdicional("Aprobada por gestor ID: " + gestorId);
 
 		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
-		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "CAMBIO_ESTADO", gestorId,
+		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
 				"GESTOR", "Estado cambiado a APROBADA");
 		enviarCorreoAprobacion(solicitudActualizada);
 
@@ -149,7 +149,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		solicitud.setInfoAdicional(motivo);
 
 		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
-		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "CAMBIO_ESTADO", gestorId,
+		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
 				"GESTOR", "Estado cambiado a RECHAZADA. Motivo: " + motivo);
 		enviarCorreoRechazo(solicitudActualizada, motivo);
 
@@ -176,7 +176,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		SolicitudAdopcion updated = solicitudRepo.save(solicitud);
 
 		Usuario u = updated.getUsuario();
-		auditoriaService.registrar("solicitud_adopcion", updated.getId(), "CAMBIO_ESTADO", usuarioId,
+		auditoriaService.registrar("solicitud_adopcion", updated.getId(), "UPDATE", usuarioId,
 				u != null ? u.getNombre() : "USUARIO", "Estado cambiado a CANCELADA");
 		enviarCorreoCancelacion(updated);
 		return updated;

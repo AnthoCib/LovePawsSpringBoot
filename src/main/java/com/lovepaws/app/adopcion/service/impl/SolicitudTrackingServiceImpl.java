@@ -74,14 +74,12 @@ public class SolicitudTrackingServiceImpl implements SolicitudTrackingService {
     private String normalizarEstado(String estado) {
         String valor = estado == null ? "" : estado.trim().toUpperCase(Locale.ROOT);
 
-        // Mapeo de estados de tracking solicitados a estados actuales de BD.
+        // Alineado al catálogo actual de estado_adopcion: PENDIENTE/APROBADA/RECHAZADA.
         return switch (valor) {
-            case "ENVIADA" -> "PENDIENTE";
-            case "EN_REVISION" -> "EN_REVISION";
+            case "ENVIADA", "PENDIENTE" -> "PENDIENTE";
             case "APROBADA" -> "APROBADA";
             case "RECHAZADA" -> "RECHAZADA";
-            case "PENDIENTE", "CANCELADA" -> valor;
-            default -> throw new IllegalArgumentException("Estado no válido: " + estado);
+            default -> throw new IllegalArgumentException("Estado no válido para la BD actual: " + estado);
         };
     }
 }
