@@ -1,5 +1,5 @@
 .hero-home {
-  background: linear-gradient(135deg, #eef2fb 0%, #f5f7fc 100%);
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
   border-radius: 18px;
 }
 .hero-home .hero-img {
@@ -9,12 +9,12 @@
   border-radius: 16px;
 }
 .metric-card {
-  border: 1px solid #e9eef8;
+  border: 1px solid #E2E8F0;
   border-radius: 14px;
   background: #fff;
 }
 .home-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid #E2E8F0;
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 8px 22px rgba(0, 0, 0, .08);
@@ -27,7 +27,7 @@
 .home-card-media {
   height: 215px;
   overflow: hidden;
-  background: #eef2ff;
+  background: #E2E8F0;
 }
 .home-card img {
   width: 100%;
@@ -39,7 +39,7 @@
   background: #fff;
 }
 .home-cta {
-  background: linear-gradient(120deg, #3f558f, #2f4478);
+  background: linear-gradient(120deg, #1E293B, #334155);
   color: #fff;
   border-radius: 16px;
 }
