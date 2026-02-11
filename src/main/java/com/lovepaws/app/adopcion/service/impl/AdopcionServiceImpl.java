@@ -6,6 +6,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
@@ -128,8 +131,28 @@ public class AdopcionServiceImpl implements AdopcionService {
 		auditoriaService.registrar("adopcion", saved.getId(), "UPDATE", gestorId, "GESTOR",
 				"Estado de adopción establecido en APROBADA");
 
-		notificacionEmailService.enviarCorreoAprobacion(solicitud);
+		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(solicitud);
+		notificacionEmailService.enviarCorreoAprobacion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
 		return saved;
+	}
+
+	private DatosCorreoSolicitud extraerDatosCorreo(SolicitudAdopcion solicitud) {
+		if (solicitud == null || solicitud.getUsuario() == null || solicitud.getMascota() == null) {
+			return new DatosCorreoSolicitud(null, null, null);
+		}
+		return new DatosCorreoSolicitud(
+				solicitud.getUsuario().getCorreo(),
+				solicitud.getUsuario().getNombre(),
+				solicitud.getMascota().getNombre()
+		);
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private static class DatosCorreoSolicitud {
+		private final String correoDestino;
+		private final String nombreUsuario;
+		private final String nombreMascota;
 	}
 
 }

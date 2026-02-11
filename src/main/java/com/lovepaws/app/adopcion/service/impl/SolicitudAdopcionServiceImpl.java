@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +68,8 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		String usuarioNombre = saved.getUsuario() != null ? saved.getUsuario().getNombre() : "Sistema";
 		auditoriaService.registrar("solicitud_adopcion", saved.getId(), "CREAR_SOLICITUD", usuarioId, usuarioNombre,
 				"Solicitud creada para mascota " + (saved.getMascota() != null ? saved.getMascota().getId() : "-"));
-		notificacionEmailService.enviarCorreoRecepcion(saved);
+		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(saved);
+		notificacionEmailService.enviarCorreoRecepcion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
 		return saved;
 	}
 
@@ -122,7 +126,8 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
 		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
 				"GESTOR", "Estado cambiado a APROBADA");
-		notificacionEmailService.enviarCorreoAprobacion(solicitudActualizada);
+		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(solicitudActualizada);
+		notificacionEmailService.enviarCorreoAprobacion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
 
 		return solicitudActualizada;
 	}
@@ -146,7 +151,8 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
 		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
 				"GESTOR", "Estado cambiado a RECHAZADA. Motivo: " + motivo);
-		notificacionEmailService.enviarCorreoRechazo(solicitudActualizada, motivo);
+		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(solicitudActualizada);
+		notificacionEmailService.enviarCorreoRechazo(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota(), motivo);
 
 		return solicitudActualizada;
 	}
@@ -173,8 +179,28 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		Usuario u = updated.getUsuario();
 		auditoriaService.registrar("solicitud_adopcion", updated.getId(), "UPDATE", usuarioId,
 				u != null ? u.getNombre() : "USUARIO", "Estado cambiado a CANCELADA");
-		notificacionEmailService.enviarCorreoCancelacion(updated);
+		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(updated);
+		notificacionEmailService.enviarCorreoCancelacion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
 		return updated;
+	}
+
+	private DatosCorreoSolicitud extraerDatosCorreo(SolicitudAdopcion solicitud) {
+		if (solicitud == null || solicitud.getUsuario() == null || solicitud.getMascota() == null) {
+			return new DatosCorreoSolicitud(null, null, null);
+		}
+		return new DatosCorreoSolicitud(
+				solicitud.getUsuario().getCorreo(),
+				solicitud.getUsuario().getNombre(),
+				solicitud.getMascota().getNombre()
+		);
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private static class DatosCorreoSolicitud {
+		private final String correoDestino;
+		private final String nombreUsuario;
+		private final String nombreMascota;
 	}
 
 }

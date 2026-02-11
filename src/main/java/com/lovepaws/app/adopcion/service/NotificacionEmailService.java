@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.mail.EmailService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,63 +18,63 @@ public class NotificacionEmailService {
     private final EmailService emailService;
 
     @Async
-    public void enviarCorreoRecepcion(SolicitudAdopcion solicitud) {
-        enviarCorreoSolicitud(solicitud,
+    public void enviarCorreoRecepcion(String correoDestino, String nombreUsuario, String nombreMascota) {
+        enviarCorreoSolicitud(correoDestino,
                 "Hemos recibido tu solicitud de adopción",
+                nombreUsuario,
+                nombreMascota,
                 "PENDIENTE",
                 null);
     }
 
     @Async
-    public void enviarCorreoAprobacion(SolicitudAdopcion solicitud) {
-        enviarCorreoSolicitud(solicitud,
+    public void enviarCorreoAprobacion(String correoDestino, String nombreUsuario, String nombreMascota) {
+        enviarCorreoSolicitud(correoDestino,
                 "Tu solicitud de adopción ha sido aprobada",
+                nombreUsuario,
+                nombreMascota,
                 "APROBADA",
                 null);
     }
 
     @Async
-    public void enviarCorreoRechazo(SolicitudAdopcion solicitud, String motivo) {
-        enviarCorreoSolicitud(solicitud,
+    public void enviarCorreoRechazo(String correoDestino, String nombreUsuario, String nombreMascota, String motivo) {
+        enviarCorreoSolicitud(correoDestino,
                 "Tu solicitud de adopción ha sido rechazada",
+                nombreUsuario,
+                nombreMascota,
                 "RECHAZADA",
                 motivo);
     }
 
     @Async
-    public void enviarCorreoCancelacion(SolicitudAdopcion solicitud) {
-        enviarCorreoSolicitud(solicitud,
+    public void enviarCorreoCancelacion(String correoDestino, String nombreUsuario, String nombreMascota) {
+        enviarCorreoSolicitud(correoDestino,
                 "Solicitud de adopción cancelada",
+                nombreUsuario,
+                nombreMascota,
                 "CANCELADA",
                 null);
     }
 
-    public void enviarCorreoSolicitud(SolicitudAdopcion solicitud,
+    public void enviarCorreoSolicitud(String correoDestino,
                                       String asunto,
+                                      String nombreUsuario,
+                                      String nombreMascota,
                                       String estado,
                                       String motivo) {
         try {
-            if (solicitud == null || solicitud.getUsuario() == null || solicitud.getMascota() == null) {
-                logger.warn("No se envía correo: solicitud incompleta");
+            if (correoDestino == null || correoDestino.isBlank()) {
+                logger.warn("No se envía correo: destinatario vacío");
                 return;
             }
 
-            String correo = solicitud.getUsuario().getCorreo();
-            if (correo == null || correo.isBlank()) {
-                logger.warn("No se envía correo: usuario sin correo para solicitud {}", solicitud.getId());
-                return;
-            }
-
-            String nombreUsuario = solicitud.getUsuario().getNombre() != null
-                    ? solicitud.getUsuario().getNombre()
-                    : "Adoptante";
-            String nombreMascota = solicitud.getMascota().getNombre() != null
-                    ? solicitud.getMascota().getNombre()
-                    : "tu mascota";
+            String nombreSeguro = (nombreUsuario != null && !nombreUsuario.isBlank()) ? nombreUsuario : "Adoptante";
+            String mascotaSegura = (nombreMascota != null && !nombreMascota.isBlank()) ? nombreMascota : "tu mascota";
 
             StringBuilder html = new StringBuilder();
-            html.append("<p>Hola ").append(nombreUsuario).append(",</p>")
-                    .append("<p>Tu solicitud para adoptar a <strong>").append(nombreMascota)
+            html.append("<p>Hola ").append(nombreSeguro).append(",</p>")
+                    .append("<p>Tu solicitud para adoptar a <strong>").append(mascotaSegura)
                     .append("</strong> cambió al estado <strong>").append(estado).append("</strong>.</p>");
 
             if (motivo != null && !motivo.isBlank()) {
@@ -85,10 +84,10 @@ public class NotificacionEmailService {
             html.append("<p>Gracias por confiar en LovePaws.</p>")
                     .append("<p>Equipo LovePaws</p>");
 
-            emailService.enviarCorreo(correo, asunto, html.toString());
-            logger.info("Correo de solicitud enviado a {} con estado {}", correo, estado);
+            emailService.enviarCorreo(correoDestino, asunto, html.toString());
+            logger.info("Correo de solicitud enviado a {} con estado {}", correoDestino, estado);
         } catch (Exception e) {
-            logger.error("Error enviando correo de solicitud para ID {}", solicitud != null ? solicitud.getId() : null, e);
+            logger.error("Error enviando correo de solicitud a {}", correoDestino, e);
         }
     }
 }
