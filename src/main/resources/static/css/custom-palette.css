@@ -1,0 +1,99 @@
+:root {
+  --lp-primary: #1E293B;
+  --lp-action: #22C55E;
+  --lp-action-hover: #16A34A;
+  --lp-accent: #F97316;
+  --lp-accent-hover: #EA580C;
+  --lp-bg: #F8FAFC;
+  --lp-text: #0F172A;
+  --lp-text-muted: #64748B;
+}
+
+body {
+  background-color: var(--lp-bg);
+  color: var(--lp-text);
+}
+
+a {
+  color: var(--lp-primary);
+}
+
+a:hover {
+  color: var(--lp-accent-hover);
+}
+
+.btn-success,
+.btn-primary {
+  background-color: var(--lp-action);
+  border-color: var(--lp-action);
+  color: #ffffff;
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--lp-action-hover) !important;
+  border-color: var(--lp-action-hover) !important;
+  color: #ffffff;
+}
+
+.btn-outline-secondary {
+  color: var(--lp-primary);
+  border-color: #94A3B8;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active {
+  background-color: var(--lp-primary) !important;
+  border-color: var(--lp-primary) !important;
+  color: #ffffff !important;
+}
+
+.badge.text-bg-dark,
+.badge.text-bg-primary {
+  background-color: var(--lp-primary) !important;
+  color: #ffffff !important;
+}
+
+.badge.text-bg-warning,
+.badge.bg-warning-subtle {
+  background-color: #FED7AA !important;
+  color: #9A3412 !important;
+}
+
+.text-muted,
+.text-secondary {
+  color: var(--lp-text-muted) !important;
+}
+
+.section-banner,
+.home-cta {
+  background: linear-gradient(120deg, var(--lp-primary), #334155) !important;
+  color: #ffffff !important;
+}
+
+.lp-navbar {
+  background: linear-gradient(135deg, var(--lp-primary) 0%, #0F172A 100%) !important;
+}
+
+.footer-custom {
+  background: linear-gradient(135deg, var(--lp-primary) 0%, #0F172A 100%) !important;
+}
+
+.footer-custom a:hover {
+  color: var(--lp-accent) !important;
+}
+
+.sidebar {
+  background: linear-gradient(180deg, var(--lp-primary), #0F172A) !important;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background-color: rgba(34, 197, 94, 0.22) !important;
+  color: #ffffff !important;
+}
