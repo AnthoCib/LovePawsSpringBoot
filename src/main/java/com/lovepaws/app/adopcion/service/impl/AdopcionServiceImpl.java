@@ -128,7 +128,7 @@ public class AdopcionServiceImpl implements AdopcionService {
 		auditoriaService.registrar("adopcion", saved.getId(), "UPDATE", gestorId, "GESTOR",
 				"Estado de adopción establecido en APROBADA");
 
-		notificacionEmailService.notificarSolicitudAprobada(solicitud);
+		notificacionEmailService.enviarCorreoAprobacion(solicitud);
 		return saved;
 	}
 

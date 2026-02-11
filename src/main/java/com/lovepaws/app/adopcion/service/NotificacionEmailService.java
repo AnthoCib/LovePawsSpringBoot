@@ -19,7 +19,7 @@ public class NotificacionEmailService {
     private final EmailService emailService;
 
     @Async
-    public void notificarRecepcionSolicitud(SolicitudAdopcion solicitud) {
+    public void enviarCorreoRecepcion(SolicitudAdopcion solicitud) {
         enviarCorreoSolicitud(solicitud,
                 "Hemos recibido tu solicitud de adopción",
                 "PENDIENTE",
@@ -27,7 +27,7 @@ public class NotificacionEmailService {
     }
 
     @Async
-    public void notificarSolicitudAprobada(SolicitudAdopcion solicitud) {
+    public void enviarCorreoAprobacion(SolicitudAdopcion solicitud) {
         enviarCorreoSolicitud(solicitud,
                 "Tu solicitud de adopción ha sido aprobada",
                 "APROBADA",
@@ -35,7 +35,7 @@ public class NotificacionEmailService {
     }
 
     @Async
-    public void notificarSolicitudRechazada(SolicitudAdopcion solicitud, String motivo) {
+    public void enviarCorreoRechazo(SolicitudAdopcion solicitud, String motivo) {
         enviarCorreoSolicitud(solicitud,
                 "Tu solicitud de adopción ha sido rechazada",
                 "RECHAZADA",
@@ -43,7 +43,7 @@ public class NotificacionEmailService {
     }
 
     @Async
-    public void notificarSolicitudCancelada(SolicitudAdopcion solicitud) {
+    public void enviarCorreoCancelacion(SolicitudAdopcion solicitud) {
         enviarCorreoSolicitud(solicitud,
                 "Solicitud de adopción cancelada",
                 "CANCELADA",

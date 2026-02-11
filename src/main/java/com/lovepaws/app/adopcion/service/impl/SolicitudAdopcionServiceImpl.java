@@ -65,7 +65,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		String usuarioNombre = saved.getUsuario() != null ? saved.getUsuario().getNombre() : "Sistema";
 		auditoriaService.registrar("solicitud_adopcion", saved.getId(), "CREAR_SOLICITUD", usuarioId, usuarioNombre,
 				"Solicitud creada para mascota " + (saved.getMascota() != null ? saved.getMascota().getId() : "-"));
-		notificacionEmailService.notificarRecepcionSolicitud(saved);
+		notificacionEmailService.enviarCorreoRecepcion(saved);
 		return saved;
 	}
 
@@ -122,7 +122,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
 		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
 				"GESTOR", "Estado cambiado a APROBADA");
-		notificacionEmailService.notificarSolicitudAprobada(solicitudActualizada);
+		notificacionEmailService.enviarCorreoAprobacion(solicitudActualizada);
 
 		return solicitudActualizada;
 	}
@@ -146,7 +146,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
 		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
 				"GESTOR", "Estado cambiado a RECHAZADA. Motivo: " + motivo);
-		notificacionEmailService.notificarSolicitudRechazada(solicitudActualizada, motivo);
+		notificacionEmailService.enviarCorreoRechazo(solicitudActualizada, motivo);
 
 		return solicitudActualizada;
 	}
@@ -173,7 +173,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		Usuario u = updated.getUsuario();
 		auditoriaService.registrar("solicitud_adopcion", updated.getId(), "UPDATE", usuarioId,
 				u != null ? u.getNombre() : "USUARIO", "Estado cambiado a CANCELADA");
-		notificacionEmailService.notificarSolicitudCancelada(updated);
+		notificacionEmailService.enviarCorreoCancelacion(updated);
 		return updated;
 	}
 
