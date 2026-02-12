@@ -290,3 +290,42 @@ main.container {
     align-items: center;
   }
 }
+
+/* ===== Responsive helpers (global) ===== */
+.lp-avatar-sm {
+  inline-size: 2.8rem;
+  block-size: 2.8rem;
+}
+
+.lp-profile-photo {
+  inline-size: clamp(6rem, 20vw, 8.75rem);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.lp-pet-detail-img {
+  width: 100%;
+  max-height: min(55vh, 24rem);
+  object-fit: cover;
+}
+
+.lp-preview-img {
+  width: auto;
+  max-width: 100%;
+  max-height: min(35vh, 13.75rem);
+  object-fit: cover;
+  border-radius: .5rem;
+}
+
+@media (max-width: 575.98px) {
+  .admin-content,
+  .main {
+    padding: 1rem !important;
+  }
+
+  .stat-card,
+  .metric-card,
+  .section-card {
+    padding: 1rem !important;
+  }
+}

@@ -29,8 +29,7 @@
                         <div class="col-12 col-md-4 text-center">
                             <img id="previewPerfil" th:src="${usuario.fotoUrl != null && !#strings.isEmpty(usuario.fotoUrl) ? usuario.fotoUrl : '/images/Imagenes_PNG/logo.svg'}"
                                  alt="Foto de perfil"
-                                 class="img-fluid rounded-circle border"
-                                 style="width:140px;height:140px;object-fit:cover;">
+                                 class="img-fluid rounded-circle border lp-profile-photo">
                             <p class="text-muted small mt-2 mb-0">Foto de perfil</p>
                             <div class="mt-2">
                                 <input type="file" class="form-control form-control-sm" name="foto" accept="image/*" onchange="previewFotoPerfil(event)">
