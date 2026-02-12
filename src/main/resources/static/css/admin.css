@@ -38,6 +38,11 @@ body {
     padding: 30px;
 }
 
+.admin-content {
+    margin-left: 260px;
+    min-height: 100vh;
+}
+
 /* ===== CARDS ===== */
 .metric-card {
     border-radius: 18px;
@@ -167,6 +172,10 @@ body {
     .content {
         margin-left: 0;
         padding: 20px;
+    }
+
+    .admin-content {
+        margin-left: 0;
     }
 
     .metric-card {
