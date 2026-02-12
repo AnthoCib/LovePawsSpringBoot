@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -130,16 +133,16 @@ public class AdopcionController {
 		return "redirect:/adopcion/mis-adopciones?created";
 	}
 
-	@PreAuthorize("hasRole('GESTOR')")
+	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
 	@GetMapping("/gestor/solicitudes")
 	public String verSolicitudesPendientes(Model model) {
-		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPendientes());
+		model.addAttribute("solicitudes", solicitudService.listarSolicitudesGestor());
 		model.addAttribute("mascota", null);
 		model.addAttribute("vistaGlobal", true);
 		return "adopcion/solicitudes";
 	}
 
-	@PreAuthorize("hasRole('GESTOR')")
+	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
 	@GetMapping("/gestor/solicitudes/{mascotaId}")
 	public String verSolicitudesPorMascota(@PathVariable Integer mascotaId, Model model) {
 		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPorMascota(mascotaId));
@@ -148,19 +151,19 @@ public class AdopcionController {
 		return "adopcion/solicitudes";
 	}
 
-	@PreAuthorize("hasRole('GESTOR')")
+	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
 	@GetMapping("/gestor/adopciones")
 	public String verAdopcionesGestor(Model model) {
 		model.addAttribute("adopciones", adopcionService.listarAdopciones());
 		return "adopcion/adopciones-gestor";
 	}
 
-	@PreAuthorize("hasRole('GESTOR')")
+	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
 	@PostMapping("/gestor/aprobar/{solicitudId}")
 	public String aprobarSolicitud(@PathVariable Integer solicitudId, Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
 		Integer gestorId = principal.getUsuario().getId();
-		adopcionService.aprobarSolicitud(solicitudId, gestorId);
+		solicitudService.decidirSolicitud(solicitudId, gestorId, "APROBAR", null);
 		Integer mascotaId = solicitudService.findSolicitudById(solicitudId).map(s -> s.getMascota().getId()).orElse(null);
 		if (mascotaId == null) {
 			return "redirect:/gestor/mascotas?aprobada";
@@ -168,18 +171,43 @@ public class AdopcionController {
 		return "redirect:/adopcion/gestor/solicitudes/" + mascotaId + "?aprobada";
 	}
 
-	@PreAuthorize("hasRole('GESTOR')")
+	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
 	@PostMapping("/gestor/rechazar/{solicitudId}")
 	public String rechazarSolicitud(@PathVariable Integer solicitudId,
 			@RequestParam(defaultValue = "No cumple criterios de adopción") String motivo,
 			Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
-		solicitudService.rechazarSolicitud(solicitudId, principal.getUsuario().getId(), motivo);
+		solicitudService.decidirSolicitud(solicitudId, principal.getUsuario().getId(), "RECHAZAR", motivo);
 		Integer mascotaId = solicitudService.findSolicitudById(solicitudId).map(s -> s.getMascota().getId()).orElse(null);
 		if (mascotaId == null) {
 			return "redirect:/adopcion/gestor/solicitudes?rechazada";
 		}
 		return "redirect:/adopcion/gestor/solicitudes/" + mascotaId + "?rechazada";
+	}
+
+	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
+	@PostMapping("/gestor/solicitudes/{solicitudId}/decision")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> decidirSolicitudAjax(@PathVariable Integer solicitudId,
+			@RequestParam String accion,
+			@RequestParam(required = false) String motivo,
+			Authentication auth) {
+		try {
+			UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+			SolicitudAdopcion solicitud = solicitudService.decidirSolicitud(solicitudId, principal.getUsuario().getId(), accion, motivo);
+			String estado = solicitud.getEstado() != null ? solicitud.getEstado().getId() : "-";
+			return ResponseEntity.ok(Map.of(
+					"ok", true,
+					"solicitudId", solicitud.getId(),
+					"estado", estado,
+					"mensaje", "Solicitud actualizada correctamente"
+			));
+		} catch (IllegalArgumentException | IllegalStateException ex) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+					"ok", false,
+					"mensaje", ex.getMessage()
+			));
+		}
 	}
 
 	@PreAuthorize("hasRole('ADOPTANTE')")

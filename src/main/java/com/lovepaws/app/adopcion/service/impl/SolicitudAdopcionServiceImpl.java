@@ -10,11 +10,14 @@ import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
+import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SolicitudAdopcionRepository;
-import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
 import com.lovepaws.app.adopcion.service.NotificacionEmailService;
+import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
+import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.mascota.repository.MascotaRepository;
 import com.lovepaws.app.user.domain.Usuario;
@@ -27,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 
 	private final SolicitudAdopcionRepository solicitudRepo;
+	private final AdopcionRepository adopcionRepository;
 	private final NotificacionEmailService notificacionEmailService;
 	private final MascotaRepository mascotaRepository;
 	private final AuditoriaService auditoriaService;
@@ -75,7 +79,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 
 	@Override
 	public List<SolicitudAdopcion> listarSolicitudesPorMascota(Integer mascotaId) {
-		return solicitudRepo.findByMascota_IdAndEstado_Id(mascotaId, ESTADO_PENDIENTE);
+		return solicitudRepo.findByMascota_IdOrderByFechaSolicitudDesc(mascotaId);
 	}
 
 	@Override
@@ -86,6 +90,11 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 	@Override
 	public List<SolicitudAdopcion> listarSolicitudesPendientes() {
 		return solicitudRepo.findByEstado_Id(ESTADO_PENDIENTE);
+	}
+
+	@Override
+	public List<SolicitudAdopcion> listarSolicitudesGestor() {
+		return solicitudRepo.findAllByOrderByFechaSolicitudDesc();
 	}
 
 	@Override
@@ -111,50 +120,13 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 	@Override
 	@Transactional
 	public SolicitudAdopcion aprobarSolicitud(Integer solicitudId, Integer gestorId) {
-		SolicitudAdopcion solicitud = solicitudRepo.findById(solicitudId)
-				.orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
-
-		if (!ESTADO_PENDIENTE.equalsIgnoreCase(solicitud.getEstado().getId())) {
-			throw new IllegalStateException("Solicitud no está pendiente");
-		}
-
-		EstadoAdopcion estado = new EstadoAdopcion();
-		estado.setId(ESTADO_APROBADA);
-		solicitud.setEstado(estado);
-		solicitud.setInfoAdicional("Aprobada por gestor ID: " + gestorId);
-
-		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
-		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
-				"GESTOR", "Estado cambiado a APROBADA");
-		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(solicitudActualizada);
-		notificacionEmailService.enviarCorreoAprobacion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
-
-		return solicitudActualizada;
+		return decidirSolicitud(solicitudId, gestorId, "APROBAR", null);
 	}
 
 	@Override
 	@Transactional
 	public SolicitudAdopcion rechazarSolicitud(Integer solicitudId, Integer gestorId, String motivo) {
-
-		SolicitudAdopcion solicitud = solicitudRepo.findById(solicitudId)
-				.orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
-
-		if (!ESTADO_PENDIENTE.equalsIgnoreCase(solicitud.getEstado().getId())) {
-			throw new IllegalStateException("Solicitud no está pendiente");
-		}
-
-		EstadoAdopcion estadoAdopcion = new EstadoAdopcion();
-		estadoAdopcion.setId(ESTADO_RECHAZADA);
-		solicitud.setEstado(estadoAdopcion);
-		solicitud.setInfoAdicional(motivo);
-
-		SolicitudAdopcion solicitudActualizada = solicitudRepo.save(solicitud);
-		auditoriaService.registrar("solicitud_adopcion", solicitudActualizada.getId(), "UPDATE", gestorId,
-				"GESTOR", "Estado cambiado a RECHAZADA. Motivo: " + motivo);
-		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(solicitudActualizada);
-		notificacionEmailService.enviarCorreoRechazo(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota(), motivo);
-
-		return solicitudActualizada;
+		return decidirSolicitud(solicitudId, gestorId, "RECHAZAR", motivo);
 	}
 
 	@Override
@@ -182,6 +154,97 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(updated);
 		notificacionEmailService.enviarCorreoCancelacion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
 		return updated;
+	}
+
+	@Override
+	@Transactional
+	public SolicitudAdopcion decidirSolicitud(Integer solicitudId, Integer gestorId, String accion, String motivo) {
+		if (accion == null || accion.isBlank()) {
+			throw new IllegalArgumentException("Acción inválida");
+		}
+
+		String accionNormalizada = accion.trim().toUpperCase();
+		if (!"APROBAR".equals(accionNormalizada) && !"RECHAZAR".equals(accionNormalizada)) {
+			throw new IllegalArgumentException("Acción inválida");
+		}
+
+		SolicitudAdopcion solicitud = solicitudRepo.findByIdForUpdate(solicitudId)
+				.orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
+
+		if (solicitud.getEstado() == null || solicitud.getEstado().getId() == null
+				|| !ESTADO_PENDIENTE.equalsIgnoreCase(solicitud.getEstado().getId())) {
+			throw new IllegalStateException("La solicitud ya no está pendiente");
+		}
+
+		if ("APROBAR".equals(accionNormalizada)) {
+			aprobarConAdopcion(solicitud, gestorId);
+		} else {
+			rechazarConMotivo(solicitud, gestorId, motivo);
+		}
+
+		return solicitudRepo.save(solicitud);
+	}
+
+	private void aprobarConAdopcion(SolicitudAdopcion solicitud, Integer gestorId) {
+		if (solicitud.getMascota() == null || solicitud.getMascota().getId() == null) {
+			throw new IllegalStateException("Solicitud sin mascota asociada");
+		}
+
+		Mascota mascota = mascotaRepository.findByIdForUpdate(solicitud.getMascota().getId())
+				.orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
+
+		if (mascota.getEstado() == null || mascota.getEstado().getId() == null
+				|| !"DISPONIBLE".equalsIgnoreCase(mascota.getEstado().getId())) {
+			throw new IllegalStateException("La mascota no está disponible para aprobar esta solicitud");
+		}
+
+		if (adopcionRepository.existsBySolicitud_Id(solicitud.getId())) {
+			throw new IllegalStateException("La solicitud ya tiene una adopción registrada");
+		}
+
+		EstadoAdopcion estadoAprobada = new EstadoAdopcion();
+		estadoAprobada.setId(ESTADO_APROBADA);
+		solicitud.setEstado(estadoAprobada);
+		solicitud.setInfoAdicional("Aprobada por gestor ID: " + gestorId);
+
+		Usuario gestor = new Usuario();
+		gestor.setId(gestorId);
+
+		Adopcion adopcion = Adopcion.builder()
+				.usuarioAdoptante(solicitud.getUsuario())
+				.mascota(mascota)
+				.estado(estadoAprobada)
+				.solicitud(solicitud)
+				.fechaAdopcion(LocalDateTime.now())
+				.activo(true)
+				.usuarioCreacion(gestor)
+				.build();
+		adopcionRepository.save(adopcion);
+
+		EstadoMascota estadoAdoptada = new EstadoMascota();
+		estadoAdoptada.setId("ADOPTADA");
+		mascota.setEstado(estadoAdoptada);
+		mascotaRepository.save(mascota);
+
+		auditoriaService.registrar("solicitud_adopcion", solicitud.getId(), "UPDATE", gestorId,
+				"GESTOR", "Solicitud APROBADA, mascota ADOPTADA y adopción creada");
+
+		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(solicitud);
+		notificacionEmailService.enviarCorreoAprobacion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
+	}
+
+	private void rechazarConMotivo(SolicitudAdopcion solicitud, Integer gestorId, String motivo) {
+		EstadoAdopcion estadoRechazada = new EstadoAdopcion();
+		estadoRechazada.setId(ESTADO_RECHAZADA);
+		solicitud.setEstado(estadoRechazada);
+		String motivoFinal = (motivo == null || motivo.isBlank()) ? "No cumple criterios de adopción" : motivo.trim();
+		solicitud.setInfoAdicional(motivoFinal);
+
+		auditoriaService.registrar("solicitud_adopcion", solicitud.getId(), "UPDATE", gestorId,
+				"GESTOR", "Solicitud RECHAZADA. Motivo: " + motivoFinal);
+
+		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(solicitud);
+		notificacionEmailService.enviarCorreoRechazo(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota(), motivoFinal);
 	}
 
 	private DatosCorreoSolicitud extraerDatosCorreo(SolicitudAdopcion solicitud) {

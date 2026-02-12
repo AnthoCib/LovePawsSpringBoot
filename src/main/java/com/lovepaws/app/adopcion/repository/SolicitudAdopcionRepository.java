@@ -33,6 +33,8 @@ public interface SolicitudAdopcionRepository extends JpaRepository<SolicitudAdop
 
 	List<SolicitudAdopcion> findByEstado_IdOrderByFechaSolicitudDesc(String estadoId);
 
+	List<SolicitudAdopcion> findByMascota_IdOrderByFechaSolicitudDesc(Integer mascotaId);
+
 	List<SolicitudAdopcion> findAllByOrderByFechaSolicitudDesc();
 
 }
