@@ -2,110 +2,12 @@
 <html lang="es"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<link th:href="@{/css/custom.css}" rel="stylesheet"/>
 
 <nav class="navbar navbar-expand-lg navbar-dark lp-navbar"
      th:fragment="navbar">
 
-    <style>
-        :root {
-            --lp-primary: #4f7ccf;
-            --lp-accent: #2aa198;
-            --lp-cta: #f4a261;
-            --lp-bg-soft: #f4f8fb;
-            --lp-text-dark: #0f172a;
-        }
-
-        body {
-            background-color: var(--lp-bg-soft);
-        }
-
-        .lp-navbar {
-            background: linear-gradient(135deg, var(--lp-primary), #3f67b0);
-            backdrop-filter: saturate(140%) blur(4px);
-            box-shadow: 0 4px 12px rgba(63, 103, 176, .25);
-            position: relative;
-            z-index: 1080;
-        }
-
-        .btn-primary {
-            background-color: var(--lp-cta);
-            border-color: var(--lp-cta);
-            color: var(--lp-text-dark);
-        }
-
-        .btn-primary:hover,
-        .btn-primary:focus {
-            background-color: #e78f48;
-            border-color: #e78f48;
-            color: #fff;
-        }
-
-        .btn-success {
-            background-color: var(--lp-accent);
-            border-color: var(--lp-accent);
-        }
-
-        .btn-success:hover,
-        .btn-success:focus {
-            background-color: #238a82;
-            border-color: #238a82;
-        }
-
-        .lp-navbar .dropdown-menu {
-            z-index: 1090;
-        }
-
-        .lp-navbar .navbar-brand {
-            font-weight: 700;
-            letter-spacing: .2px;
-        }
-
-        .lp-navbar .nav-link.nav-pill {
-            color: #f3f4f6;
-            border: 1px solid transparent;
-            border-radius: 999px;
-            padding: .38rem .85rem;
-            margin: .1rem .12rem;
-            transition: all .2s ease-in-out;
-        }
-
-        .lp-navbar .nav-link.nav-pill:hover,
-        .lp-navbar .nav-link.nav-pill:focus {
-            color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.14);
-            border-color: rgba(255, 255, 255, 0.24);
-        }
-
-        .lp-navbar .btn-auth {
-            border: 1px solid rgba(255, 255, 255, .4);
-            border-radius: 999px;
-            color: #fff;
-            background: transparent;
-            padding: .35rem .75rem;
-            font-size: .9rem;
-            transition: all .2s ease-in-out;
-        }
-
-        .lp-navbar .btn-auth:hover,
-        .lp-navbar .btn-auth:focus {
-            background-color: rgba(255, 255, 255, .16);
-            border-color: rgba(255, 255, 255, .72);
-            color: #fff;
-        }
-
-        @media (max-width: 991.98px) {
-            .lp-navbar .navbar-nav {
-                padding-top: .6rem;
-                gap: .35rem;
-            }
-
-            .lp-navbar .nav-link.nav-pill,
-            .lp-navbar .btn-auth {
-                width: 100%;
-                text-align: center;
-            }
-        }
-    </style>
+    
 
     <div class="container">
         <a class="navbar-brand" th:href="@{/}">

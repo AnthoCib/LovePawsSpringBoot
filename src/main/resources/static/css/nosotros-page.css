@@ -10,3 +10,25 @@
   object-fit: contain;
   filter: grayscale(15%);
 }
+
+
+.about-banner {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75), rgba(15, 118, 110, 0.5)),
+              url('/images/Imagenes_PNG/nosotros.avif') center/cover no-repeat;
+  min-height: 260px;
+}
+
+.about-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.35));
+}
+
+.about-banner .banner-content {
+  position: relative;
+  z-index: 2;
+}

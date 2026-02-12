@@ -79,3 +79,31 @@
     object-fit: cover;
     border-radius: 10px;
 }
+
+
+.contact-banner {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.6), rgba(15, 118, 110, 0.6)),
+              url('/images/mascotas/pexels-jhelmuth-12538668.jpg') center/cover no-repeat;
+  min-height: 260px;
+}
+
+.contact-banner .banner-content {
+  position: relative;
+  z-index: 2;
+}
+
+.contact-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.4));
+}
+
+.contact-feature {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
