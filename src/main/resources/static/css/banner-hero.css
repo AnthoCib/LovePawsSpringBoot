@@ -24,3 +24,5 @@
     right: 1.25rem;
     bottom: 1.25rem;
 }
+
+.lp-pet-thumb { height: 220px; object-fit: cover; }

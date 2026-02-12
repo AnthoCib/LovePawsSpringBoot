@@ -50,7 +50,7 @@
     <div class="row g-3">
         <div class="col-md-4" th:each="m : ${mascotas}">
             <div class="card h-100 shadow-sm">
-                <img th:src="${m.fotoUrl != null ? m.fotoUrl : '/images/mascotas/mascota-default.jpg'}" class="card-img-top" alt="mascota" style="height:220px;object-fit:cover;">
+                <img th:src="${m.fotoUrl != null ? m.fotoUrl : '/images/mascotas/mascota-default.jpg'}" class="card-img-top lp-pet-thumb" alt="mascota">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${m.nombre}">Nombre</h5>
                     <p class="card-text mb-1"><strong>Raza:</strong> <span th:text="${m.raza != null ? m.raza.nombre : '-'}"></span></p>

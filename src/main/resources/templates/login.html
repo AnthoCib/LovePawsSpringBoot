@@ -15,14 +15,13 @@
 
 <script src="https://kit.fontawesome.com/9c8abac2af.js"></script>
 <link href="/css/index.css" rel="stylesheet">
-<link href="/css/boostrap.css" rel="stylesheet">
+<link href="/css/bootstrap-custom.css" rel="stylesheet">
 </head>
 <body class="bg-gradient">
 
 	<div
 		class="container d-flex align-items-center justify-content-center min-vh-100">
-		<div class="row g-0 shadow-lg rounded-4 overflow-hidden w-100"
-			style="max-width: 700px;">
+		<div class="row g-0 shadow-lg rounded-4 overflow-hidden w-100 lp-login-shell">
 
 			<!-- Columna izquierda: Formulario -->
 			<div class="col-lg-6 bg-white p-4">
@@ -88,7 +87,7 @@
 
 					<div class="text-center small text-muted">
 						¿No tienes cuenta? <a th:href="@{/usuarios/registro}"
-							class="fw-medium text-decoration-none" style="color: #f59e0b;">
+							class="fw-medium text-decoration-none lp-register-link">
 							Regístrate </a>
 					</div>
 				</form>
@@ -96,16 +95,14 @@
 
 			<!-- Columna derecha: Imagen -->
 			<div
-				class="col-lg-6 d-none d-lg-flex flex-column justify-content-between text-dark"
-				style="background: linear-gradient(135deg, rgba(255, 252, 249, 0.95), rgba(255, 239, 230, 0.95)); box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.04); background-size: cover; background-position: center;">
+				class="col-lg-6 d-none d-lg-flex flex-column justify-content-between text-dark lp-login-art">
 				<div class="p-4">
 					<img src="/images/login/logosf.svg" alt="Love Paws Logo"
-						style="max-width: 140px; height: auto;">
+						class="lp-login-logo">
 				</div>
 
 				<div class="text-center mb-4">
-					<img src="/images/login/catdog.svg" alt="Gato" class="img-fluid"
-						style="max-height: 350px; width: auto;">
+					<img src="/images/login/catdog.svg" alt="Gato" class="img-fluid lp-login-pet">
 				</div>
 			</div>
 

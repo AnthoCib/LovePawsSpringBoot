@@ -173,28 +173,4 @@ body {
         margin-bottom: 15px;
     }
 }
-/* ===== Layout base ===== */
-.admin-dark {
-    background-color: #f5f7fb;
-    min-height: 100vh;
-}
-
-/* ===== Sidebar ===== */
-.sidebar {
-    width: 240px;
-    min-height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: linear-gradient(180deg, #0d6efd, #0a58ca);
-    z-index: 1000;
-}
-
-/* ===== Contenido ===== */
-.admin-content {
-    margin-left: 240px; 
-    padding: 2rem;
-    width: calc(100% - 240px);
-}
-
-
+/* Layout base moved to custom.css and page-level styles. */

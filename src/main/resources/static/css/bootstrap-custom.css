@@ -1,0 +1,49 @@
+@charset "UTF-8";
+
+.text-primary-custom {
+	color: #1e3a8a !important;
+}
+
+.bg-gradient {
+	background: linear-gradient(135deg, #e0efff 0%, #ffffff 100%);
+}
+
+.btn-accent {
+	background-color: #f59e0b;
+	color: #fff;
+}
+
+.btn-accent:hover {
+	filter: brightness(0.9);
+}
+
+body {
+	margin: 0;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #f8f9fa;
+}
+
+.loading-button {
+	padding: 1.5rem 3rem;
+	font-size: 1.5rem;
+}
+
+.carousel-item img {
+	width: 100%;
+	height: 400px;
+	object-fit: cover; /* Asegura que la imagen no se deforme */
+}
+
+.lp-login-shell { max-width: 700px; }
+.lp-register-link { color: #f59e0b; }
+.lp-login-art {
+  background: linear-gradient(135deg, rgba(255, 252, 249, 0.95), rgba(255, 239, 230, 0.95));
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.04);
+  background-size: cover;
+  background-position: center;
+}
+.lp-login-logo { max-width: 140px; height: auto; }
+.lp-login-pet { max-height: 350px; width: auto; }
