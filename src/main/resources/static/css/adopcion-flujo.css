@@ -65,6 +65,46 @@
     background: #fff;
     border-radius: 14px;
     border: 1px solid #e9edf5;
+    box-shadow: 0 12px 20px rgba(13, 110, 253, 0.08);
+}
+
+.lp-btn {
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lp-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(13, 110, 253, 0.18);
+}
+
+.lp-btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #255bdb 100%);
+    border: none;
+    color: #fff;
+}
+
+.lp-btn-outline {
+    border: 1px solid var(--lp-border);
+    color: var(--lp-ink);
+    background: #fff;
+}
+
+.lp-btn-danger {
+    border: 1px solid #f0b7be;
+    color: #b42318;
+    background: #fff;
+}
+
+.lp-table thead th {
+    color: var(--lp-ink);
+    font-weight: 700;
+}
+
+.lp-table tbody tr {
+    border-color: #e9edf5;
 }
 
 .pet-attribute {
