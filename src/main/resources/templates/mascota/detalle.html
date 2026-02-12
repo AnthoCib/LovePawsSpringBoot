@@ -21,7 +21,7 @@
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm h-100">
                 <img th:src="${mascota.fotoUrl != null ? mascota.fotoUrl : '/images/mascotas/mascota-default.jpg'}"
-                     class="card-img-top" alt="foto mascota" style="height:380px;object-fit:cover;">
+                     class="card-img-top img-fluid lp-pet-detail-img" alt="foto mascota">
                 <div class="card-body">
                     <h1 class="h3 mb-1" th:text="${mascota.nombre}">Nombre mascota</h1>
                     <p class="text-muted mb-0">Conoce su perfil y completa tu solicitud cuando estés listo.</p>
