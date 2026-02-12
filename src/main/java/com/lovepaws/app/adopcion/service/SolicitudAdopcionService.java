@@ -15,6 +15,8 @@ public interface SolicitudAdopcionService {
 
 	List<SolicitudAdopcion> listarSolicitudesPendientes();
 
+	List<SolicitudAdopcion> listarSolicitudesGestor();
+
 	Optional<SolicitudAdopcion> findSolicitudById(Integer id);
 
 	SolicitudAdopcion updateSolicitud(SolicitudAdopcion solicitud);
@@ -27,5 +29,7 @@ public interface SolicitudAdopcionService {
 	SolicitudAdopcion rechazarSolicitud(Integer solicitudId, Integer gestorId, String motivo);
 
 	SolicitudAdopcion cancelarSolicitud(Integer solicitudId, Integer usuarioId);
+
+	SolicitudAdopcion decidirSolicitud(Integer solicitudId, Integer gestorId, String accion, String motivo);
 
 }
