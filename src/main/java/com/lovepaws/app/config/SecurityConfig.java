@@ -6,13 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
 
 import com.lovepaws.app.security.CustomSuccessHandler;
 import com.lovepaws.app.security.CustomUserDetailsService;
@@ -48,6 +48,10 @@ public class SecurityConfig {
                 //  Recursos estáticos y rutas públicas
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/webjars/**").permitAll()
                 .requestMatchers("/", "/index", "/home", "/usuarios/registro", "/usuarios/recuperar-password", "/usuarios/reset-password", "/login", "/registro", "/mascotas/**", "/nosotros", "/contacto", "/adopcion").permitAll()
+                // API móvil (estructura JWT preparada; validación JWT se agregará en un filtro dedicado)
+                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/mascotas/**").permitAll()
+                .requestMatchers("/api/**").permitAll()
                 // Rutas protegidas por rol
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/gestor/**").hasAnyRole("GESTOR","ADMIN")
@@ -81,7 +85,9 @@ public class SecurityConfig {
                 .authenticationEntryPoint((request, response, authException) ->
                     response.sendRedirect("/usuarios/login"))
             )
-            .csrf(Customizer.withDefaults()) // Mantiene CSRF habilitado
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**")
+            )
             .authenticationProvider(authenticationProvider());
 
         return http.build();
