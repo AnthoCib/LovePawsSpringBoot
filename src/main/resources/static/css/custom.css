@@ -130,3 +130,163 @@ main.container {
   background-color: var(--lp-blue-soft-2) !important;
   color: var(--lp-blue-deep) !important;
 }
+
+/* ===== Login SaaS ===== */
+.lp-login-page {
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 45%, #93c5fd 100%) !important;
+}
+
+.lp-login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.lp-login-card {
+  width: min(100%, 980px);
+  background: #ffffff;
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 45px rgba(37, 99, 235, 0.16);
+  border: 1px solid #dbeafe;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.lp-login-brand-panel,
+.lp-login-form {
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.lp-login-brand-panel {
+  background: linear-gradient(160deg, #eff6ff 0%, #dbeafe 100%);
+  border-bottom: 1px solid #dbeafe;
+  position: relative;
+}
+
+.lp-login-back {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #1d4ed8;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid #bfdbfe;
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.lp-login-badge {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  padding: .25rem .65rem;
+  margin-bottom: .8rem;
+}
+
+.lp-login-title {
+  font-weight: 700;
+  margin-bottom: .35rem;
+  color: #0f172a;
+}
+
+.lp-login-subtitle {
+  margin: 0;
+  color: #475569;
+}
+
+.lp-login-label {
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: .45rem;
+}
+
+.lp-login-input-wrap {
+  position: relative;
+}
+
+.lp-login-input-icon {
+  position: absolute;
+  left: .85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  z-index: 2;
+}
+
+.lp-login-input {
+  border-radius: .9rem;
+  border: 1px solid #cbd5e1;
+  padding-left: 2.35rem;
+  min-height: 2.75rem;
+}
+
+.lp-login-input:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 .25rem rgba(147, 197, 253, 0.35);
+}
+
+.lp-login-toggle {
+  position: absolute;
+  top: 50%;
+  right: .5rem;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+}
+
+.lp-login-toggle:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.lp-login-submit {
+  background-color: #2563EB !important;
+  border-color: #2563EB !important;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: .9rem;
+  min-height: 2.8rem;
+}
+
+.lp-login-submit:hover,
+.lp-login-submit:focus {
+  background-color: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+.lp-login-link {
+  color: #2563EB;
+  text-decoration: none;
+}
+
+.lp-login-link:hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline;
+}
+
+@media (min-width: 992px) {
+  .lp-login-card {
+    grid-template-columns: minmax(280px, 42%) 1fr;
+  }
+
+  .lp-login-brand-panel {
+    border-bottom: 0;
+    border-right: 1px solid #dbeafe;
+    display: flex;
+    align-items: center;
+  }
+}
