@@ -12,27 +12,42 @@
 <div class="d-flex">
   <div th:replace="fragments/admin-sidebar :: adminSidebar"></div>
   <main class="admin-content w-100 p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold">Catálogo de Razas</h2>
-      <a class="btn btn-primary" th:href="@{/admin/catalogos/razas/nuevo}">Nueva raza</a>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+      <h2 class="fw-bold m-0">Catálogo de Razas</h2>
+      <a class="btn btn-primary" th:href="@{/admin/catalogos/razas/nuevo}">
+        <i class="bi bi-plus-circle me-1"></i>Nueva raza
+      </a>
     </div>
-    <table class="table table-dark table-striped">
-      <thead><tr><th>ID</th><th>Raza</th><th>Especie</th><th>Estado</th><th>Acciones</th></tr></thead>
-      <tbody>
-        <tr th:each="r : ${razas}">
-          <td th:text="${r.id}">1</td>
-          <td th:text="${r.nombre}">Labrador</td>
-          <td th:text="${r.especie.nombre}">Canino</td>
-          <td th:text="${r.estado} ? 'Activo' : 'Inactivo'">Activo</td>
-          <td>
-            <a class="btn btn-sm btn-outline-info" th:href="@{/admin/catalogos/razas/editar/{id}(id=${r.id})}">Editar</a>
-            <form class="d-inline" method="post" th:action="@{/admin/catalogos/razas/eliminar/{id}(id=${r.id})}">
-              <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
-            </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
+    <div class="row g-4">
+      <div class="col-12 col-md-6 col-xl-4" th:each="r : ${razas}">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column gap-3">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <div>
+                <h5 class="card-title mb-1" th:text="${r.nombre}">Labrador</h5>
+                <small class="text-muted d-block">ID: <span th:text="${r.id}">1</span></small>
+                <small class="text-muted">Especie: <span th:text="${r.especie.nombre}">Canino</span></small>
+              </div>
+              <span class="badge"
+                    th:classappend="${r.estado} ? ' text-bg-success' : ' text-bg-secondary'"
+                    th:text="${r.estado} ? 'Activo' : 'Inactivo'">Activo</span>
+            </div>
+
+            <div class="mt-auto d-flex gap-2">
+              <a class="btn btn-sm btn-outline-info flex-fill" th:href="@{/admin/catalogos/razas/editar/{id}(id=${r.id})}">
+                <i class="bi bi-pencil-square me-1"></i>Editar
+              </a>
+              <form class="flex-fill" method="post" th:action="@{/admin/catalogos/razas/eliminar/{id}(id=${r.id})}">
+                <button class="btn btn-sm btn-outline-danger w-100" type="submit">
+                  <i class="bi bi-trash3 me-1"></i>Eliminar
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 <script th:if="${swalSuccess != null}" th:inline="javascript">Swal.fire({icon:'success',title:'Éxito',text:[[${swalSuccess}]]});</script>
