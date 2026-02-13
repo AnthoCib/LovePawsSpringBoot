@@ -9,4 +9,6 @@ import com.lovepaws.app.mascota.domain.Raza;
 public interface RazaRepository extends JpaRepository<Raza, Integer> {
 	
 	List<Raza> findByEspecieId(Integer especieId);
+
+	boolean existsByEspecieIdAndNombreIgnoreCase(Integer especieId, String nombre);
 }
