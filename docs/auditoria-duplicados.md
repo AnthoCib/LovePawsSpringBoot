@@ -1,332 +1,186 @@
 # Auditoría técnica de duplicados (Spring Boot + Maven + STS/Eclipse)
+Este informe fue generado con `scripts/audit_duplicates.py` y validado manualmente.
+## Resumen ejecutivo
+- Duplicados por **nombre**: 6
+- Duplicados por **contenido (SHA-256)**: 18 grupos
+- Duplicados de **simpleName Java**: 0
+- Duplicados de **nombre de template Thymeleaf**: 6
+- Duplicados por nombre en **static/**: 0
+- Duplicados por nombre en **tests**: 0
+- Colisiones de **bean name**: 0
+- Colisiones de **mapping (HTTP+ruta)**: 0
+- `.classpath` presente en repo: No
+## 1) Duplicados por nombre de archivo
+### `dashboard.html`
+- `src/main/resources/templates/admin/dashboard.html`
+- `src/main/resources/templates/admin/reportes/dashboard.html`
+- `src/main/resources/templates/gestor/dashboard.html`
+- Impacto: ambigüedad en mantenimiento y posible referencia incorrecta.
+- Recomendación: unificar, renombrar por contexto funcional y actualizar referencias.
+### `form.html`
+- `src/main/resources/templates/gestor/mascota/form.html`
+- `src/main/resources/templates/gestor/mascotas/form.html`
+- `src/main/resources/templates/mascota/form.html`
+- Impacto: ambigüedad en mantenimiento y posible referencia incorrecta.
+- Recomendación: unificar, renombrar por contexto funcional y actualizar referencias.
+### `lista.html`
+- `src/main/resources/templates/gestor/mascota/lista.html`
+- `src/main/resources/templates/mascota/lista.html`
+- Impacto: ambigüedad en mantenimiento y posible referencia incorrecta.
+- Recomendación: unificar, renombrar por contexto funcional y actualizar referencias.
+### `login.html`
+- `src/main/resources/templates/login.html`
+- `src/main/resources/templates/usuario/login.html`
+- `src/main/resources/templates/usuarios/login.html`
+- Impacto: ambigüedad en mantenimiento y posible referencia incorrecta.
+- Recomendación: unificar, renombrar por contexto funcional y actualizar referencias.
+### `mascotas.html`
+- `src/main/resources/templates/admin/mascotas.html`
+- `src/main/resources/templates/admin/reportes/mascotas.html`
+- `src/main/resources/templates/gestor/mascotas.html`
+- Impacto: ambigüedad en mantenimiento y posible referencia incorrecta.
+- Recomendación: unificar, renombrar por contexto funcional y actualizar referencias.
+### `usuarios.html`
+- `src/main/resources/templates/admin/reportes/usuarios.html`
+- `src/main/resources/templates/admin/usuarios.html`
+- Impacto: ambigüedad en mantenimiento y posible referencia incorrecta.
+- Recomendación: unificar, renombrar por contexto funcional y actualizar referencias.
 
-Fecha: 2026-02-13  
-Proyecto analizado: `LovePawsSpringBoot`
-
-## Alcance y método
-Se revisó el proyecto completo para detectar duplicidades por:
-
-- nombre de archivo repetido en rutas distintas
-- contenido idéntico (copias exactas por hash SHA-256)
-- clases Java con mismo `simpleName` en paquetes distintos
-- plantillas Thymeleaf duplicadas por nombre
-- recursos estáticos duplicados
-- entradas duplicadas en `.classpath`
-- beans/componentes con mismo nombre lógico de bean
-- mappings de Spring repetidos (`método HTTP + ruta`)
-- tests duplicados
-- inclusión de `target`/`generated-sources` como source folder
-
-## Hallazgos
-
-### 1) Duplicados por nombre de archivo (reales)
-
-1. `login.html`
-   - `src/main/resources/templates/login.html`
-   - `src/main/resources/templates/usuario/login.html`
-   - `src/main/resources/templates/usuarios/login.html`
-   - Impacto potencial: alta confusión de mantenimiento; riesgo de renderizar template equivocado si en controladores se usa nombre no calificado.
-   - Recomendación: conservar una convención única por módulo (`usuario/login`, `admin/login`, etc.) y eliminar/copiar lógica en un solo archivo base con fragmentos.
-
-2. `dashboard.html`
-   - `src/main/resources/templates/admin/dashboard.html`
-   - `src/main/resources/templates/admin/reportes/dashboard.html`
-   - `src/main/resources/templates/gestor/dashboard.html`
-   - Impacto: ambigüedad funcional y deuda técnica.
-   - Recomendación: renombrar vistas de reportes a `dashboard-reportes.html` o mover bajo estructura por feature.
-
-3. `mascotas.html`
-   - `src/main/resources/templates/admin/mascotas.html`
-   - `src/main/resources/templates/admin/reportes/mascotas.html`
-   - `src/main/resources/templates/gestor/mascotas.html`
-   - Impacto: riesgo de mapeos de vista poco explícitos.
-   - Recomendación: prefijos por contexto (`admin-mascotas`, `gestor-mascotas`, `reportes-mascotas`).
-
-4. `form.html`
-   - `src/main/resources/templates/gestor/mascota/form.html`
-   - `src/main/resources/templates/gestor/mascotas/form.html`
-   - `src/main/resources/templates/mascota/form.html`
-   - Impacto: alta probabilidad de usar template incorrecto en refactors.
-   - Recomendación: unificar singular/plural (`mascotas`) y dejar solo un formulario por caso de uso.
-
-5. `lista.html`
-   - `src/main/resources/templates/gestor/mascota/lista.html`
-   - `src/main/resources/templates/mascota/lista.html`
-   - Impacto: duplicidad de UX y esfuerzo de mantenimiento.
-   - Recomendación: consolidar y parametrizar por rol.
-
-6. `usuarios.html`
-   - `src/main/resources/templates/admin/reportes/usuarios.html`
-   - `src/main/resources/templates/admin/usuarios.html`
-   - Impacto: posible inconsistencia de datos/columnas.
-   - Recomendación: separar intención (`usuarios-listado` vs `usuarios-reporte`) o unificar.
-
----
-
-### 2) Duplicados por contenido idéntico (copias exactas)
-
-Se detectaron copias exactas (mismo hash) principalmente en imágenes entre:
-- `src/main/resources/static/images/mascotas/*`
-- `src/main/resources/static/uploads/*`
-- `uploads/*`
-
-Casos representativos:
+## 2) Duplicados por contenido (copias exactas)
+### Grupo 1 (`132078d24eb2…`)
+- `src/main/resources/static/images/mascotas/cc35.jpg`
+- `uploads/32a82994-728c-469a-b968-5eb51e7f743f.jpg`
+- `uploads/d843801e-800f-4564-9013-111d82acfcfe.jpg`
+### Grupo 2 (`1515db6248a1…`)
+- `src/main/resources/static/images/mascotas/cc22.jpg`
+- `uploads/7b456f74-2aff-491c-b255-2e81c96c86aa.jpg`
+### Grupo 3 (`175a81e212e3…`)
+- `src/main/resources/static/images/mascotas/cc20.jpg`
+- `uploads/f73376a7-57c6-4435-8e29-eaa8c49a09d5.jpg`
+### Grupo 4 (`27236b741dd6…`)
+- `src/main/resources/static/images/mascotas/pp10.jpg`
+- `src/main/resources/static/uploads/f06757b1-cf0d-4103-ab17-270c29c043c3.jpg`
+### Grupo 5 (`36119b03f65e…`)
+- `src/main/resources/static/images/mascotas/cc21.jpg`
+- `uploads/c5978b74-0516-498d-958e-4e5a969b5e06.jpg`
+### Grupo 6 (`4240930a05f4…`)
+- `src/main/resources/static/uploads/7fe5f689-739a-4789-995f-44656046297b.jpg`
+- `uploads/8fa6240d-f132-4d95-8b7c-143251229e79.jpg`
+- `uploads/e34b9c3f-f38d-4432-90d6-f49272cca253.jpg`
+### Grupo 7 (`52d4f285eac3…`)
+- `src/main/resources/static/images/mascotas/dp31.jpg`
+- `src/main/resources/static/uploads/21f2586e-1b62-4a39-a731-8bd6f1491ed5.jpg`
+### Grupo 8 (`6227fc14c714…`)
 - `src/main/resources/static/images/mascotas/daisy.jpg`
 - `src/main/resources/static/uploads/03177191-f505-4002-94b4-245236634802.jpg`
 - `src/main/resources/static/uploads/e3b32964-be83-4ad5-b663-3689d5fffb4f.jpg`
-
-Y también:
+### Grupo 9 (`698855131c83…`)
+- `src/main/resources/static/images/mascotas/cc39.jpg`
+- `uploads/e08947ef-32b9-4a8b-a150-7520c1a55d98.jpg`
+### Grupo 10 (`780c32fe5002…`)
+- `src/main/resources/static/images/mascotas/pp01.jpg`
+- `src/main/resources/static/uploads/e0668366-5f36-4a60-9887-39b0d430161a.jpg`
+### Grupo 11 (`7c0aaaec2fbf…`)
+- `src/main/resources/static/images/mascotas/cc13.jpg`
+- `uploads/a1b962d5-b6cf-4703-b46c-682ca561295d.jpg`
+- `uploads/a591cbad-e1e6-4a24-bbe7-17097604ee21.jpg`
+### Grupo 12 (`7e64ae12de29…`)
+- `src/main/resources/static/images/mascotas/pp07.jpg`
+- `uploads/cf07d320-adaa-4b0e-ade1-b3605603f1d4.jpg`
+### Grupo 13 (`8333faa8ee0e…`)
+- `src/main/resources/static/images/mascotas/cc03.jpg`
+- `uploads/220b1bea-4150-4152-a72b-2468e362e424.jpg`
+### Grupo 14 (`9c9874bfeee7…`)
+- `src/main/resources/static/uploads/0e099481-3439-4bc9-8671-bde03d532c80.jpg`
+- `uploads/983d701c-553c-47a6-a524-932dd5869418.jpg`
+### Grupo 15 (`b1e3a980c1cb…`)
 - `src/main/resources/static/images/mascotas/bruno.jpg`
 - `src/main/resources/static/images/mascotas/pp09.jpg`
+### Grupo 16 (`ce8330ee3653…`)
+- `src/main/resources/static/images/mascotas/cc07.jpg`
+- `src/main/resources/static/uploads/57897043-390d-4bc7-be90-5f79297cbf34.jpg`
+- `uploads/8b32709c-5ef1-40ef-bfe9-e258f4a4fd19.jpg`
+### Grupo 17 (`e82cbbbad1d4…`)
+- `src/main/resources/static/images/mascotas/cc01.jpg`
+- `uploads/89ce3ab2-8a5b-4b2d-98f0-01d855f0e38d.jpg`
+- `uploads/8fe21921-a77d-4d62-8451-07e5796bbc8a.jpg`
+### Grupo 18 (`f5e804dc6c2a…`)
+- `src/main/resources/static/images/mascotas/cc40.jpg`
+- `uploads/ee6a1d36-974c-4533-aa96-f79d170993a6.jpg`
+- Impacto: tamaño de repo/artefacto mayor, riesgo de inconsistencias de referencia.
+- Recomendación: conservar un archivo canónico por grupo y actualizar referencias.
 
-Impacto potencial:
-- incremento innecesario del tamaño del repo y artefacto
-- dificultad para versionar activos
-- posible contenido “huérfano” o repetido por carga de archivos
+## 3) Clases Java con mismo simpleName
+- No se detectaron duplicados.
 
-Recomendación:
-- elegir **una** estrategia: assets seed (`static/images/mascotas`) **o** uploads runtime (`uploads` fuera de classpath)
-- deduplicar por hash y actualizar referencias en BD/entidades
-- excluir `uploads/` del versionado si es runtime
+## 4) Plantillas Thymeleaf duplicadas por nombre
+- `dashboard.html`: `src/main/resources/templates/admin/dashboard.html`, `src/main/resources/templates/admin/reportes/dashboard.html`, `src/main/resources/templates/gestor/dashboard.html`
+- `form.html`: `src/main/resources/templates/gestor/mascota/form.html`, `src/main/resources/templates/gestor/mascotas/form.html`, `src/main/resources/templates/mascota/form.html`
+- `lista.html`: `src/main/resources/templates/gestor/mascota/lista.html`, `src/main/resources/templates/mascota/lista.html`
+- `login.html`: `src/main/resources/templates/login.html`, `src/main/resources/templates/usuario/login.html`, `src/main/resources/templates/usuarios/login.html`
+- `mascotas.html`: `src/main/resources/templates/admin/mascotas.html`, `src/main/resources/templates/admin/reportes/mascotas.html`, `src/main/resources/templates/gestor/mascotas.html`
+- `usuarios.html`: `src/main/resources/templates/admin/reportes/usuarios.html`, `src/main/resources/templates/admin/usuarios.html`
+- Riesgo runtime: medio/alto si algún controlador retorna nombre de vista ambiguo.
 
----
+## 5) Recursos estáticos duplicados
+- Por nombre en `static/`: no detectados.
+- Por contenido: ver sección 2.
 
-### 3) Clases Java con mismo nombre simple
+## 6) `.classpath`
+- No existe `.classpath` en el repositorio; no se pueden detectar entradas duplicadas desde Git.
+- Acción en STS/Eclipse: revisar Build Path y remover `target/` y `generated-sources/` si aparecen como source folders.
 
-Resultado: **no se detectaron duplicados** de `simpleName` entre clases Java de `src/main/java`.
+## 7) Duplicación de beans
+- No se detectaron colisiones de nombre de bean por estereotipos.
 
-Impacto actual: sin conflicto por nombre de clase.
+## 8) Duplicación de mappings
+- No se detectaron colisiones exactas de `método HTTP + ruta`.
 
-Recomendación:
-- mantener sufijos semánticos (`*Controller`, `*ServiceImpl`, `*Repository`) para evitar colisiones futuras.
+## 9) Tests duplicados
+- No se detectaron duplicados por nombre en `src/test`.
 
----
+## 10) Duplicados con potencial de conflicto runtime
+1. **Alto**: templates con mismo nombre (`login.html`, `form.html`, `dashboard.html`, etc.).
+2. **Medio**: imágenes duplicadas por contenido entre `static/images`, `static/uploads` y `uploads`.
 
-### 4) Plantillas Thymeleaf duplicadas por nombre
-
-Coinciden con el bloque de duplicados por nombre (sección 1):
-`login.html`, `dashboard.html`, `mascotas.html`, `form.html`, `lista.html`, `usuarios.html`.
-
-Riesgo runtime:
-- si un controlador retorna vistas relativas ambiguas, se puede renderizar una plantilla no esperada.
-
-Recomendación:
-- usar nombres de vista explícitos y completos (`"admin/reportes/usuarios"`) en todos los controladores
-- aplicar convención única de carpetas por bounded context.
-
----
-
-### 5) Recursos estáticos duplicados
-
-No se detectaron duplicados por **nombre de archivo** dentro de `static/` en rutas distintas.  
-Sí se detectaron duplicados por **contenido** (ver sección 2).
-
----
-
-### 6) Entradas duplicadas en `.classpath`
-
-Resultado: no existe archivo `.classpath` en el repositorio analizado.
-
-Impacto:
-- no se puede validar duplicados de classpath directamente desde Git.
-
-Recomendación:
-- exportar `.classpath` local de STS/Eclipse y validar con script (ver sección comandos).
-
----
-
-### 7) Duplicación de beans / componentes (mismo nombre de bean)
-
-Resultado: **no se detectaron** colisiones de nombres de bean por convención Spring (`@Controller/@Service/@Repository/@Component`) en código fuente.
-
-Riesgo residual:
-- podría aparecer si se define `@Bean(name="...")` duplicado en configuraciones futuras.
-
-Recomendación:
-- mantener nombres explícitos si se usan factories `@Bean`.
-
----
-
-### 8) Duplicación de mappings Spring (`HTTP + ruta`)
-
-Resultado: **no se detectaron** rutas duplicadas exactas por combinación de método HTTP y path.
-
-Riesgo residual:
-- sobrecargas con `params`, `consumes`, `produces` podrían requerir validación adicional con `actuator/mappings` en runtime.
-
-Recomendación:
-- habilitar `spring-boot-starter-actuator` + endpoint `/actuator/mappings` en entorno de QA para validación final.
-
----
-
-### 9) Tests duplicados/copia en `src/test`
-
-Resultado: no se detectaron duplicados por nombre ni por contenido en `src/test`.
-
----
-
-### 10) Source folders inválidos (`target` / `generated-sources`)
-
-No se encontró `.classpath`; por tanto, no hay evidencia en repo de inclusión errónea como source folder.
-
-Recomendación en STS/Eclipse:
-- verificar `Build Path` y remover cualquier `target/` o `generated-sources/` agregado manualmente.
-
-## Duplicados con potencial de conflicto en runtime
-
-Prioridad alta:
-1. Plantillas Thymeleaf duplicadas por nombre (`login.html`, `form.html`, etc.) por ambigüedad y errores de renderizado.
-2. Activos estáticos/imagenes duplicadas por contenido (impacto de tamaño y referencias inconsistentes).
-
-Prioridad media:
-3. Estructura duplicada singular/plural (`mascota` vs `mascotas`) en templates.
-
-## Estructura ideal recomendada
-
+## 11) Estructura ideal recomendada
 ```text
-src/
-  main/
-    java/com/lovepaws/app/
-      config/
-      modules/
-        admin/
-          controller/
-          service/
-          repository/
-        mascota/
-        adopcion/
-        usuario/
-    resources/
-      templates/
-        admin/
-          dashboard.html
-          usuarios-listado.html
-          reportes/
-            dashboard-reportes.html
-            usuarios-reporte.html
-        mascota/
-          listado.html
-          formulario.html
-        auth/
-          login.html
-      static/
-        css/
-        js/
-        images/
-          mascotas/
-  test/
-    java/
-uploads/   (fuera de src/main/resources y fuera del repo idealmente)
+src/main/resources/templates/
+  auth/login.html
+  admin/dashboard.html
+  admin/reportes/dashboard-reportes.html
+  mascota/formulario.html
+  mascota/listado.html
+
+src/main/resources/static/
+  images/mascotas/
+  css/
+  js/
+
+uploads/   # runtime, fuera de resources y preferible fuera del repo
 ```
-
-Reglas sugeridas:
-- evitar singular/plural mixto en rutas de carpeta
-- un nombre de template por caso de uso
-- assets runtime fuera de classpath
-
-## Comandos/scripts para validar localmente
-
-### Linux/macOS (bash)
-
-1) Duplicados por nombre de archivo
+## 12) Comandos de verificación local
+### Linux/macOS
 ```bash
-find . -type f | sed 's#^.*/##' | sort | uniq -d
+python3 scripts/audit_duplicates.py | jq .
 ```
-
-2) Duplicados por contenido (hash)
 ```bash
-find . -type f -not -path '*/.git/*' -print0 \
-  | xargs -0 sha256sum \
-  | sort \
-  | awk '{print $1}' | uniq -d
+find . -type f | sed "s#^.*/##" | sort | uniq -d
 ```
-
-3) Clases Java con mismo simpleName
 ```bash
-find src/main/java -name '*.java' -print \
- | awk -F/ '{print $NF}' \
- | sed 's/.java$//' | sort | uniq -d
+find . -type f -not -path "*/.git/*" -print0 | xargs -0 sha256sum | sort
 ```
-
-4) Templates duplicados por nombre
-```bash
-find src/main/resources/templates -type f -name '*.html' \
- | awk -F/ '{print $NF}' | sort | uniq -d
-```
-
-5) Mappings repetidos (heurístico)
-```bash
-rg '@(RequestMapping|GetMapping|PostMapping|PutMapping|DeleteMapping|PatchMapping)' src/main/java
-```
-
-6) `.classpath` con entradas repetidas (si existe)
-```bash
-[ -f .classpath ] && xmllint --xpath '//classpathentry/@path' .classpath
-```
-
 ### PowerShell
-
-1) Duplicados por nombre
 ```powershell
-Get-ChildItem -Recurse -File | Group-Object Name | Where-Object Count -gt 1
+python .\scripts\audit_duplicates.py | ConvertFrom-Json
 ```
-
-2) Duplicados por contenido (hash)
 ```powershell
-Get-ChildItem -Recurse -File |
-  Get-FileHash -Algorithm SHA256 |
-  Group-Object Hash |
-  Where-Object Count -gt 1
+Get-ChildItem -Recurse -File | Group-Object Name | ? Count -gt 1
 ```
-
-3) Clases Java por simpleName duplicado
-```powershell
-Get-ChildItem src/main/java -Recurse -Filter *.java |
-  Group-Object BaseName |
-  Where-Object Count -gt 1
-```
-
-4) Templates duplicados por nombre
-```powershell
-Get-ChildItem src/main/resources/templates -Recurse -File -Filter *.html |
-  Group-Object Name |
-  Where-Object Count -gt 1
-```
-
-## Plan de corrección recomendado (paso a paso)
-
-1. **Backup / rama de trabajo**
-   - crear rama `chore/dedup-audit-fixes`
-   - respaldar `templates/` y cualquier carpeta de imágenes
-
-2. **Unificar templates duplicados**
-   - definir naming final
-   - mover/renombrar
-   - actualizar todos los `return "..."` en controladores
-
-3. **Deduplicar imágenes por hash**
-   - seleccionar archivo canónico
-   - actualizar referencias en BD/código
-   - eliminar copias
-
-4. **Validar mappings y vistas**
-   - `mvn clean test`
-   - correr aplicación y smoke test de rutas clave
-
-5. **Higiene STS/Eclipse**
-   - `Maven -> Update Project`
-   - `Project -> Clean`
-   - revisar `Build Path` (sin `target/generated-sources`)
-
-6. **Empaquetado final**
-   - `mvn clean package`
-   - verificar artefacto y tamaño final
-
-## Comandos usados en esta auditoría (ejecutados)
-
-- `find .. -name AGENTS.md -print`
-- `git status --short`
-- `find . -maxdepth 3 -type d | sort`
-- script Python para duplicados por nombre/hash/simpleName/templates/static/test
-- script Python para colisiones de mappings y bean names
-
+## 13) Plan de corrección
+1. Backup y rama de trabajo.
+2. Unificar/renombrar templates duplicados y actualizar controladores.
+3. Deduplicar imágenes por hash y corregir referencias en BD/código.
+4. Ejecutar `mvn clean test` y smoke test manual de rutas críticas.
+5. En STS/Eclipse: `Maven -> Update Project` y `Project -> Clean`.
+6. Empaquetar: `mvn clean package`.
