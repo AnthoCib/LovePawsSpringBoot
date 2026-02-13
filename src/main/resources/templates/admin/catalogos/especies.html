@@ -37,7 +37,7 @@
               <a th:href="@{/admin/catalogos/especies/editar/{id}(id=${e.id})}" class="btn btn-sm btn-outline-info flex-fill">
                 <i class="bi bi-pencil-square me-1"></i>Editar
               </a>
-              <form th:action="@{/admin/catalogos/especies/eliminar/{id}(id=${e.id})}" method="post" class="flex-fill">
+              <form th:action="@{/admin/catalogos/especies/eliminar/{id}(id=${e.id})}" method="post" class="flex-fill js-delete-form">
                 <button class="btn btn-sm btn-outline-danger w-100" type="submit">
                   <i class="bi bi-trash3 me-1"></i>Eliminar
                 </button>
@@ -51,5 +51,29 @@
 </div>
 <script th:if="${swalSuccess != null}" th:inline="javascript">Swal.fire({icon:'success',title:'Éxito',text:[[${swalSuccess}]]});</script>
 <script th:if="${swalError != null}" th:inline="javascript">Swal.fire({icon:'error',title:'Error',text:[[${swalError}]]});</script>
+
+<script>
+function bindDeleteConfirmations() {
+  document.querySelectorAll('.js-delete-form').forEach(form => {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: '¿Eliminar registro?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) form.submit();
+      });
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', bindDeleteConfirmations);
+</script>
+
 </body>
 </html>
