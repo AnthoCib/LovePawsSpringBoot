@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
-import com.lovepaws.app.adopcion.repository.SeguimientoRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
 import com.lovepaws.app.user.service.AuditoriaService;
 
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
 	
-	private final SeguimientoRepository seguimientoRepo;
+	private final SeguimientoAdopcionRepository seguimientoRepo;
 	private final AuditoriaService auditoriaService;
 
 	@Override

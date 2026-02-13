@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 
-public interface SeguimientoRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
+public interface SeguimientoPostAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
 
     Optional<SeguimientoPostAdopcion> findByIdAndDeletedAtIsNull(Integer id);
 

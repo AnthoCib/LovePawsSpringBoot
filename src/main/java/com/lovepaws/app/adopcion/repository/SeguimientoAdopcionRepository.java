@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 
-public interface SeguimientoRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
+public interface SeguimientoAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
 
 	List<SeguimientoPostAdopcion> findByAdopcionIdOrderByFechaVisitaDesc(Integer adopcionId);
 

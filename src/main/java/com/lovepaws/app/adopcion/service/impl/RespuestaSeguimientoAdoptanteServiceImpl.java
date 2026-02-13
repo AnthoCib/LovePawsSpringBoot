@@ -11,7 +11,7 @@ import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoRequestDTO;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoResponseDTO;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.RespuestaSeguimientoAdoptanteRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.service.RespuestaSeguimientoAdoptanteService;
 import com.lovepaws.app.config.storage.FileStorageService;
 import com.lovepaws.app.user.domain.Usuario;
@@ -30,7 +30,7 @@ public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguim
     }
 
     private final RespuestaSeguimientoAdoptanteRepository respuestaRepository;
-    private final SeguimientoRepository seguimientoRepository;
+    private final SeguimientoAdopcionRepository seguimientoRepository;
     private final AdopcionRepository adopcionRepository;
     private final FileStorageService fileStorageService;
     private final AuditoriaService auditoriaService;
