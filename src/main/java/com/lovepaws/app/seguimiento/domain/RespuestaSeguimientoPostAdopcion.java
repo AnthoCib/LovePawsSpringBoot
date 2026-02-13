@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @SQLDelete(sql = "UPDATE respuesta_seguimiento_adoptante SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class RespuestaSeguimientoAdoptante {
+public class RespuestaSeguimientoPostAdopcion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

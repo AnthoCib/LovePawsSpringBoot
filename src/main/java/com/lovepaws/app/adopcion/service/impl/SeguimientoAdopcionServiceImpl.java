@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
 import com.lovepaws.app.user.service.AuditoriaService;
@@ -22,8 +22,8 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
 
 	@Override
 	@Transactional
-	public SeguimientoPostAdopcion createSeguimiento(SeguimientoPostAdopcion seguimiento, Integer usuarioId, String usuarioNombre) {
-		SeguimientoPostAdopcion saved = seguimientoRepo.save(seguimiento);
+	public SeguimientoAdopcion createSeguimiento(SeguimientoAdopcion seguimiento, Integer usuarioId, String usuarioNombre) {
+		SeguimientoAdopcion saved = seguimientoRepo.save(seguimiento);
 		auditoriaService.registrar("seguimiento_post_adopcion", saved.getId(), "CREAR_SEGUIMIENTO", usuarioId,
 				usuarioNombre, "Seguimiento post adopción registrado");
 		return saved;
@@ -31,13 +31,13 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId) {
+	public List<SeguimientoAdopcion> listarPorAdopcion(Integer adopcionId) {
 		return seguimientoRepo.findByAdopcionIdOrderByFechaVisitaDesc(adopcionId);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<SeguimientoPostAdopcion> findById(Integer id) {
+	public Optional<SeguimientoAdopcion> findById(Integer id) {
 		return seguimientoRepo.findById(id);
 	}
 

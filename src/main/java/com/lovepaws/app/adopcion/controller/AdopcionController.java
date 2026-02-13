@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.service.AdopcionService;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
@@ -227,7 +227,7 @@ public class AdopcionController {
 		model.addAttribute("adopciones", adopciones);
 		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPorUsuario(usuarioId));
 		Map<Integer, Integer> adopcionIdPorSolicitud = new LinkedHashMap<>();
-		Map<Integer, List<SeguimientoPostAdopcion>> seguimientosPorAdopcion = new LinkedHashMap<>();
+		Map<Integer, List<SeguimientoAdopcion>> seguimientosPorAdopcion = new LinkedHashMap<>();
 		for (com.lovepaws.app.adopcion.domain.Adopcion adopcion : adopciones) {
 			if (adopcion.getSolicitud() != null && adopcion.getSolicitud().getId() != null) {
 				adopcionIdPorSolicitud.put(adopcion.getSolicitud().getId(), adopcion.getId());
@@ -290,7 +290,7 @@ public class AdopcionController {
 			return "redirect:/adopcion/gestor/seguimiento/" + adopcionId + "?error=fecha-min";
 		}
 
-		SeguimientoPostAdopcion seguimiento = new SeguimientoPostAdopcion();
+		SeguimientoAdopcion seguimiento = new SeguimientoAdopcion();
 		seguimiento.setAdopcion(adopcion);
 		seguimiento.setFechaVisita(fecha);
 		seguimiento.setObservaciones(observaciones != null ? observaciones.trim() : null);

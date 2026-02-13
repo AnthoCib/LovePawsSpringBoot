@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 
-public interface SeguimientoAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
+public interface SeguimientoAdopcionRepository extends JpaRepository<SeguimientoAdopcion, Integer> {
 
-	List<SeguimientoPostAdopcion> findByAdopcionIdOrderByFechaVisitaDesc(Integer adopcionId);
+	List<SeguimientoAdopcion> findByAdopcionIdOrderByFechaVisitaDesc(Integer adopcionId);
 
 
-	List<SeguimientoPostAdopcion> findAllByOrderByFechaVisitaDesc();
+	List<SeguimientoAdopcion> findAllByOrderByFechaVisitaDesc();
 
-	List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaVisitaDesc(String estadoId);
+	List<SeguimientoAdopcion> findByEstado_IdOrderByFechaVisitaDesc(String estadoId);
 
 }

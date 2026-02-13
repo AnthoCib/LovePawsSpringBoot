@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
@@ -30,7 +30,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     public SeguimientoPostAdopcionResponseDTO crearSeguimiento(SeguimientoPostAdopcionRequestDTO request, Integer gestorId) {
         Adopcion adopcion = obtenerAdopcionConfirmada(request.getAdopcionId());
 
-        SeguimientoPostAdopcion seguimiento = new SeguimientoPostAdopcion();
+        SeguimientoAdopcion seguimiento = new SeguimientoAdopcion();
         seguimiento.setAdopcion(adopcion);
         seguimiento.setFechaVisita(request.getFechaSeguimiento());
         seguimiento.setObservaciones(request.getNotas() != null ? request.getNotas().trim() : null);
@@ -50,7 +50,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     @Transactional(readOnly = true)
     public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoMascotaTracking estadoMascota) {
 
-        List<SeguimientoPostAdopcion> data = (estadoMascota == null)
+        List<SeguimientoAdopcion> data = (estadoMascota == null)
                 ? seguimientoRepository.findAllByOrderByFechaVisitaDesc()
                 : seguimientoRepository.findByEstado_IdOrderByFechaVisitaDesc(mapearEstadoId(estadoMascota));
 
@@ -61,7 +61,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     @Transactional
     public SeguimientoPostAdopcionResponseDTO actualizarSeguimiento(Integer seguimientoId,
                                                                     SeguimientoPostAdopcionRequestDTO request) {
-        SeguimientoPostAdopcion existente = seguimientoRepository.findById(seguimientoId)
+        SeguimientoAdopcion existente = seguimientoRepository.findById(seguimientoId)
                 .orElseThrow(() -> new IllegalArgumentException("Seguimiento no encontrado"));
 
         Adopcion adopcion = obtenerAdopcionConfirmada(request.getAdopcionId());
@@ -112,7 +112,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         };
     }
 
-    private SeguimientoPostAdopcionResponseDTO toDto(SeguimientoPostAdopcion s) {
+    private SeguimientoPostAdopcionResponseDTO toDto(SeguimientoAdopcion s) {
         String estadoId = s.getEstado() != null ? s.getEstado().getId() : null;
         return SeguimientoPostAdopcionResponseDTO.builder()
                 .id(s.getId())

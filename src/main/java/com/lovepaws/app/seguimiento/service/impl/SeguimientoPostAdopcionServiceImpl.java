@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
-import com.lovepaws.app.seguimiento.domain.RespuestaSeguimientoAdoptante;
+import com.lovepaws.app.seguimiento.domain.RespuestaSeguimientoPostAdopcion;
 import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.seguimiento.dto.RespuestaSeguimientoRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoCreateRequest;
@@ -17,7 +17,7 @@ import com.lovepaws.app.seguimiento.dto.SeguimientoResponse;
 import com.lovepaws.app.seguimiento.exception.EstadoInvalidoException;
 import com.lovepaws.app.seguimiento.exception.SeguimientoException;
 import com.lovepaws.app.seguimiento.repository.EstadoSeguimientoRepository;
-import com.lovepaws.app.seguimiento.repository.RespuestaSeguimientoRepository;
+import com.lovepaws.app.seguimiento.repository.RespuestaSeguimientoPostAdopcionRepository;
 import com.lovepaws.app.seguimiento.repository.SeguimientoPostAdopcionRepository;
 import com.lovepaws.app.seguimiento.service.SeguimientoService;
 import com.lovepaws.app.user.domain.Usuario;
@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class SeguimientoPostAdopcionServiceImpl implements SeguimientoService {
 
     private final SeguimientoPostAdopcionRepository seguimientoRepository;
-    private final RespuestaSeguimientoRepository respuestaRepository;
+    private final RespuestaSeguimientoPostAdopcionRepository respuestaRepository;
     private final EstadoSeguimientoRepository estadoRepository;
     private final AdopcionRepository adopcionRepository;
     private final UsuarioRepository usuarioRepository;
@@ -218,7 +218,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoService {
     }
 
     private void registrarMensaje(SeguimientoPostAdopcion seguimiento, Usuario autor, String mensaje, Boolean revisado) {
-        RespuestaSeguimientoAdoptante respuesta = RespuestaSeguimientoAdoptante.builder()
+        RespuestaSeguimientoPostAdopcion respuesta = RespuestaSeguimientoPostAdopcion.builder()
                 .seguimiento(seguimiento)
                 .mensaje(mensaje)
                 .revisado(revisado)

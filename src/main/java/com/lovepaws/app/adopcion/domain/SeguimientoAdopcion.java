@@ -1,54 +1,48 @@
 package com.lovepaws.app.adopcion.domain;
 
-import com.lovepaws.app.user.domain.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import com.lovepaws.app.mascota.domain.EstadoMascota;
+import com.lovepaws.app.user.domain.Usuario;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "respuesta_seguimiento_adoptante")
+@Table(name = "seguimiento_post_adopcion")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLDelete(sql = "UPDATE respuesta_seguimiento_adoptante SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE seguimiento_post_adopcion SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class RespuestaSeguimientoAdoptante {
+public class SeguimientoAdopcion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seguimiento_id")
-    private SeguimientoPostAdopcion seguimiento;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adopcion_id")
     private Adopcion adopcion;
 
-    @CreationTimestamp
-    @Column(name = "fecha_respuesta")
-    private LocalDateTime fechaRespuesta;
+    @Column(name = "fecha_visita", nullable = false)
+    private LocalDateTime fechaVisita;
 
-    @Column(name = "estado_salud")
-    private String estadoSalud;
+    @Column(name = "observaciones", columnDefinition = "TEXT")
+    private String observaciones;
 
-    private String comportamiento;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estado_id")
+    private EstadoMascota estado;
 
-    private String alimentacion;
 
-    @Column(columnDefinition = "TEXT")
-    private String comentarios;
-
-    @Column(name = "foto_url")
-    private String fotoUrl;
-
-    private Boolean revisado = false;
+    private Boolean activo = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario_creacion")
@@ -57,6 +51,10 @@ public class RespuestaSeguimientoAdoptante {
     @CreationTimestamp
     @Column(name = "fecha_creacion", updatable = false)
     private LocalDateTime fechaCreacion;
+
+    @UpdateTimestamp
+    @Column(name = "fecha_modificacion")
+    private LocalDateTime fechaModificacion;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
