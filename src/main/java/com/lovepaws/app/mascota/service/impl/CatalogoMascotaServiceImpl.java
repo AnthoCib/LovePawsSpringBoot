@@ -3,6 +3,7 @@ package com.lovepaws.app.mascota.service.impl;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,14 +50,15 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Override
     @Transactional
     public EspecieResponseDTO crearEspecie(EspecieRequestDTO request, Integer usuarioId) {
-        if (especieRepository.existsByNombreIgnoreCase(request.nombre().trim())) {
+        String nombre = normalize(request.nombre());
+        if (especieRepository.existsByNombreIgnoreCase(nombre)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una especie con ese nombre");
         }
 
         Especie especie = new Especie();
-        especie.setNombre(request.nombre().trim());
+        especie.setNombre(nombre);
         especie.setEstado(request.estado() != null ? request.estado() : Boolean.TRUE);
-        especie.setIdUsuarioCreacion(usuarioId);
+        especie.setIdUsuarioCreacion(resolveUsuarioId(usuarioId));
 
         return toEspecieResponse(especieRepository.save(especie));
     }
@@ -65,7 +67,7 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Transactional
     public EspecieResponseDTO actualizarEspecie(Integer especieId, EspecieRequestDTO request) {
         Especie especie = findEspecieById(especieId);
-        String nuevoNombre = request.nombre().trim();
+        String nuevoNombre = normalize(request.nombre());
 
         if (!especie.getNombre().equalsIgnoreCase(nuevoNombre)
                 && especieRepository.existsByNombreIgnoreCase(nuevoNombre)) {
@@ -82,12 +84,21 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Transactional
     public void eliminarEspecie(Integer especieId) {
         Especie especie = findEspecieById(especieId);
-        especieRepository.delete(especie);
+        try {
+            especieRepository.delete(especie);
+            especieRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "No se puede eliminar la especie porque tiene registros relacionados");
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<RazaResponseDTO> listarRazas(Integer especieId) {
+        if (especieId != null) {
+            findEspecieById(especieId);
+        }
         List<Raza> razas = especieId == null ? razaRepository.findAll() : razaRepository.findByEspecieId(especieId);
         return razas.stream().map(this::toRazaResponse).toList();
     }
@@ -101,7 +112,8 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Override
     @Transactional
     public RazaResponseDTO crearRaza(RazaRequestDTO request, Integer usuarioId) {
-        if (razaRepository.existsByEspecieIdAndNombreIgnoreCase(request.especieId(), request.nombre().trim())) {
+        String nombre = normalize(request.nombre());
+        if (razaRepository.existsByEspecieIdAndNombreIgnoreCase(request.especieId(), nombre)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Ya existe una raza con ese nombre para la especie indicada");
         }
@@ -110,7 +122,7 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
 
         Raza raza = new Raza();
         raza.setEspecie(especie);
-        raza.setNombre(request.nombre().trim());
+        raza.setNombre(nombre);
         raza.setEstado(request.estado() != null ? request.estado() : Boolean.TRUE);
         raza.setUsuarioCreacion(findUsuarioById(usuarioId));
 
@@ -121,7 +133,7 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Transactional
     public RazaResponseDTO actualizarRaza(Integer razaId, RazaRequestDTO request) {
         Raza raza = findRazaById(razaId);
-        String nuevoNombre = request.nombre().trim();
+        String nuevoNombre = normalize(request.nombre());
 
         if ((!raza.getNombre().equalsIgnoreCase(nuevoNombre)
                 || !raza.getEspecie().getId().equals(request.especieId()))
@@ -141,7 +153,13 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Transactional
     public void eliminarRaza(Integer razaId) {
         Raza raza = findRazaById(razaId);
-        razaRepository.delete(raza);
+        try {
+            razaRepository.delete(raza);
+            razaRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "No se puede eliminar la raza porque tiene registros relacionados");
+        }
     }
 
     @Override
@@ -159,12 +177,13 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Override
     @Transactional
     public CategoriaResponseDTO crearCategoria(CategoriaRequestDTO request, Integer usuarioId) {
-        if (categoriaRepository.existsByNombreIgnoreCase(request.nombre().trim())) {
+        String nombre = normalize(request.nombre());
+        if (categoriaRepository.existsByNombreIgnoreCase(nombre)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una categoría con ese nombre");
         }
 
         Categoria categoria = new Categoria();
-        categoria.setNombre(request.nombre().trim());
+        categoria.setNombre(nombre);
         categoria.setDescripcion(request.descripcion());
         categoria.setEstado(request.estado() != null ? request.estado() : Boolean.TRUE);
         categoria.setUsuarioCreacion(findUsuarioById(usuarioId));
@@ -176,7 +195,7 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Transactional
     public CategoriaResponseDTO actualizarCategoria(Integer categoriaId, CategoriaRequestDTO request) {
         Categoria categoria = findCategoriaById(categoriaId);
-        String nuevoNombre = request.nombre().trim();
+        String nuevoNombre = normalize(request.nombre());
 
         if (!categoria.getNombre().equalsIgnoreCase(nuevoNombre)
                 && categoriaRepository.existsByNombreIgnoreCase(nuevoNombre)) {
@@ -194,7 +213,24 @@ public class CatalogoMascotaServiceImpl implements CatalogoMascotaService {
     @Transactional
     public void eliminarCategoria(Integer categoriaId) {
         Categoria categoria = findCategoriaById(categoriaId);
-        categoriaRepository.delete(categoria);
+        try {
+            categoriaRepository.delete(categoria);
+            categoriaRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "No se puede eliminar la categoría porque tiene registros relacionados");
+        }
+    }
+
+    private String normalize(String value) {
+        return value == null ? null : value.trim();
+    }
+
+    private Integer resolveUsuarioId(Integer usuarioId) {
+        if (usuarioId == null) {
+            return null;
+        }
+        return usuarioRepository.existsById(usuarioId) ? usuarioId : null;
     }
 
     private Especie findEspecieById(Integer especieId) {
