@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SeguimientoServiceImpl implements SeguimientoService {
+public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
 	
 	private final SeguimientoRepository seguimientoRepo;
 	private final AuditoriaService auditoriaService;

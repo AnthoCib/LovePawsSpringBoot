@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class SeguimientoServiceImpl implements SeguimientoService {
+public class SeguimientoPostAdopcionServiceImpl implements SeguimientoService {
 
     private final SeguimientoRepository seguimientoRepository;
     private final RespuestaSeguimientoRepository respuestaRepository;
