@@ -32,6 +32,6 @@ public class GestorDashboardController {
 		model.addAttribute("mascotasDisponibles", mascotaRepository.findByEstado_Id("DISPONIBLE").size());
 		model.addAttribute("solicitudesPendientes", solicitudRepository.countByEstado_Id("PENDIENTE"));
 
-		return "gestor/dashboard";
+		return "gestor/panel-gestor";
 	}
 }

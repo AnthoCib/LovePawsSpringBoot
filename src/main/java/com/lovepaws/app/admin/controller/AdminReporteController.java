@@ -38,7 +38,7 @@ public class AdminReporteController {
 
 		model.addAttribute("usuariosPorRol", reporteService.usuariosPorRol(desde, hasta));
 
-		return "admin/reportes/dashboard";
+		return "admin/reportes/dashboard-reportes";
 	}
 	
 	@GetMapping("/pdf")

@@ -72,7 +72,7 @@ public class MascotaController {
 	@GetMapping("/gestor/mascotas")
 	public String listarParaGestor(Model model) {
 		model.addAttribute("mascotas", mascotaService.listarMascotas());
-		return "gestor/mascota/lista";
+		return "gestor/mascota/listado-gestor";
 	}
 
 	@PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
