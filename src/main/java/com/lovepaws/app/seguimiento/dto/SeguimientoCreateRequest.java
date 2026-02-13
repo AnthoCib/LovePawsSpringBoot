@@ -6,12 +6,12 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class CrearSeguimientoRequest {
+public class SeguimientoCreateRequest {
 
     @NotNull(message = "La adopción es obligatoria")
     private Integer adopcionId;
 
-    @NotBlank(message = "El mensaje inicial es obligatorio")
-    @Size(max = 2000, message = "El mensaje inicial no puede exceder 2000 caracteres")
-    private String mensajeInicial;
+    @NotBlank(message = "La observación inicial es obligatoria")
+    @Size(max = 2000, message = "La observación no puede exceder 2000 caracteres")
+    private String observacionInicial;
 }

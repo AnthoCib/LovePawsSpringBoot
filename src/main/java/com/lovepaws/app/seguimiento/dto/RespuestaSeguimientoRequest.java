@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class ResponderSeguimientoRequest {
+public class RespuestaSeguimientoRequest {
 
     @NotBlank(message = "El mensaje es obligatorio")
     @Size(max = 2000, message = "El mensaje no puede exceder 2000 caracteres")

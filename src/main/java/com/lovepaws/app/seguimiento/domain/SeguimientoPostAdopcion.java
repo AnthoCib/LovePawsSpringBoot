@@ -12,8 +12,6 @@ import com.lovepaws.app.user.domain.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,32 +25,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "seguimiento_adopcion")
+@Table(name = "seguimiento_post_adopcion")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLDelete(sql = "UPDATE seguimiento_adopcion SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE seguimiento_post_adopcion SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class SeguimientoAdopcion {
+public class SeguimientoPostAdopcion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "adopcion_id", nullable = false)
     private Adopcion adopcion;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false, length = 20)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "estado_id", nullable = false)
     private EstadoSeguimiento estado;
 
-    @Column(name = "motivo_escalamiento", columnDefinition = "TEXT")
-    private String motivoEscalamiento;
-
-    @Column(name = "comentario_cierre", columnDefinition = "TEXT")
-    private String comentarioCierre;
+    @Column(name = "observaciones", columnDefinition = "TEXT")
+    private String observaciones;
 
     @Column(name = "activo")
     private Boolean activo = Boolean.TRUE;
