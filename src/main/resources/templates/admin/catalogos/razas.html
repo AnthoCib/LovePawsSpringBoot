@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Catálogo de Razas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/admin.css}" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="admin-dark">
+<div class="d-flex">
+  <div th:replace="fragments/admin-sidebar :: adminSidebar"></div>
+  <main class="admin-content w-100 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold">Catálogo de Razas</h2>
+      <a class="btn btn-primary" th:href="@{/admin/catalogos/razas/nuevo}">Nueva raza</a>
+    </div>
+    <table class="table table-dark table-striped">
+      <thead><tr><th>ID</th><th>Raza</th><th>Especie</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+        <tr th:each="r : ${razas}">
+          <td th:text="${r.id}">1</td>
+          <td th:text="${r.nombre}">Labrador</td>
+          <td th:text="${r.especie.nombre}">Canino</td>
+          <td th:text="${r.estado} ? 'Activo' : 'Inactivo'">Activo</td>
+          <td>
+            <a class="btn btn-sm btn-outline-info" th:href="@{/admin/catalogos/razas/editar/{id}(id=${r.id})}">Editar</a>
+            <form class="d-inline" method="post" th:action="@{/admin/catalogos/razas/eliminar/{id}(id=${r.id})}">
+              <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</div>
+<script th:if="${swalSuccess != null}" th:inline="javascript">Swal.fire({icon:'success',title:'Éxito',text:[[${swalSuccess}]]});</script>
+<script th:if="${swalError != null}" th:inline="javascript">Swal.fire({icon:'error',title:'Error',text:[[${swalError}]]});</script>
+</body>
+</html>
