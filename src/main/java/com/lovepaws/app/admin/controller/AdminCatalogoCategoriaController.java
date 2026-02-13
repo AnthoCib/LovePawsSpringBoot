@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.lovepaws.app.admin.domain.Categoria;
-import com.lovepaws.app.admin.service.CategoriaService;
+import com.lovepaws.app.mascota.domain.Categoria;
+import com.lovepaws.app.admin.service.CategoriaAdminService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 
 import jakarta.validation.Valid;
@@ -25,11 +25,11 @@ import lombok.RequiredArgsConstructor;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminCatalogoCategoriaController {
 
-    private final CategoriaService categoriaService;
+    private final CategoriaAdminService categoriaAdminService;
 
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("categorias", categoriaService.listarActivas());
+        model.addAttribute("categorias", categoriaAdminService.listarActivas());
         return "admin/catalogos/categorias";
     }
 
@@ -49,7 +49,7 @@ public class AdminCatalogoCategoriaController {
         }
         try {
             Integer userId = principal != null ? principal.getUsuario().getId() : null;
-            categoriaService.crear(categoria, userId);
+            categoriaAdminService.crear(categoria, userId);
             ra.addFlashAttribute("swalSuccess", "Categoría creada correctamente");
             return "redirect:/admin/catalogos/categorias";
         } catch (Exception ex) {
@@ -61,7 +61,7 @@ public class AdminCatalogoCategoriaController {
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
         try {
-            model.addAttribute("categoria", categoriaService.obtenerActiva(id));
+            model.addAttribute("categoria", categoriaAdminService.obtenerActiva(id));
             return "admin/catalogos/categoria-form";
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
@@ -78,7 +78,7 @@ public class AdminCatalogoCategoriaController {
             return "admin/catalogos/categoria-form";
         }
         try {
-            categoriaService.actualizar(id, categoria);
+            categoriaAdminService.actualizar(id, categoria);
             ra.addFlashAttribute("swalSuccess", "Categoría actualizada correctamente");
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
@@ -89,7 +89,7 @@ public class AdminCatalogoCategoriaController {
     @PostMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Integer id, RedirectAttributes ra) {
         try {
-            categoriaService.eliminar(id);
+            categoriaAdminService.eliminar(id);
             ra.addFlashAttribute("swalSuccess", "Categoría eliminada correctamente");
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());

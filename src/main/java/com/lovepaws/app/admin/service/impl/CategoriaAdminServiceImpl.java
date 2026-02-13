@@ -6,17 +6,18 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lovepaws.app.admin.domain.Categoria;
-import com.lovepaws.app.admin.repository.CategoriaRepository;
-import com.lovepaws.app.admin.service.CategoriaService;
+import com.lovepaws.app.admin.service.CategoriaAdminService;
+import com.lovepaws.app.mascota.domain.Categoria;
+import com.lovepaws.app.mascota.repository.CategoriaRepository;
 import com.lovepaws.app.mascota.repository.MascotaRepository;
+import com.lovepaws.app.user.domain.Usuario;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CategoriaServiceImpl implements CategoriaService {
+public class CategoriaAdminServiceImpl implements CategoriaAdminService {
 
     private final CategoriaRepository categoriaRepository;
     private final MascotaRepository mascotaRepository;
@@ -45,7 +46,11 @@ public class CategoriaServiceImpl implements CategoriaService {
         }
         categoria.setNombre(nombre);
         categoria.setEstado(categoria.getEstado() == null ? Boolean.TRUE : categoria.getEstado());
-        categoria.setIdUsuarioCreacion(idUsuarioCreacion);
+        if (idUsuarioCreacion != null) {
+            Usuario user = new Usuario();
+            user.setId(idUsuarioCreacion);
+            categoria.setUsuarioCreacion(user);
+        }
         return categoriaRepository.save(categoria);
     }
 

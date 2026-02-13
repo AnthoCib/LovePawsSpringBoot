@@ -2,9 +2,9 @@ package com.lovepaws.app.admin.service;
 
 import java.util.List;
 
-import com.lovepaws.app.admin.domain.Categoria;
+import com.lovepaws.app.mascota.domain.Categoria;
 
-public interface CategoriaService {
+public interface CategoriaAdminService {
     List<Categoria> listarActivas();
     Categoria obtenerActiva(Integer id);
     Categoria crear(Categoria categoria, Integer idUsuarioCreacion);

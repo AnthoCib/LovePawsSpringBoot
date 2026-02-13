@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.lovepaws.app.admin.domain.Especie;
-import com.lovepaws.app.admin.service.EspecieService;
+import com.lovepaws.app.mascota.domain.Especie;
+import com.lovepaws.app.admin.service.EspecieAdminService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 
 import jakarta.validation.Valid;
@@ -25,11 +25,11 @@ import lombok.RequiredArgsConstructor;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminCatalogoEspecieController {
 
-    private final EspecieService especieService;
+    private final EspecieAdminService especieAdminService;
 
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("especies", especieService.listarActivas());
+        model.addAttribute("especies", especieAdminService.listarActivas());
         return "admin/catalogos/especies";
     }
 
@@ -49,7 +49,7 @@ public class AdminCatalogoEspecieController {
         }
         try {
             Integer userId = principal != null ? principal.getUsuario().getId() : null;
-            especieService.crear(especie, userId);
+            especieAdminService.crear(especie, userId);
             ra.addFlashAttribute("swalSuccess", "Especie creada correctamente");
             return "redirect:/admin/catalogos/especies";
         } catch (Exception ex) {
@@ -61,7 +61,7 @@ public class AdminCatalogoEspecieController {
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
         try {
-            model.addAttribute("especie", especieService.obtenerActiva(id));
+            model.addAttribute("especie", especieAdminService.obtenerActiva(id));
             return "admin/catalogos/especie-form";
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
@@ -78,7 +78,7 @@ public class AdminCatalogoEspecieController {
             return "admin/catalogos/especie-form";
         }
         try {
-            especieService.actualizar(id, especie);
+            especieAdminService.actualizar(id, especie);
             ra.addFlashAttribute("swalSuccess", "Especie actualizada correctamente");
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
@@ -89,7 +89,7 @@ public class AdminCatalogoEspecieController {
     @PostMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Integer id, RedirectAttributes ra) {
         try {
-            especieService.eliminar(id);
+            especieAdminService.eliminar(id);
             ra.addFlashAttribute("swalSuccess", "Especie eliminada correctamente");
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());

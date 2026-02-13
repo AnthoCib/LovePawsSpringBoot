@@ -6,19 +6,20 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lovepaws.app.admin.domain.Especie;
-import com.lovepaws.app.admin.domain.Raza;
-import com.lovepaws.app.admin.repository.EspecieRepository;
-import com.lovepaws.app.admin.repository.RazaRepository;
-import com.lovepaws.app.admin.service.RazaService;
+import com.lovepaws.app.admin.service.RazaAdminService;
+import com.lovepaws.app.mascota.domain.Especie;
+import com.lovepaws.app.mascota.domain.Raza;
+import com.lovepaws.app.mascota.repository.EspecieRepository;
 import com.lovepaws.app.mascota.repository.MascotaRepository;
+import com.lovepaws.app.mascota.repository.RazaRepository;
+import com.lovepaws.app.user.domain.Usuario;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RazaServiceImpl implements RazaService {
+public class RazaAdminServiceImpl implements RazaAdminService {
 
     private final RazaRepository razaRepository;
     private final EspecieRepository especieRepository;
@@ -60,7 +61,11 @@ public class RazaServiceImpl implements RazaService {
         raza.setNombre(nombre);
         raza.setEspecie(especie);
         raza.setEstado(raza.getEstado() == null ? Boolean.TRUE : raza.getEstado());
-        raza.setIdUsuarioCreacion(idUsuarioCreacion);
+        if (idUsuarioCreacion != null) {
+            Usuario user = new Usuario();
+            user.setId(idUsuarioCreacion);
+            raza.setUsuarioCreacion(user);
+        }
         return razaRepository.save(raza);
     }
 

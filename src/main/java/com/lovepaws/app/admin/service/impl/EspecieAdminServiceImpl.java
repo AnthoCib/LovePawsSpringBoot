@@ -6,17 +6,17 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lovepaws.app.admin.domain.Especie;
-import com.lovepaws.app.admin.repository.EspecieRepository;
-import com.lovepaws.app.admin.repository.RazaRepository;
-import com.lovepaws.app.admin.service.EspecieService;
+import com.lovepaws.app.admin.service.EspecieAdminService;
+import com.lovepaws.app.mascota.domain.Especie;
+import com.lovepaws.app.mascota.repository.EspecieRepository;
+import com.lovepaws.app.mascota.repository.RazaRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class EspecieServiceImpl implements EspecieService {
+public class EspecieAdminServiceImpl implements EspecieAdminService {
 
     private final EspecieRepository especieRepository;
     private final RazaRepository razaRepository;

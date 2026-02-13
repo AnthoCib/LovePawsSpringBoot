@@ -2,9 +2,9 @@ package com.lovepaws.app.admin.service;
 
 import java.util.List;
 
-import com.lovepaws.app.admin.domain.Raza;
+import com.lovepaws.app.mascota.domain.Raza;
 
-public interface RazaService {
+public interface RazaAdminService {
     List<Raza> listarActivas();
     List<Raza> listarActivasPorEspecie(Integer especieId);
     Raza obtenerActiva(Integer id);
