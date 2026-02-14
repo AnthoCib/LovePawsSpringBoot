@@ -53,6 +53,11 @@
                             </form>
                             <a th:if="${adopcionIdPorSolicitud != null and adopcionIdPorSolicitud.containsKey(s.id)}"
                                class="btn btn-sm lp-btn lp-btn-outline"
+                               th:href="@{'/adopcion/' + ${adopcionIdPorSolicitud.get(s.id)}}">
+                                Ver detalle
+                            </a>
+                            <a th:if="${adopcionIdPorSolicitud != null and adopcionIdPorSolicitud.containsKey(s.id)}"
+                               class="btn btn-sm lp-btn lp-btn-outline"
                                th:href="@{'/adopcion/seguimiento/' + ${adopcionIdPorSolicitud.get(s.id)}}">
                                 Ver seguimiento
                             </a>
@@ -85,6 +90,9 @@
                     <td><span class="badge text-bg-success" th:text="${a.estado != null ? a.estado.id : '-'}"></span></td>
                     <td th:text="${a.fechaAdopcion != null ? #temporals.format(a.fechaAdopcion, 'dd/MM/yyyy HH:mm') : '-'}"></td>
                     <td>
+                        <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/' + ${a.id}}">
+                            Ver detalle
+                        </a>
                         <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/seguimiento/' + ${a.id}}">
                             Ver seguimiento
                         </a>
