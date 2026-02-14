@@ -1,23 +1,22 @@
-.solicitud-card {
-  border-width: 2px;
-  transition: transform .2s ease, box-shadow .2s ease;
+.solicitud-row {
+  transition: background-color .2s ease;
 }
 
-.solicitud-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+.solicitud-row.estado-pendiente {
+  border-left: 4px solid #facc15;
 }
 
-.solicitud-card.estado-pendiente {
-  border-color: #facc15;
+.solicitud-row.estado-aprobada {
+  border-left: 4px solid #22c55e;
 }
 
-.solicitud-card.estado-aprobada {
-  border-color: #22c55e;
+.solicitud-row.estado-rechazada {
+  border-left: 4px solid #ef4444;
 }
 
-.solicitud-card.estado-rechazada {
-  border-color: #ef4444;
+.motivo-col {
+  max-width: 380px;
+  white-space: normal;
 }
 
 .estado-badge {

@@ -9,62 +9,78 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link th:href="@{/css/adopcion-flujo.css}" rel="stylesheet"/>
+    <link th:href="@{/css/admin.css}" rel="stylesheet">
     <link th:href="@{/css/adopcion-solicitudes.css}" rel="stylesheet"/>
 </head>
-<body class="page-shell">
-<div th:replace="~{fragments/navbar :: navbar}"></div>
+<body class="admin-dark">
+<div th:replace="~{fragments/gestor-navbar :: gestorNavbar}"></div>
+
 <div class="container py-4">
-    <div class="section-card p-4">
-        <div class="d-flex flex-wrap gap-2 mb-3">
-            <a href="javascript:history.back()" class="btn btn-sm lp-btn lp-btn-outline"><i class="bi bi-arrow-left-short me-1"></i>Volver</a>
-            <a th:href="@{/gestor/dashboard}" class="btn btn-sm lp-btn lp-btn-outline"><i class="bi bi-speedometer2 me-1"></i>Dashboard gestor</a>
-            <a th:href="@{/gestor/mascotas}" class="btn btn-sm lp-btn lp-btn-outline"><i class="bi bi-heart-pulse me-1"></i>CRUD mascotas</a>
+    <h2 class="fw-bold mb-3">
+        <i class="bi bi-journal-check me-2"></i>
+        <span th:text="${vistaGlobal} ? 'Gestión de solicitudes de adopción' : 'Solicitudes de adopción por mascota'">Gestión de solicitudes de adopción</span>
+    </h2>
+
+    <p th:if="${mascota != null}" class="mb-3">Mascota: <strong th:text="${mascota.nombre}"></strong></p>
+
+    <div class="card section-card shadow-sm">
+        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span class="fw-semibold"><i class="bi bi-card-checklist me-2"></i>Listado de solicitudes</span>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left-short me-1"></i>Volver</a>
+                <a th:href="@{/gestor/dashboard}" class="btn btn-sm btn-outline-primary"><i class="bi bi-speedometer2 me-1"></i>Dashboard gestor</a>
+                <a th:href="@{/gestor/mascotas}" class="btn btn-sm btn-outline-primary"><i class="bi bi-heart-pulse me-1"></i>CRUD mascotas</a>
+            </div>
         </div>
 
-        <h1 class="h4" th:text="${vistaGlobal} ? 'Solicitudes de adopción (todas)' : 'Solicitudes de adopción por mascota'">Solicitudes de adopción</h1>
-        <p th:if="${mascota != null}" class="mb-3">Mascota: <strong th:text="${mascota.nombre}"></strong></p>
-
-        <div class="row g-3" id="solicitudesGrid">
-            <div class="col-12 col-md-6 col-xl-4" th:each="s : ${solicitudes}">
-                <article class="card h-100 solicitud-card"
-                         th:attr="data-id=${s.id},data-estado=${s.estado != null ? s.estado.id : '-'}"
-                         th:classappend="${s.estado != null and s.estado.id == 'PENDIENTE'} ? ' estado-pendiente' : (${s.estado != null and s.estado.id == 'APROBADA'} ? ' estado-aprobada' : ' estado-rechazada')">
-                    <div class="card-body d-flex flex-column gap-2">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h2 class="h6 mb-0">Solicitud <span th:text="${s.id}">#</span></h2>
-                            <span class="badge rounded-pill fs-6 px-3 py-2 estado-badge"
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Mascota</th>
+                        <th>Adoptante</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="s : ${solicitudes}"
+                        class="solicitud-row"
+                        th:attr="data-id=${s.id},data-estado=${s.estado != null ? s.estado.id : '-'}"
+                        th:classappend="${s.estado != null and s.estado.id == 'PENDIENTE'} ? ' estado-pendiente' : (${s.estado != null and s.estado.id == 'APROBADA'} ? ' estado-aprobada' : ' estado-rechazada')">
+                        <td class="fw-semibold" th:text="${s.id}">1</td>
+                        <td th:text="${s.mascota != null ? s.mascota.nombre : '-'}">Mascota</td>
+                        <td th:text="${s.usuario != null ? s.usuario.nombre : '-'}">Adoptante</td>
+                        <td class="motivo-col" th:text="${s.pqAdoptar != null ? s.pqAdoptar : '-'}">Motivo</td>
+                        <td>
+                            <span class="badge rounded-pill estado-badge"
                                   th:classappend="${s.estado != null and s.estado.id == 'PENDIENTE'} ? ' text-bg-warning' : (${s.estado != null and s.estado.id == 'APROBADA'} ? ' text-bg-success' : ' text-bg-danger')"
                                   th:text="${s.estado != null ? s.estado.id : '-'}">PENDIENTE</span>
-                        </div>
-
-                        <div class="small text-muted">Mascota</div>
-                        <div class="fw-semibold" th:text="${s.mascota != null ? s.mascota.nombre : '-'}">Mascota</div>
-
-                        <div class="small text-muted mt-2">Adoptante</div>
-                        <div class="fw-semibold" th:text="${s.usuario != null ? s.usuario.nombre : '-'}">Adoptante</div>
-
-                        <div class="small text-muted mt-2">Motivo</div>
-                        <p class="mb-2" th:text="${s.pqAdoptar != null ? s.pqAdoptar : '-'}">Motivo</p>
-
-                        <div class="d-flex gap-2 mt-auto" th:if="${s.estado != null and s.estado.id == 'PENDIENTE'}">
-                            <button type="button"
-                                    class="btn btn-sm lp-btn lp-btn-primary js-decidir"
-                                    th:attr="data-id=${s.id},data-accion='APROBAR'">
-                                <i class="bi bi-check-circle me-1"></i>Aprobar
-                            </button>
-                            <button type="button"
-                                    class="btn btn-sm lp-btn lp-btn-danger js-decidir"
-                                    th:attr="data-id=${s.id},data-accion='RECHAZAR'">
-                                <i class="bi bi-x-circle me-1"></i>Rechazar
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-12" th:if="${#lists.isEmpty(solicitudes)}">
-                <div class="alert alert-info mb-0">No hay solicitudes registradas.</div>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-inline-flex gap-2" th:if="${s.estado != null and s.estado.id == 'PENDIENTE'}">
+                                <button type="button"
+                                        class="btn btn-outline-success btn-sm js-decidir"
+                                        th:attr="data-id=${s.id},data-accion='APROBAR'">
+                                    <i class="bi bi-check-circle me-1"></i>Aprobar
+                                </button>
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm js-decidir"
+                                        th:attr="data-id=${s.id},data-accion='RECHAZAR'">
+                                    <i class="bi bi-x-circle me-1"></i>Rechazar
+                                </button>
+                            </div>
+                            <span class="text-muted small" th:if="${s.estado == null or s.estado.id != 'PENDIENTE'}">Sin acciones</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(solicitudes)}">
+                        <td colspan="6" class="text-center text-muted">No hay solicitudes registradas.</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -76,9 +92,9 @@
     const headerName = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
 
     const estadoClasses = {
-        PENDIENTE: { card: 'estado-pendiente', badge: 'text-bg-warning' },
-        APROBADA: { card: 'estado-aprobada', badge: 'text-bg-success' },
-        RECHAZADA: { card: 'estado-rechazada', badge: 'text-bg-danger' }
+        PENDIENTE: { row: 'estado-pendiente', badge: 'text-bg-warning' },
+        APROBADA: { row: 'estado-aprobada', badge: 'text-bg-success' },
+        RECHAZADA: { row: 'estado-rechazada', badge: 'text-bg-danger' }
     };
 
     async function enviarDecision(id, accion, motivo) {
@@ -98,20 +114,25 @@
         return resp.json();
     }
 
-    function pintarEstado(card, nuevoEstado) {
-        card.dataset.estado = nuevoEstado;
-        card.classList.remove('estado-pendiente', 'estado-aprobada', 'estado-rechazada');
+    function pintarEstado(row, nuevoEstado) {
+        row.dataset.estado = nuevoEstado;
+        row.classList.remove('estado-pendiente', 'estado-aprobada', 'estado-rechazada');
 
-        const badge = card.querySelector('.estado-badge');
+        const badge = row.querySelector('.estado-badge');
         badge.classList.remove('text-bg-warning', 'text-bg-success', 'text-bg-danger');
 
         const cfg = estadoClasses[nuevoEstado] || estadoClasses.RECHAZADA;
-        card.classList.add(cfg.card);
+        row.classList.add(cfg.row);
         badge.classList.add(cfg.badge);
         badge.textContent = nuevoEstado;
 
-        const actionBlock = card.querySelector('.js-decidir')?.closest('.d-flex');
-        if (actionBlock) actionBlock.remove();
+        const actionBlock = row.querySelector('.js-decidir')?.closest('.d-inline-flex');
+        if (actionBlock) {
+            actionBlock.replaceWith(Object.assign(document.createElement('span'), {
+                className: 'text-muted small',
+                textContent: 'Sin acciones'
+            }));
+        }
     }
 
     document.addEventListener('click', async (e) => {
@@ -155,8 +176,8 @@
                 return;
             }
 
-            const card = document.querySelector(`.solicitud-card[data-id="${solicitudId}"]`);
-            if (card) pintarEstado(card, data.estado);
+            const row = document.querySelector(`.solicitud-row[data-id="${solicitudId}"]`);
+            if (row) pintarEstado(row, data.estado);
 
             await Swal.fire({
                 icon: accion === 'APROBAR' ? 'success' : 'info',
