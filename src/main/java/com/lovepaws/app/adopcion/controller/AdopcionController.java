@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -210,34 +209,39 @@ public class AdopcionController {
 		}
 	}
 
-	@PreAuthorize("hasRole('ADOPTANTE')")
-	@PostMapping("/cancelar/{solicitudId}")
-	public String cancelarSolicitud(@PathVariable Integer solicitudId, Authentication auth) {
-		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
-		solicitudService.cancelarSolicitud(solicitudId, principal.getUsuario().getId());
-		return "redirect:/adopcion/mis-adopciones?cancelada";
-	}
 
 	@PreAuthorize("hasRole('ADOPTANTE')")
 	@GetMapping("/mis-adopciones")
 	public String misAdopciones(Model model, Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
 		Integer usuarioId = principal.getUsuario().getId();
-		List<com.lovepaws.app.adopcion.domain.Adopcion> adopciones = adopcionService.listarAdopcionesPorUsuario(usuarioId);
-		model.addAttribute("adopciones", adopciones);
+		model.addAttribute("adopciones", adopcionService.listarAdopcionesPorUsuario(usuarioId));
 		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPorUsuario(usuarioId));
-		Map<Integer, Integer> adopcionIdPorSolicitud = new LinkedHashMap<>();
-		Map<Integer, List<SeguimientoAdopcion>> seguimientosPorAdopcion = new LinkedHashMap<>();
-		for (com.lovepaws.app.adopcion.domain.Adopcion adopcion : adopciones) {
-			if (adopcion.getSolicitud() != null && adopcion.getSolicitud().getId() != null) {
-				adopcionIdPorSolicitud.put(adopcion.getSolicitud().getId(), adopcion.getId());
-			}
-			seguimientosPorAdopcion.put(adopcion.getId(), seguimientoService.listarPorAdopcion(adopcion.getId()));
-		}
-		model.addAttribute("adopcionIdPorSolicitud", adopcionIdPorSolicitud);
-		model.addAttribute("seguimientosPorAdopcion", seguimientosPorAdopcion);
 		return "adopcion/mis-adopciones";
 	}
+
+	@PreAuthorize("hasRole('ADOPTANTE')")
+	@GetMapping("/mis-adopciones/solicitud/{solicitudId}")
+	public String verDetalleSolicitudAdoptante(@PathVariable Integer solicitudId, Model model, Authentication auth) {
+		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+		Integer usuarioId = principal.getUsuario().getId();
+		SolicitudAdopcion solicitud = solicitudService.findSolicitudById(solicitudId)
+				.filter(s -> s.getUsuario() != null && s.getUsuario().getId().equals(usuarioId))
+				.orElse(null);
+		if (solicitud == null) {
+			return "redirect:/adopcion/mis-adopciones?error=forbidden";
+		}
+		Integer adopcionId = adopcionService.listarAdopcionesPorUsuario(usuarioId).stream()
+				.filter(a -> a.getSolicitud() != null && a.getSolicitud().getId() != null
+						&& a.getSolicitud().getId().equals(solicitudId))
+				.map(com.lovepaws.app.adopcion.domain.Adopcion::getId)
+				.findFirst()
+				.orElse(null);
+		model.addAttribute("solicitud", solicitud);
+		model.addAttribute("adopcionId", adopcionId);
+		return "adopcion/solicitud-detalle";
+	}
+
 
 	@PreAuthorize("hasRole('ADOPTANTE')")
 	@GetMapping("/seguimiento/{adopcionId}")
