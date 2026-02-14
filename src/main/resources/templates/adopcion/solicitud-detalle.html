@@ -5,74 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Detalle de solicitud</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link th:href="@{/css/adopcion-flujo.css}" rel="stylesheet"/>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
 </head>
-<body class="page-shell">
+<body class="bg-light">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="container py-4">
-    <div class="section-card p-4">
-        <div class="d-flex flex-wrap gap-2 mb-3">
-            <a th:href="@{/adopcion/mis-adopciones}" class="btn btn-sm lp-btn lp-btn-outline">
-                <i class="bi bi-arrow-left-short me-1"></i>Volver a mis adopciones
-            </a>
-            <a th:if="${adopcionId != null}" th:href="@{'/adopcion/seguimiento/' + ${adopcionId}}" class="btn btn-sm lp-btn lp-btn-outline">
-                Ver seguimiento de adopción
-            </a>
-        </div>
-
-        <h1 class="h4 mb-4">Detalle de solicitud de adopción</h1>
-
-        <div class="row g-3">
-            <div class="col-md-4">
-                <label class="form-label small text-muted">Solicitud #</label>
-                <div class="form-control" th:text="${solicitud.id}">1</div>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label small text-muted">Mascota</label>
-                <div class="form-control" th:text="${solicitud.mascota != null ? solicitud.mascota.nombre : '-'}">Mascota</div>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label small text-muted">Estado</label>
-                <div class="form-control" th:text="${solicitud.estado != null ? solicitud.estado.id : '-'}">PENDIENTE</div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <div>
+                    <h1 class="h5 mb-1">Detalle de solicitud de adopción</h1>
+                    <p class="text-muted mb-0">Sigue el estado de tu proceso y revisa la información enviada.</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a th:href="@{/adopcion/mis-adopciones}" class="btn btn-outline-secondary btn-sm">Volver</a>
+                    <a th:if="${adopcionId != null}" th:href="@{'/adopcion/' + ${adopcionId}}" class="btn btn-success btn-sm">Ver adopción aceptada</a>
+                </div>
             </div>
 
-            <div class="col-md-6">
-                <label class="form-label small text-muted">Fecha de solicitud</label>
-                <div class="form-control" th:text="${solicitud.fechaSolicitud != null ? #temporals.format(solicitud.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">-</div>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label small text-muted">Tipo de vivienda</label>
-                <div class="form-control" th:text="${solicitud.tipoVivienda != null ? solicitud.tipoVivienda : '-'}">-</div>
+            <div class="alert"
+                 th:classappend="${solicitud.estado != null and solicitud.estado.id == 'PENDIENTE'} ? ' alert-warning' : (${solicitud.estado != null and solicitud.estado.id == 'APROBADA'} ? ' alert-success' : (${solicitud.estado != null and solicitud.estado.id == 'RECHAZADA'} ? ' alert-danger' : ' alert-secondary'))">
+                <strong>Seguimiento de estado:</strong>
+                <span th:if="${solicitud.estado != null and solicitud.estado.id == 'PENDIENTE'}">Tu solicitud sigue pendiente de revisión por el equipo.</span>
+                <span th:if="${solicitud.estado != null and solicitud.estado.id == 'APROBADA'}">¡Tu solicitud fue aprobada! Ya puedes revisar el detalle de la adopción.</span>
+                <span th:if="${solicitud.estado != null and solicitud.estado.id == 'RECHAZADA'}">Tu solicitud fue rechazada. Revisa observaciones para más contexto.</span>
+                <span th:if="${solicitud.estado != null and solicitud.estado.id == 'CANCELADA'}">Cancelaste esta solicitud desde tu panel.</span>
             </div>
 
-            <div class="col-12">
-                <label class="form-label small text-muted">¿Por qué deseas adoptar?</label>
-                <textarea class="form-control" rows="3" readonly th:text="${solicitud.pqAdoptar != null ? solicitud.pqAdoptar : '-'}"></textarea>
-            </div>
-            <div class="col-12">
-                <label class="form-label small text-muted">Experiencia previa</label>
-                <textarea class="form-control" rows="2" readonly th:text="${solicitud.experiencia != null ? solicitud.experiencia : '-'}"></textarea>
-            </div>
-            <div class="col-12">
-                <label class="form-label small text-muted">Niños u otras mascotas en casa</label>
-                <textarea class="form-control" rows="2" readonly th:text="${solicitud.ninosOtraMascotas != null ? solicitud.ninosOtraMascotas : '-'}"></textarea>
-            </div>
-            <div class="col-12">
-                <label class="form-label small text-muted">Tiempo dedicado</label>
-                <textarea class="form-control" rows="2" readonly th:text="${solicitud.tiempoDedicado != null ? solicitud.tiempoDedicado : '-'}"></textarea>
-            </div>
-            <div class="col-12">
-                <label class="form-label small text-muted">Plan de cuidado de la mascota</label>
-                <textarea class="form-control" rows="2" readonly th:text="${solicitud.planMascota != null ? solicitud.planMascota : '-'}"></textarea>
-            </div>
-            <div class="col-12">
-                <label class="form-label small text-muted">Cómo cubrirás los costos</label>
-                <textarea class="form-control" rows="2" readonly th:text="${solicitud.cubrirCostos != null ? solicitud.cubrirCostos : '-'}"></textarea>
-            </div>
-            <div class="col-12">
-                <label class="form-label small text-muted">Información adicional</label>
-                <textarea class="form-control" rows="2" readonly th:text="${solicitud.infoAdicional != null ? solicitud.infoAdicional : '-'}"></textarea>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label small text-muted">Solicitud #</label>
+                    <div class="form-control" th:text="${solicitud.id}">1</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small text-muted">Mascota</label>
+                    <div class="form-control" th:text="${solicitud.mascota != null ? solicitud.mascota.nombre : '-'}">Mascota</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small text-muted">Estado</label>
+                    <div class="form-control" th:text="${solicitud.estado != null ? solicitud.estado.id : '-'}">PENDIENTE</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small text-muted">Fecha de solicitud</label>
+                    <div class="form-control" th:text="${solicitud.fechaSolicitud != null ? #temporals.format(solicitud.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">-</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small text-muted">Tipo de vivienda</label>
+                    <div class="form-control" th:text="${solicitud.tipoVivienda != null ? solicitud.tipoVivienda : '-'}">-</div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label small text-muted">¿Por qué deseas adoptar?</label>
+                    <textarea class="form-control" rows="3" readonly th:text="${solicitud.pqAdoptar != null ? solicitud.pqAdoptar : '-'}"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted">Experiencia previa</label>
+                    <textarea class="form-control" rows="2" readonly th:text="${solicitud.experiencia != null ? solicitud.experiencia : '-'}"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted">Niños u otras mascotas en casa</label>
+                    <textarea class="form-control" rows="2" readonly th:text="${solicitud.ninosOtraMascotas != null ? solicitud.ninosOtraMascotas : '-'}"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted">Tiempo dedicado</label>
+                    <textarea class="form-control" rows="2" readonly th:text="${solicitud.tiempoDedicado != null ? solicitud.tiempoDedicado : '-'}"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted">Plan de cuidado de la mascota</label>
+                    <textarea class="form-control" rows="2" readonly th:text="${solicitud.planMascota != null ? solicitud.planMascota : '-'}"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted">Cómo cubrirás los costos</label>
+                    <textarea class="form-control" rows="2" readonly th:text="${solicitud.cubrirCostos != null ? solicitud.cubrirCostos : '-'}"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted">Observaciones del proceso</label>
+                    <textarea class="form-control" rows="2" readonly th:text="${solicitud.infoAdicional != null ? solicitud.infoAdicional : '-'}"></textarea>
+                </div>
             </div>
         </div>
     </div>

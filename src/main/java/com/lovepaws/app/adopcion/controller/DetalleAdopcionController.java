@@ -26,7 +26,7 @@ public class DetalleAdopcionController {
     private final SeguimientoService seguimientoService;
 
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN','ADOPTANTE')")
-    @GetMapping("/adopcion/{id}")
+    @GetMapping("/seguimiento/adopcion/{id}")
     public String verDetalleAdopcion(@PathVariable Integer id, Model model) {
         Adopcion adopcion = seguimientoService.obtenerAdopcionActivaAprobada(id);
         model.addAttribute("adopcion", adopcion);
