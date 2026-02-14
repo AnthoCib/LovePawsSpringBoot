@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
     <link th:href="@{/css/adopcion-flujo.css}" rel="stylesheet"/>
     <link rel="stylesheet"  href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -18,6 +19,7 @@
 </head>
 <body class="page-shell">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="container py-4">
     <div class="section-card p-4">
         <div class="d-flex flex-wrap gap-2 mb-3">
@@ -25,98 +27,117 @@
             <a th:href="@{/mascotas}" class="btn btn-sm lp-btn lp-btn-outline">Ver catálogo</a>
         </div>
 
-        <h1 class="h4 mb-1">Mis solicitudes de adopción</h1>
-        <p class="text-muted mb-4">Vista moderna con filtros rápidos para revisar tus solicitudes activas y adopciones.</p>
+        <h1 class="h4 mb-1">Mis solicitudes y adopciones</h1>
+        <p class="text-muted mb-4">Escribe para filtrar al instante por mascota, estado, tipo o ID.</p>
 
-        <div class="misadop-toolbar mb-4">
-            <input id="filtroTexto" type="search" class="form-control" placeholder="Buscar por mascota, estado o tipo...">
+        <div class="misadop-toolbar mb-3">
+            <input id="filtroTexto" type="search" class="form-control" placeholder="Ej.: luna, pendiente, adopción, 12...">
             <select id="filtroTipo" class="form-select">
                 <option value="TODOS">Todos</option>
-                <option value="Solicitud">Solicitudes</option>
-                <option value="Adopción">Adopciones</option>
+                <option value="SOLICITUD">Solicitudes</option>
+                <option value="ADOPCION">Adopciones</option>
             </select>
         </div>
 
-        <div id="misadopGrid" class="misadop-grid">
-            <article class="misadop-card p-3"
-                     th:each="s : ${solicitudes}"
-                     th:attr="data-tipo='Solicitud',data-mascota=${s.mascota != null ? s.mascota.nombre : ''},data-estado=${s.estado != null ? s.estado.id : ''}">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge text-bg-secondary">Solicitud</span>
-                    <small class="text-muted">#<span th:text="${s.id}">1</span></small>
-                </div>
-
-                <h2 class="h6 mb-1" th:text="${s.mascota != null ? s.mascota.nombre : '-'}">Mascota</h2>
-                <p class="text-muted small mb-3" th:text="${s.fechaSolicitud != null ? #temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">-</p>
-
-                <div class="misadop-meta mb-3">
-                    <div>
-                        <div class="small text-muted">Estado</div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle lp-table mb-0" id="tablaMisAdopciones">
+                <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>ID</th>
+                    <th>Mascota</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th class="text-end">Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${solicitudes}"
+                    class="fila-adopcion"
+                    th:attr="data-tipo-key='SOLICITUD',data-search=${'solicitud ' + (s.id != null ? s.id : '') + ' ' + (s.mascota != null && s.mascota.nombre != null ? s.mascota.nombre : '') + ' ' + (s.estado != null && s.estado.id != null ? s.estado.id : '')}">
+                    <td><span class="badge text-bg-secondary">Solicitud</span></td>
+                    <td th:text="${s.id}">1</td>
+                    <td th:text="${s.mascota != null ? s.mascota.nombre : '-'}">Mascota</td>
+                    <td>
                         <span class="badge"
                               th:classappend="${s.estado != null and s.estado.id == 'PENDIENTE'} ? ' text-bg-warning' : (${s.estado != null and s.estado.id == 'APROBADA'} ? ' text-bg-success' : (${s.estado != null and s.estado.id == 'RECHAZADA'} ? ' text-bg-danger' : ' text-bg-secondary'))"
                               th:text="${s.estado != null ? s.estado.id : '-'}"></span>
-                    </div>
-                    <div>
-                        <div class="small text-muted">Tipo</div>
-                        <div class="fw-semibold">Solicitud</div>
-                    </div>
-                </div>
+                    </td>
+                    <td th:text="${s.fechaSolicitud != null ? #temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/mis-adopciones/solicitud/' + ${s.id}}">Ver detalle</a>
+                    </td>
+                </tr>
 
-                <a class="btn btn-sm lp-btn lp-btn-outline"
-                   th:href="@{'/adopcion/mis-adopciones/solicitud/' + ${s.id}}">
-                    Ver detalle
-                </a>
-            </article>
+                <tr th:each="a : ${adopciones}"
+                    class="fila-adopcion"
+                    th:attr="data-tipo-key='ADOPCION',data-search=${'adopcion ' + (a.id != null ? a.id : '') + ' ' + (a.mascota != null && a.mascota.nombre != null ? a.mascota.nombre : '') + ' ' + (a.estado != null && a.estado.id != null ? a.estado.id : '')}">
+                    <td><span class="badge text-bg-primary">Adopción</span></td>
+                    <td th:text="${a.id}">2</td>
+                    <td th:text="${a.mascota != null ? a.mascota.nombre : '-'}">Mascota</td>
+                    <td><span class="badge text-bg-success" th:text="${a.estado != null ? a.estado.id : '-'}"></span></td>
+                    <td th:text="${a.fechaAdopcion != null ? #temporals.format(a.fechaAdopcion, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/seguimiento/' + ${a.id}}">Ver detalle</a>
+                    </td>
+                </tr>
 
-            <article class="misadop-card p-3"
-                     th:each="a : ${adopciones}"
-                     th:attr="data-tipo='Adopción',data-mascota=${a.mascota != null ? a.mascota.nombre : ''},data-estado=${a.estado != null ? a.estado.id : ''}">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge text-bg-primary">Adopción</span>
-                    <small class="text-muted">#<span th:text="${a.id}">2</span></small>
-                </div>
-
-                <h2 class="h6 mb-1" th:text="${a.mascota != null ? a.mascota.nombre : '-'}">Mascota</h2>
-                <p class="text-muted small mb-3" th:text="${a.fechaAdopcion != null ? #temporals.format(a.fechaAdopcion, 'dd/MM/yyyy HH:mm') : '-'}">-</p>
-
-                <div class="misadop-meta mb-3">
-                    <div>
-                        <div class="small text-muted">Estado</div>
-                        <span class="badge text-bg-success" th:text="${a.estado != null ? a.estado.id : '-'}"></span>
-                    </div>
-                    <div>
-                        <div class="small text-muted">Tipo</div>
-                        <div class="fw-semibold">Adopción</div>
-                    </div>
-                </div>
-
-                <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/seguimiento/' + ${a.id}}">
-                    Ver detalle
-                </a>
-            </article>
+                <tr th:if="${#lists.isEmpty(solicitudes) and #lists.isEmpty(adopciones)}">
+                    <td colspan="6" class="text-center text-muted">No tienes registros de adopción todavía.</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
         <div id="misadopEmpty" class="misadop-empty mt-3 d-none">No hay resultados para el filtro actual.</div>
-        <div class="misadop-empty mt-3" th:if="${#lists.isEmpty(solicitudes) and #lists.isEmpty(adopciones)}">
-            No tienes registros de adopción todavía.
-        </div>
     </div>
 </div>
 
-<div th:if="${param.created}">
-<script>Swal.fire({icon:'success',title:'Solicitud enviada',text:'Tu solicitud de adopción fue registrada.'});</script>
-</div>
-<div th:if="${param.error == 'solicitud-activa'}">
-<script>Swal.fire({icon:'warning',title:'Ya tienes una solicitud activa',text:'Solo puedes tener una solicitud PENDIENTE a la vez.'});</script>
-</div>
-<div th:if="${param.error == 'forbidden'}">
-<script>Swal.fire({icon:'error',title:'Acceso denegado',text:'No tienes permiso para ver este detalle.'});</script>
-</div>
+<div th:if="${param.created}"><script>Swal.fire({icon:'success',title:'Solicitud enviada',text:'Tu solicitud de adopción fue registrada.'});</script></div>
+<div th:if="${param.error == 'solicitud-activa'}"><script>Swal.fire({icon:'warning',title:'Ya tienes una solicitud activa',text:'Solo puedes tener una solicitud PENDIENTE a la vez.'});</script></div>
+<div th:if="${param.error == 'forbidden'}"><script>Swal.fire({icon:'error',title:'Acceso denegado',text:'No tienes permiso para ver este detalle.'});</script></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+(() => {
+    const input = document.getElementById('filtroTexto');
+    const tipo = document.getElementById('filtroTipo');
+    const filas = Array.from(document.querySelectorAll('#tablaMisAdopciones .fila-adopcion'));
+    const empty = document.getElementById('misadopEmpty');
 
 
+    const norm = (v) => (v || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+
+
+    function filtrar() {
+        const q = norm(input?.value);
+        const tipoSel = tipo?.value || 'TODOS';
+        let visibles = 0;
+
+        filas.forEach((fila) => {
+            const tipoRow = fila.dataset.tipoKey || 'TODOS';
+            const search = norm(fila.dataset.search || fila.textContent);
+            const okTipo = tipoSel === 'TODOS' || tipoSel === tipoRow;
+            const okTexto = !q || search.includes(q);
+            const show = okTipo && okTexto;
+            fila.classList.toggle('d-none', !show);
+            if (show) visibles += 1;
+        });
+
+        empty?.classList.toggle('d-none', visibles > 0);
+    }
+
+    input?.addEventListener('input', filtrar);
+    tipo?.addEventListener('change', filtrar);
+    filtrar();
+})();
+</script>
 
 </body>
 </html>
