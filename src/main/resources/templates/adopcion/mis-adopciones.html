@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
     <link th:href="@{/css/adopcion-flujo.css}" rel="stylesheet"/>
     <link th:href="@{/css/mis-adopciones.css}" rel="stylesheet"/>
 </head>
@@ -26,15 +27,15 @@
             <input id="filtroTexto" type="search" class="form-control" placeholder="Buscar por mascota, estado o tipo...">
             <select id="filtroTipo" class="form-select">
                 <option value="TODOS">Todos</option>
-                <option value="Solicitud">Solicitudes</option>
-                <option value="Adopción">Adopciones</option>
+                <option value="SOLICITUD">Solicitudes</option>
+                <option value="ADOPCION">Adopciones</option>
             </select>
         </div>
 
         <div id="misadopGrid" class="misadop-grid">
             <article class="misadop-card p-3"
                      th:each="s : ${solicitudes}"
-                     th:attr="data-tipo='Solicitud',data-mascota=${s.mascota != null ? s.mascota.nombre : ''},data-estado=${s.estado != null ? s.estado.id : ''}">
+                     th:attr="data-tipo='Solicitud',data-tipo-key='SOLICITUD',data-mascota=${s.mascota != null ? s.mascota.nombre : ''},data-estado=${s.estado != null ? s.estado.id : ''},data-id=${s.id}">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="badge text-bg-secondary">Solicitud</span>
                     <small class="text-muted">#<span th:text="${s.id}">1</span></small>
@@ -64,7 +65,7 @@
 
             <article class="misadop-card p-3"
                      th:each="a : ${adopciones}"
-                     th:attr="data-tipo='Adopción',data-mascota=${a.mascota != null ? a.mascota.nombre : ''},data-estado=${a.estado != null ? a.estado.id : ''}">
+                     th:attr="data-tipo='Adopción',data-tipo-key='ADOPCION',data-mascota=${a.mascota != null ? a.mascota.nombre : ''},data-estado=${a.estado != null ? a.estado.id : ''},data-id=${a.id}">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="badge text-bg-primary">Adopción</span>
                     <small class="text-muted">#<span th:text="${a.id}">2</span></small>
@@ -115,7 +116,14 @@
     const cards = Array.from(document.querySelectorAll('#misadopGrid .misadop-card'));
     const empty = document.getElementById('misadopEmpty');
 
-    function normalizar(v) { return (v || '').toLowerCase().trim(); }
+    function normalizar(v) {
+        return (v || '')
+            .toString()
+            .normalize('NFD')
+            .replace(/[̀-ͯ]/g, '')
+            .toLowerCase()
+            .trim();
+    }
 
     function aplicarFiltros() {
         const q = normalizar(filtroTexto?.value);
@@ -124,10 +132,13 @@
 
         cards.forEach(card => {
             const tipoCard = card.dataset.tipo || '';
+            const tipoKey = card.dataset.tipoKey || '';
             const mascota = card.dataset.mascota || '';
             const estado = card.dataset.estado || '';
-            const textMatch = !q || normalizar(`${tipoCard} ${mascota} ${estado}`).includes(q);
-            const tipoMatch = tipo === 'TODOS' || tipo === tipoCard;
+            const id = card.dataset.id || '';
+            const searchable = normalizar(`${tipoCard} ${mascota} ${estado} ${id}`);
+            const textMatch = !q || searchable.includes(q);
+            const tipoMatch = tipo === 'TODOS' || tipo === tipoKey;
             const show = textMatch && tipoMatch;
             card.classList.toggle('d-none', !show);
             if (show) visibles++;
