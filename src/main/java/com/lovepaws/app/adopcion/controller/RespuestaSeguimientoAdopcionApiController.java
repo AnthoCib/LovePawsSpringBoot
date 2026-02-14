@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoRequestDTO;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoResponseDTO;
 import com.lovepaws.app.adopcion.service.AdopcionService;
-import com.lovepaws.app.adopcion.service.RespuestaSeguimientoAdoptanteService;
+import com.lovepaws.app.adopcion.service.RespuestaSeguimientoAdopcionService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 
 import jakarta.validation.Valid;
@@ -28,9 +28,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/respuestas-seguimiento")
 @RequiredArgsConstructor
 @Validated
-public class RespuestaSeguimientoAdoptanteApiController {
+public class RespuestaSeguimientoAdopcionApiController {
 
-    private final RespuestaSeguimientoAdoptanteService respuestaService;
+    private final RespuestaSeguimientoAdopcionService respuestaService;
     private final AdopcionService adopcionService;
 
     // Lista respuestas por adopción para seguimiento del adoptante o revisión del gestor.

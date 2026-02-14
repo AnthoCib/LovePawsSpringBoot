@@ -1,6 +1,8 @@
 package com.lovepaws.app.mascota.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -22,7 +24,11 @@ public class Categoria {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
+    @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
+
     private String descripcion;
     private Boolean estado;
 

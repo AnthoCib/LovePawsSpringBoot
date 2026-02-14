@@ -5,14 +5,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
-import com.lovepaws.app.adopcion.domain.RespuestaSeguimientoAdoptante;
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.domain.RespuestaSeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoRequestDTO;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoResponseDTO;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-import com.lovepaws.app.adopcion.repository.RespuestaSeguimientoAdoptanteRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoRepository;
-import com.lovepaws.app.adopcion.service.RespuestaSeguimientoAdoptanteService;
+import com.lovepaws.app.adopcion.repository.RespuestaSeguimientoAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
+import com.lovepaws.app.adopcion.service.RespuestaSeguimientoAdopcionService;
 import com.lovepaws.app.config.storage.FileStorageService;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.AuditoriaService;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguimientoAdoptanteService {
+public class RespuestaSeguimientoAdopcionServiceImpl implements RespuestaSeguimientoAdopcionService {
 
     @Override
     @Transactional(readOnly = true)
@@ -29,8 +29,8 @@ public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguim
         return respuestaRepository.findByAdopcion_Id(adopcionId).stream().map(this::toDto).toList();
     }
 
-    private final RespuestaSeguimientoAdoptanteRepository respuestaRepository;
-    private final SeguimientoRepository seguimientoRepository;
+    private final RespuestaSeguimientoAdopcionRepository respuestaRepository;
+    private final SeguimientoAdopcionRepository seguimientoRepository;
     private final AdopcionRepository adopcionRepository;
     private final FileStorageService fileStorageService;
     private final AuditoriaService auditoriaService;
@@ -42,7 +42,7 @@ public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguim
                                                               Integer usuarioId,
                                                               String usuarioNombre) {
         // Validación en capa service: seguimiento debe existir.
-        SeguimientoPostAdopcion seguimiento = seguimientoRepository.findById(request.getSeguimientoId())
+        SeguimientoAdopcion seguimiento = seguimientoRepository.findById(request.getSeguimientoId())
                 .orElseThrow(() -> new IllegalArgumentException("Seguimiento no encontrado"));
 
         // Validación en capa service: adopción debe existir y coincidir con seguimiento.
@@ -53,7 +53,7 @@ public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguim
             throw new IllegalStateException("El seguimiento no pertenece a la adopción enviada");
         }
 
-        RespuestaSeguimientoAdoptante respuesta = new RespuestaSeguimientoAdoptante();
+        RespuestaSeguimientoAdopcion respuesta = new RespuestaSeguimientoAdopcion();
         respuesta.setSeguimiento(seguimiento);
         respuesta.setAdopcion(adopcion);
         respuesta.setEstadoSalud(request.getEstadoSalud().trim());
@@ -69,7 +69,7 @@ public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguim
         usuario.setId(usuarioId);
         respuesta.setUsuarioCreacion(usuario);
 
-        RespuestaSeguimientoAdoptante saved = respuestaRepository.save(respuesta);
+        RespuestaSeguimientoAdopcion saved = respuestaRepository.save(respuesta);
         auditoriaService.registrar("respuesta_seguimiento_adoptante", saved.getId(), "INSERT", usuarioId,
                 usuarioNombre, "Registro de respuesta del adoptante al seguimiento");
         return toDto(saved);
@@ -81,11 +81,11 @@ public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguim
                                                           boolean revisado,
                                                           Integer usuarioId,
                                                           String usuarioNombre) {
-        RespuestaSeguimientoAdoptante respuesta = respuestaRepository.findById(respuestaId)
+        RespuestaSeguimientoAdopcion respuesta = respuestaRepository.findById(respuestaId)
                 .orElseThrow(() -> new IllegalArgumentException("Respuesta no encontrada"));
 
         respuesta.setRevisado(revisado);
-        RespuestaSeguimientoAdoptante updated = respuestaRepository.save(respuesta);
+        RespuestaSeguimientoAdopcion updated = respuestaRepository.save(respuesta);
 
         auditoriaService.registrar("respuesta_seguimiento_adoptante", updated.getId(), "UPDATE", usuarioId,
                 usuarioNombre, "Campo revisado actualizado a " + revisado);
@@ -93,7 +93,7 @@ public class RespuestaSeguimientoAdoptanteServiceImpl implements RespuestaSeguim
         return toDto(updated);
     }
 
-    private RespuestaSeguimientoResponseDTO toDto(RespuestaSeguimientoAdoptante r) {
+    private RespuestaSeguimientoResponseDTO toDto(RespuestaSeguimientoAdopcion r) {
         return RespuestaSeguimientoResponseDTO.builder()
                 .id(r.getId())
                 .seguimientoId(r.getSeguimiento() != null ? r.getSeguimiento().getId() : null)
