@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Detalle de adopción</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <link th:href="@{/css/adopcion-flujo.css}" rel="stylesheet"/>
+</head>
+<body class="page-shell">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container py-4">
+    <div class="section-card p-4 mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <h1 class="h4 mb-0">Detalle de adopción #<span th:text="${adopcion.id}">1</span></h1>
+            <a th:href="@{/adopcion/mis-adopciones}" class="btn btn-sm lp-btn lp-btn-outline">Volver</a>
+        </div>
+
+        <div class="alert alert-danger" th:if="${incumple8Semanas}">
+            ⚠️ Esta adopción incumple la regla de seguimiento en los primeros 56 días (8 semanas).
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-4"><strong>Estado:</strong> <span th:text="${adopcion.estado != null ? adopcion.estado.id : '-'}"></span></div>
+            <div class="col-md-4"><strong>Fecha adopción:</strong> <span th:text="${adopcion.fechaAdopcion != null ? #temporals.format(adopcion.fechaAdopcion,'dd/MM/yyyy HH:mm') : '-'}"></span></div>
+            <div class="col-md-4"><strong>Adoptante:</strong> <span th:text="${adopcion.usuarioAdoptante != null ? adopcion.usuarioAdoptante.nombre : '-'}"></span></div>
+            <div class="col-md-6"><strong>Mascota:</strong> <span th:text="${adopcion.mascota != null ? adopcion.mascota.nombre : '-'}"></span></div>
+        </div>
+    </div>
+
+    <div class="section-card p-4 mb-3" th:if="${puedeGestionar}">
+        <h2 class="h6 mb-3">Crear seguimiento post adopción</h2>
+        <form th:action="@{/adopcion/seguimiento/crear}" method="post" class="row g-2">
+            <input type="hidden" name="adopcionId" th:value="${adopcion.id}"/>
+            <div class="col-md-4">
+                <label class="form-label">Fecha visita</label>
+                <input type="datetime-local" class="form-control" name="fechaVisita" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Estado mascota</label>
+                <select class="form-select" name="estadoId">
+                    <option value="">Sin cambio</option>
+                    <option th:each="e : ${estadosMascota}" th:value="${e.id}" th:text="${e.id}"></option>
+                </select>
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Observaciones</label>
+                <textarea class="form-control" rows="2" name="observaciones"></textarea>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-sm lp-btn lp-btn-primary" type="submit">Guardar seguimiento</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="section-card p-4 mb-3">
+        <h2 class="h6 mb-3">Seguimientos</h2>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle lp-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha visita</th>
+                    <th>Observaciones</th>
+                    <th>Estado</th>
+                    <th>Usuario creación</th>
+                    <th>Fecha creación</th>
+                    <th sec:authorize="hasAnyRole('GESTOR','ADMIN')">Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${seguimientos}">
+                    <td th:text="${s.id}">1</td>
+                    <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita,'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                    <td th:text="${s.observaciones != null ? s.observaciones : '-'}">-</td>
+                    <td th:text="${s.estado != null ? s.estado.id : '-'}">-</td>
+                    <td th:text="${s.usuarioCreacion != null ? s.usuarioCreacion.nombre : '-'}">-</td>
+                    <td th:text="${s.fechaCreacion != null ? #temporals.format(s.fechaCreacion,'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                    <td sec:authorize="hasAnyRole('GESTOR','ADMIN')">
+                        <form th:action="@{'/adopcion/seguimiento/' + ${s.id} + '/eliminar'}" method="post" class="m-0">
+                            <input type="hidden" name="adopcionId" th:value="${adopcion.id}"/>
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(seguimientos)}"><td colspan="7" class="text-center text-muted">Sin seguimientos.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section-card p-4 mb-3" th:if="${puedeResponder and !#lists.isEmpty(seguimientos)}">
+        <h2 class="h6 mb-3">Responder seguimiento (Adoptante)</h2>
+        <form th:action="@{/adopcion/seguimiento/responder}" method="post" enctype="multipart/form-data" class="row g-2">
+            <input type="hidden" name="adopcionId" th:value="${adopcion.id}"/>
+            <div class="col-md-4">
+                <label class="form-label">Seguimiento</label>
+                <select class="form-select" name="seguimientoId" required>
+                    <option th:each="s : ${seguimientos}" th:value="${s.id}" th:text="${'Seguimiento #' + s.id}"></option>
+                </select>
+            </div>
+            <div class="col-md-4"><label class="form-label">Estado salud</label><input class="form-control" name="estadoSalud" required></div>
+            <div class="col-md-4"><label class="form-label">Comportamiento</label><input class="form-control" name="comportamiento" required></div>
+            <div class="col-md-4"><label class="form-label">Alimentación</label><input class="form-control" name="alimentacion" required></div>
+            <div class="col-md-8"><label class="form-label">Comentarios</label><input class="form-control" name="comentarios"></div>
+            <div class="col-md-6"><label class="form-label">Foto (opcional)</label><input type="file" class="form-control" name="foto"></div>
+            <div class="col-12"><button class="btn btn-sm lp-btn lp-btn-primary" type="submit">Enviar respuesta</button></div>
+        </form>
+    </div>
+
+    <div class="section-card p-4">
+        <h2 class="h6 mb-3">Respuestas del adoptante</h2>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle lp-table">
+                <thead>
+                <tr>
+                    <th>Fecha respuesta</th>
+                    <th>Estado salud</th>
+                    <th>Comportamiento</th>
+                    <th>Alimentación</th>
+                    <th>Comentarios</th>
+                    <th>Revisado</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${respuestas}">
+                    <td th:text="${r.fechaRespuesta != null ? #temporals.format(r.fechaRespuesta,'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                    <td th:text="${r.estadoSalud != null ? r.estadoSalud : '-'}">-</td>
+                    <td th:text="${r.comportamiento != null ? r.comportamiento : '-'}">-</td>
+                    <td th:text="${r.alimentacion != null ? r.alimentacion : '-'}">-</td>
+                    <td th:text="${r.comentarios != null ? r.comentarios : '-'}">-</td>
+                    <td><span th:text="${r.revisado != null and r.revisado ? 'Sí' : 'No'}"></span></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(respuestas)}"><td colspan="6" class="text-center text-muted">Sin respuestas.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
