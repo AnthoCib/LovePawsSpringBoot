@@ -22,6 +22,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
@@ -215,8 +217,17 @@ public class AdopcionController {
 	public String misAdopciones(Model model, Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
 		Integer usuarioId = principal.getUsuario().getId();
-		model.addAttribute("adopciones", adopcionService.listarAdopcionesPorUsuario(usuarioId));
-		model.addAttribute("solicitudes", solicitudService.listarSolicitudesPorUsuario(usuarioId));
+		List<com.lovepaws.app.adopcion.domain.Adopcion> adopciones = adopcionService.listarAdopcionesPorUsuario(usuarioId);
+		Set<Integer> solicitudIdsConAdopcion = adopciones.stream()
+				.map(com.lovepaws.app.adopcion.domain.Adopcion::getSolicitud)
+				.filter(s -> s != null && s.getId() != null)
+				.map(SolicitudAdopcion::getId)
+				.collect(Collectors.toSet());
+		List<SolicitudAdopcion> solicitudesSinAdopcion = solicitudService.listarSolicitudesPorUsuario(usuarioId).stream()
+				.filter(s -> s.getId() != null && !solicitudIdsConAdopcion.contains(s.getId()))
+				.collect(Collectors.toList());
+		model.addAttribute("adopciones", adopciones);
+		model.addAttribute("solicitudes", solicitudesSinAdopcion);
 		return "adopcion/mis-adopciones";
 	}
 
