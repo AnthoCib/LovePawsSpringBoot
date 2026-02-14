@@ -1,6 +1,6 @@
 .misadop-toolbar {
   display: grid;
-  gap: 0.75rem;
+  gap: .75rem;
   grid-template-columns: 1fr;
 }
 
@@ -10,35 +10,13 @@
   }
 }
 
-.misadop-grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr;
+#tablaMisAdopciones {
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-@media (min-width: 992px) {
-  .misadop-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.misadop-card {
-  border: 1px solid #e8ecf4;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, .05);
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-
-.misadop-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px rgba(15, 23, 42, .08);
-}
-
-.misadop-meta {
-  display: grid;
-  gap: .5rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+#tablaMisAdopciones thead th {
+  white-space: nowrap;
 }
 
 .misadop-empty {
