@@ -91,12 +91,12 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         return estado;
     }
 
-    // Mapea el tracking funcional a los estados reales existentes en tabla estado_mascota.
+    // El tracking se persiste con los mismos IDs funcionales: BIEN, ATENCION_VETERINARIA, RETORNADO.
     private String mapearEstadoId(EstadoMascotaTracking tracking) {
         return switch (tracking) {
-            case BIEN -> "ADOPTADA";
-            case ATENCION_VETERINARIA -> "NO_DISPONIBLE";
-            case RETORNADO -> "DISPONIBLE";
+            case BIEN -> "BIEN";
+            case ATENCION_VETERINARIA -> "ATENCION_VETERINARIA";
+            case RETORNADO -> "RETORNADO";
         };
     }
 
@@ -104,10 +104,11 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         if (estadoId == null) {
             return null;
         }
+
         return switch (estadoId.toUpperCase()) {
-            case "ADOPTADA" -> EstadoMascotaTracking.BIEN;
-            case "NO_DISPONIBLE" -> EstadoMascotaTracking.ATENCION_VETERINARIA;
-            case "DISPONIBLE" -> EstadoMascotaTracking.RETORNADO;
+            case "BIEN", "ADOPTADA" -> EstadoMascotaTracking.BIEN;
+            case "ATENCION_VETERINARIA", "NO_DISPONIBLE" -> EstadoMascotaTracking.ATENCION_VETERINARIA;
+            case "RETORNADO", "DISPONIBLE" -> EstadoMascotaTracking.RETORNADO;
             default -> null;
         };
     }

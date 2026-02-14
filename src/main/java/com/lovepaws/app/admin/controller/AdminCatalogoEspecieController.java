@@ -30,13 +30,13 @@ public class AdminCatalogoEspecieController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("especies", especieAdminService.listarActivas());
-        return "admin/catalogos/especies";
+        return "redirect:/admin/catalogos";
     }
 
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("especie", new Especie());
-        return "admin/catalogos/especie-form";
+        return "redirect:/admin/catalogos";
     }
 
     @PostMapping("/guardar")
@@ -45,16 +45,17 @@ public class AdminCatalogoEspecieController {
                           @AuthenticationPrincipal UsuarioPrincipal principal,
                           RedirectAttributes ra) {
         if (bindingResult.hasErrors()) {
-            return "admin/catalogos/especie-form";
+            ra.addFlashAttribute("swalError", "Formulario inválido");
+            return "redirect:/admin/catalogos";
         }
         try {
             Integer userId = principal != null ? principal.getUsuario().getId() : null;
             especieAdminService.crear(especie, userId);
             ra.addFlashAttribute("swalSuccess", "Especie creada correctamente");
-            return "redirect:/admin/catalogos/especies";
+            return "redirect:/admin/catalogos";
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
-            return "redirect:/admin/catalogos/especies/nuevo";
+            return "redirect:/admin/catalogos";
         }
     }
 
@@ -62,10 +63,10 @@ public class AdminCatalogoEspecieController {
     public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
         try {
             model.addAttribute("especie", especieAdminService.obtenerActiva(id));
-            return "admin/catalogos/especie-form";
+            return "redirect:/admin/catalogos";
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
-            return "redirect:/admin/catalogos/especies";
+            return "redirect:/admin/catalogos";
         }
     }
 
@@ -75,7 +76,8 @@ public class AdminCatalogoEspecieController {
                              BindingResult bindingResult,
                              RedirectAttributes ra) {
         if (bindingResult.hasErrors()) {
-            return "admin/catalogos/especie-form";
+            ra.addFlashAttribute("swalError", "Formulario inválido");
+            return "redirect:/admin/catalogos";
         }
         try {
             especieAdminService.actualizar(id, especie);
@@ -83,7 +85,7 @@ public class AdminCatalogoEspecieController {
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
         }
-        return "redirect:/admin/catalogos/especies";
+        return "redirect:/admin/catalogos";
     }
 
     @PostMapping("/eliminar/{id}")
@@ -94,6 +96,6 @@ public class AdminCatalogoEspecieController {
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
         }
-        return "redirect:/admin/catalogos/especies";
+        return "redirect:/admin/catalogos";
     }
 }

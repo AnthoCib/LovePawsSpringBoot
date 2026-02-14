@@ -32,14 +32,14 @@ public class AdminCatalogoRazaController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("razas", razaAdminService.listarActivas());
-        return "admin/catalogos/razas";
+        return "redirect:/admin/catalogos";
     }
 
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("raza", new Raza());
         model.addAttribute("especies", especieAdminService.listarActivas());
-        return "admin/catalogos/raza-form";
+        return "redirect:/admin/catalogos";
     }
 
     @PostMapping("/guardar")
@@ -50,16 +50,16 @@ public class AdminCatalogoRazaController {
                           RedirectAttributes ra) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("especies", especieAdminService.listarActivas());
-            return "admin/catalogos/raza-form";
+            return "redirect:/admin/catalogos";
         }
         try {
             Integer userId = principal != null ? principal.getUsuario().getId() : null;
             razaAdminService.crear(raza, userId);
             ra.addFlashAttribute("swalSuccess", "Raza creada correctamente");
-            return "redirect:/admin/catalogos/razas";
+            return "redirect:/admin/catalogos";
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
-            return "redirect:/admin/catalogos/razas/nuevo";
+            return "redirect:/admin/catalogos";
         }
     }
 
@@ -68,10 +68,10 @@ public class AdminCatalogoRazaController {
         try {
             model.addAttribute("raza", razaAdminService.obtenerActiva(id));
             model.addAttribute("especies", especieAdminService.listarActivas());
-            return "admin/catalogos/raza-form";
+            return "redirect:/admin/catalogos";
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
-            return "redirect:/admin/catalogos/razas";
+            return "redirect:/admin/catalogos";
         }
     }
 
@@ -83,7 +83,7 @@ public class AdminCatalogoRazaController {
                              RedirectAttributes ra) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("especies", especieAdminService.listarActivas());
-            return "admin/catalogos/raza-form";
+            return "redirect:/admin/catalogos";
         }
         try {
             razaAdminService.actualizar(id, raza);
@@ -91,7 +91,7 @@ public class AdminCatalogoRazaController {
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
         }
-        return "redirect:/admin/catalogos/razas";
+        return "redirect:/admin/catalogos";
     }
 
     @PostMapping("/eliminar/{id}")
@@ -102,6 +102,6 @@ public class AdminCatalogoRazaController {
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
         }
-        return "redirect:/admin/catalogos/razas";
+        return "redirect:/admin/catalogos";
     }
 }

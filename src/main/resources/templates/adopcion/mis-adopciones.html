@@ -63,9 +63,6 @@
                               th:classappend="${s.estado != null and s.estado.id == 'PENDIENTE'} ? ' text-bg-warning' : (${s.estado != null and s.estado.id == 'APROBADA'} ? ' text-bg-success' : (${s.estado != null and s.estado.id == 'RECHAZADA'} ? ' text-bg-danger' : ' text-bg-secondary'))"
                               th:text="${s.estado != null ? s.estado.id : '-'}"></span>
                     </td>
-                    <td th:text="${s.fechaSolicitud != null ? #temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
-                    <td class="text-end">
-                        <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/mis-adopciones/solicitud/' + ${s.id}}">Ver detalle</a>
                     </td>
                 </tr>
 
@@ -88,8 +85,6 @@
                 </tbody>
             </table>
         </div>
-
-        <div id="misadopEmpty" class="misadop-empty mt-3 d-none">No hay resultados para el filtro actual.</div>
     </div>
 </div>
 
