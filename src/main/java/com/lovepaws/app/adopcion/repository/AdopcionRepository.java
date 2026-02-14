@@ -21,18 +21,18 @@ public interface AdopcionRepository extends JpaRepository<Adopcion, Integer> {
 	Optional<Adopcion> findByIdAndDeletedAtIsNullAndActivoTrue(Integer id);
 
 	@Query(value = """
-		SELECT a.id
-		FROM adopcion a
-		WHERE a.deleted_at IS NULL
-		  AND a.estado_id = 'APROBADA'
-		  AND NOT EXISTS (
-		      SELECT 1 FROM seguimiento_post_adopcion s
-		      WHERE s.adopcion_id = a.id
-		        AND s.deleted_at IS NULL
-		        AND s.fecha_visita <= DATE_ADD(a.fecha_adopcion, INTERVAL 56 DAY)
-		  )
-		""", nativeQuery = true)
-    long countByEstado_Id(String estadoId);
+		    SELECT COUNT(*)
+		    FROM adopcion a
+		    WHERE a.deleted_at IS NULL
+		      AND a.estado_id = :estadoId
+		      AND NOT EXISTS (
+		          SELECT 1 FROM seguimiento_post_adopcion s
+		          WHERE s.adopcion_id = a.id
+		            AND s.deleted_at IS NULL
+		            AND s.fecha_visita <= DATE_ADD(a.fecha_adopcion, INTERVAL 56 DAY)
+		      )
+		    """, nativeQuery = true)
+		long countByEstado_Id(@Param("estadoId") String estadoId);
 
     @Query(value = """
             SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
