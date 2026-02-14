@@ -30,13 +30,13 @@ public class AdminCatalogoCategoriaController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("categorias", categoriaAdminService.listarActivas());
-        return "admin/catalogos/categorias";
+        return "redirect:/admin/catalogos";
     }
 
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("categoria", new Categoria());
-        return "admin/catalogos/categoria-form";
+        return "redirect:/admin/catalogos";
     }
 
     @PostMapping("/guardar")
@@ -45,16 +45,17 @@ public class AdminCatalogoCategoriaController {
                           @AuthenticationPrincipal UsuarioPrincipal principal,
                           RedirectAttributes ra) {
         if (bindingResult.hasErrors()) {
-            return "admin/catalogos/categoria-form";
+            ra.addFlashAttribute("swalError", "Formulario inválido");
+            return "redirect:/admin/catalogos";
         }
         try {
             Integer userId = principal != null ? principal.getUsuario().getId() : null;
             categoriaAdminService.crear(categoria, userId);
             ra.addFlashAttribute("swalSuccess", "Categoría creada correctamente");
-            return "redirect:/admin/catalogos/categorias";
+            return "redirect:/admin/catalogos";
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
-            return "redirect:/admin/catalogos/categorias/nuevo";
+            return "redirect:/admin/catalogos";
         }
     }
 
@@ -62,10 +63,10 @@ public class AdminCatalogoCategoriaController {
     public String editar(@PathVariable Integer id, Model model, RedirectAttributes ra) {
         try {
             model.addAttribute("categoria", categoriaAdminService.obtenerActiva(id));
-            return "admin/catalogos/categoria-form";
+            return "redirect:/admin/catalogos";
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
-            return "redirect:/admin/catalogos/categorias";
+            return "redirect:/admin/catalogos";
         }
     }
 
@@ -75,7 +76,8 @@ public class AdminCatalogoCategoriaController {
                              BindingResult bindingResult,
                              RedirectAttributes ra) {
         if (bindingResult.hasErrors()) {
-            return "admin/catalogos/categoria-form";
+            ra.addFlashAttribute("swalError", "Formulario inválido");
+            return "redirect:/admin/catalogos";
         }
         try {
             categoriaAdminService.actualizar(id, categoria);
@@ -83,7 +85,7 @@ public class AdminCatalogoCategoriaController {
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
         }
-        return "redirect:/admin/catalogos/categorias";
+        return "redirect:/admin/catalogos";
     }
 
     @PostMapping("/eliminar/{id}")
@@ -94,6 +96,6 @@ public class AdminCatalogoCategoriaController {
         } catch (Exception ex) {
             ra.addFlashAttribute("swalError", ex.getMessage());
         }
-        return "redirect:/admin/catalogos/categorias";
+        return "redirect:/admin/catalogos";
     }
 }
