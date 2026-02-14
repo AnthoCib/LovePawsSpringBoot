@@ -228,7 +228,25 @@ public class AdopcionController {
 				.collect(Collectors.toList());
 		model.addAttribute("adopciones", adopciones);
 		model.addAttribute("solicitudes", solicitudesSinAdopcion);
+		model.addAttribute("totalPendientes", solicitudesSinAdopcion.stream()
+				.filter(s -> s.getEstado() != null && "PENDIENTE".equalsIgnoreCase(s.getEstado().getId()))
+				.count());
+		model.addAttribute("totalAprobadas", adopciones.stream()
+				.filter(a -> a.getEstado() != null && "APROBADA".equalsIgnoreCase(a.getEstado().getId()))
+				.count());
 		return "adopcion/mis-adopciones";
+	}
+
+	@PreAuthorize("hasRole('ADOPTANTE')")
+	@PostMapping("/mis-adopciones/solicitud/{solicitudId}/cancelar")
+	public String cancelarSolicitudAdoptante(@PathVariable Integer solicitudId, Authentication auth) {
+		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
+		try {
+			solicitudService.cancelarSolicitud(solicitudId, principal.getUsuario().getId());
+			return "redirect:/adopcion/mis-adopciones?cancelada";
+		} catch (IllegalArgumentException | IllegalStateException ex) {
+			return "redirect:/adopcion/mis-adopciones?error=cancelar";
+		}
 	}
 
 	@PreAuthorize("hasRole('ADOPTANTE')")
