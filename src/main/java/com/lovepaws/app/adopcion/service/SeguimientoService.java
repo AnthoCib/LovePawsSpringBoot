@@ -3,14 +3,14 @@ package com.lovepaws.app.adopcion.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 
 public interface SeguimientoService {
 
-	SeguimientoPostAdopcion createSeguimiento(SeguimientoPostAdopcion seguimiento, Integer usuarioId, String usuarioNombre);
+	SeguimientoAdopcion createSeguimiento(SeguimientoAdopcion seguimiento, Integer usuarioId, String usuarioNombre);
 
-	List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId);
+	List<SeguimientoAdopcion> listarPorAdopcion(Integer adopcionId);
 
-	Optional<SeguimientoPostAdopcion> findById(Integer id);
+	Optional<SeguimientoAdopcion> findById(Integer id);
 
 }

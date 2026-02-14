@@ -34,4 +34,8 @@ public interface MascotaRepository extends JpaRepository<Mascota, Integer> {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT m FROM Mascota m WHERE m.id = :id")
 	Optional<Mascota> findByIdForUpdate(@Param("id") Integer id);
+
+	long countByRaza_IdAndDeletedAtIsNull(Integer razaId);
+
+	long countByCategoria_IdAndDeletedAtIsNull(Integer categoriaId);
 }

@@ -1,13 +1,26 @@
-package com.lovepaws.app.adopcion.domain;
+package com.lovepaws.app.seguimiento.domain;
 
-import com.lovepaws.app.user.domain.Usuario;
-import jakarta.persistence.*;
-import lombok.*;
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.time.LocalDateTime;
+import com.lovepaws.app.user.domain.Usuario;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "respuesta_seguimiento_adoptante")
@@ -17,38 +30,21 @@ import java.time.LocalDateTime;
 @Builder
 @SQLDelete(sql = "UPDATE respuesta_seguimiento_adoptante SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class RespuestaSeguimientoAdoptante {
+public class RespuestaSeguimientoPostAdopcion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seguimiento_id")
+    @JoinColumn(name = "seguimiento_id", nullable = false)
     private SeguimientoPostAdopcion seguimiento;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adopcion_id")
-    private Adopcion adopcion;
+    @Column(name = "comentarios", nullable = false, columnDefinition = "TEXT")
+    private String mensaje;
 
-    @CreationTimestamp
-    @Column(name = "fecha_respuesta")
-    private LocalDateTime fechaRespuesta;
-
-    @Column(name = "estado_salud")
-    private String estadoSalud;
-
-    private String comportamiento;
-
-    private String alimentacion;
-
-    @Column(columnDefinition = "TEXT")
-    private String comentarios;
-
-    @Column(name = "foto_url")
-    private String fotoUrl;
-
-    private Boolean revisado = false;
+    @Column(name = "revisado")
+    private Boolean revisado = Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario_creacion")

@@ -6,7 +6,7 @@ import java.util.List;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
-public interface RespuestaSeguimientoAdoptanteService {
+public interface RespuestaSeguimientoAdopcionService {
 
     List<RespuestaSeguimientoResponseDTO> listarPorAdopcion(Integer adopcionId);
 
