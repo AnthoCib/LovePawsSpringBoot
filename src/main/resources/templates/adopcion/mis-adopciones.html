@@ -9,13 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link th:href="@{/css/custom.css}" rel="stylesheet"/>
     <link th:href="@{/css/adopcion-flujo.css}" rel="stylesheet"/>
-    <link rel="stylesheet"  href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    
-
     <link th:href="@{/css/mis-adopciones.css}" rel="stylesheet"/>
-
 </head>
 <body class="page-shell">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
@@ -28,111 +22,121 @@
         </div>
 
         <h1 class="h4 mb-1">Mis solicitudes y adopciones</h1>
-        <p class="text-muted mb-4">Escribe para filtrar al instante por mascota, estado, tipo o ID.</p>
+        <p class="text-muted mb-3">Revisa tus solicitudes pendientes y el detalle de tus adopciones aceptadas.</p>
 
-        <div class="misadop-toolbar mb-3">
-            <input id="filtroTexto" type="search" class="form-control" placeholder="Ej.: luna, pendiente, adopción, 12...">
-            <select id="filtroTipo" class="form-select">
-                <option value="TODOS">Todos</option>
-                <option value="SOLICITUD">Solicitudes</option>
-                <option value="ADOPCION">Adopciones</option>
-            </select>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="border rounded-3 p-3 bg-light h-100">
+                    <div class="small text-muted">Solicitudes pendientes</div>
+                    <div class="display-6 fw-bold text-warning" th:text="${totalPendientes}">0</div>
+                    <div class="small text-muted">En espera de evaluación por el gestor.</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded-3 p-3 bg-light h-100">
+                    <div class="small text-muted">Adopciones aceptadas</div>
+                    <div class="display-6 fw-bold text-success" th:text="${totalAprobadas}">0</div>
+                    <div class="small text-muted">Con seguimiento activo y detalle disponible.</div>
+                </div>
+            </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle lp-table mb-0" id="tablaMisAdopciones">
-                <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>ID</th>
-                    <th>Mascota</th>
-                    <th>Estado</th>
-                    <th>Fecha</th>
-                    <th class="text-end">Acción</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="s : ${solicitudes}"
-                    class="fila-adopcion"
-                    th:attr="data-tipo-key='SOLICITUD',data-search=${'solicitud ' + (s.id != null ? s.id : '') + ' ' + (s.mascota != null && s.mascota.nombre != null ? s.mascota.nombre : '') + ' ' + (s.estado != null && s.estado.id != null ? s.estado.id : '')}">
-                    <td><span class="badge text-bg-secondary">Solicitud</span></td>
-                    <td th:text="${s.id}">1</td>
-                    <td th:text="${s.mascota != null ? s.mascota.nombre : '-'}">Mascota</td>
-                    <td>
-                        <span class="badge"
-                              th:classappend="${s.estado != null and s.estado.id == 'PENDIENTE'} ? ' text-bg-warning' : (${s.estado != null and s.estado.id == 'APROBADA'} ? ' text-bg-success' : (${s.estado != null and s.estado.id == 'RECHAZADA'} ? ' text-bg-danger' : ' text-bg-secondary'))"
-                              th:text="${s.estado != null ? s.estado.id : '-'}"></span>
-                    </td>
-                    </td>
-                </tr>
+        <ul class="nav nav-pills mb-3" id="misAdopcionesTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-solicitudes" data-bs-toggle="pill" data-bs-target="#panel-solicitudes" type="button" role="tab">
+                    Mis solicitudes
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-adopciones" data-bs-toggle="pill" data-bs-target="#panel-adopciones" type="button" role="tab">
+                    Mis adopciones
+                </button>
+            </li>
+        </ul>
 
-                <tr th:each="a : ${adopciones}"
-                    class="fila-adopcion"
-                    th:attr="data-tipo-key='ADOPCION',data-search=${'adopcion ' + (a.id != null ? a.id : '') + ' ' + (a.mascota != null && a.mascota.nombre != null ? a.mascota.nombre : '') + ' ' + (a.estado != null && a.estado.id != null ? a.estado.id : '')}">
-                    <td><span class="badge text-bg-primary">Adopción</span></td>
-                    <td th:text="${a.id}">2</td>
-                    <td th:text="${a.mascota != null ? a.mascota.nombre : '-'}">Mascota</td>
-                    <td><span class="badge text-bg-success" th:text="${a.estado != null ? a.estado.id : '-'}"></span></td>
-                    <td th:text="${a.fechaAdopcion != null ? #temporals.format(a.fechaAdopcion, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
-                    <td class="text-end">
-                        <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/seguimiento/' + ${a.id}}">Ver detalle</a>
-                    </td>
-                </tr>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="panel-solicitudes" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle lp-table mb-0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mascota</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="s : ${solicitudes}">
+                            <td th:text="${s.id}">1</td>
+                            <td th:text="${s.mascota != null ? s.mascota.nombre : '-'}">Mascota</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${s.estado != null and s.estado.id == 'PENDIENTE'} ? ' text-bg-warning' : (${s.estado != null and s.estado.id == 'APROBADA'} ? ' text-bg-success' : (${s.estado != null and s.estado.id == 'RECHAZADA'} ? ' text-bg-danger' : (${s.estado != null and s.estado.id == 'CANCELADA'} ? ' text-bg-dark' : ' text-bg-secondary')))"
+                                      th:text="${s.estado != null ? s.estado.id : '-'}"></span>
+                            </td>
+                            <td th:text="${s.fechaSolicitud != null ? #temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                            <td class="text-end d-flex gap-2 justify-content-end flex-wrap">
+                                <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/mis-adopciones/solicitud/' + ${s.id}}">Ver detalle</a>
+                                <form th:if="${s.estado != null and s.estado.id == 'PENDIENTE'}" th:action="@{'/adopcion/mis-adopciones/solicitud/' + ${s.id} + '/cancelar'}" method="post" class="d-inline"
+                                      onsubmit="return confirm('¿Seguro que deseas cancelar esta solicitud?');">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Cancelar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(solicitudes)}">
+                            <td colspan="5" class="text-center text-muted">No tienes solicitudes sin adopción asociada.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                <tr th:if="${#lists.isEmpty(solicitudes) and #lists.isEmpty(adopciones)}">
-                    <td colspan="6" class="text-center text-muted">No tienes registros de adopción todavía.</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="tab-pane fade" id="panel-adopciones" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle lp-table mb-0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mascota</th>
+                            <th>Estado</th>
+                            <th>Fecha adopción</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="a : ${adopciones}">
+                            <td th:text="${a.id}">2</td>
+                            <td th:text="${a.mascota != null ? a.mascota.nombre : '-'}">Mascota</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${a.estado != null and a.estado.id == 'APROBADA'} ? ' text-bg-success' : ' text-bg-secondary'"
+                                      th:text="${a.estado != null ? a.estado.id : '-'}"></span>
+                            </td>
+                            <td th:text="${a.fechaAdopcion != null ? #temporals.format(a.fechaAdopcion, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                            <td class="text-end d-flex gap-2 justify-content-end flex-wrap">
+                                <a class="btn btn-sm lp-btn lp-btn-outline" th:href="@{'/adopcion/' + ${a.id}}">Ver detalle completo</a>
+                                <a class="btn btn-sm btn-outline-secondary" th:href="@{'/adopcion/seguimiento/' + ${a.id}}">Ver seguimiento</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(adopciones)}">
+                            <td colspan="5" class="text-center text-muted">Aún no tienes adopciones aceptadas.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <div th:if="${param.created}"><script>Swal.fire({icon:'success',title:'Solicitud enviada',text:'Tu solicitud de adopción fue registrada.'});</script></div>
+<div th:if="${param.cancelada}"><script>Swal.fire({icon:'success',title:'Solicitud cancelada',text:'La solicitud fue cancelada correctamente.'});</script></div>
+<div th:if="${param.error == 'cancelar'}"><script>Swal.fire({icon:'error',title:'No se pudo cancelar',text:'Solo puedes cancelar solicitudes pendientes y propias.'});</script></div>
 <div th:if="${param.error == 'solicitud-activa'}"><script>Swal.fire({icon:'warning',title:'Ya tienes una solicitud activa',text:'Solo puedes tener una solicitud PENDIENTE a la vez.'});</script></div>
 <div th:if="${param.error == 'forbidden'}"><script>Swal.fire({icon:'error',title:'Acceso denegado',text:'No tienes permiso para ver este detalle.'});</script></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-(() => {
-    const input = document.getElementById('filtroTexto');
-    const tipo = document.getElementById('filtroTipo');
-    const filas = Array.from(document.querySelectorAll('#tablaMisAdopciones .fila-adopcion'));
-    const empty = document.getElementById('misadopEmpty');
-
-
-    const norm = (v) => (v || '')
-        .toString()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .trim();
-
-
-    function filtrar() {
-        const q = norm(input?.value);
-        const tipoSel = tipo?.value || 'TODOS';
-        let visibles = 0;
-
-        filas.forEach((fila) => {
-            const tipoRow = fila.dataset.tipoKey || 'TODOS';
-            const search = norm(fila.dataset.search || fila.textContent);
-            const okTipo = tipoSel === 'TODOS' || tipoSel === tipoRow;
-            const okTexto = !q || search.includes(q);
-            const show = okTipo && okTexto;
-            fila.classList.toggle('d-none', !show);
-            if (show) visibles += 1;
-        });
-
-        empty?.classList.toggle('d-none', visibles > 0);
-    }
-
-    input?.addEventListener('input', filtrar);
-    tipo?.addEventListener('change', filtrar);
-    filtrar();
-})();
-</script>
-
 </body>
 </html>
