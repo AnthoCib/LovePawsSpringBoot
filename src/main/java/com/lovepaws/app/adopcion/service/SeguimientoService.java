@@ -13,4 +13,6 @@ public interface SeguimientoService {
 
 	Optional<SeguimientoAdopcion> findById(Integer id);
 
+	void eliminarLogico(Integer seguimientoId, Integer usuarioId, String usuarioNombre);
+
 }

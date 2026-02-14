@@ -1,6 +1,7 @@
 package com.lovepaws.app.adopcion.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,5 +15,7 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
 	List<SeguimientoAdopcion> findAllByOrderByFechaVisitaDesc();
 
 	List<SeguimientoAdopcion> findByEstado_IdOrderByFechaVisitaDesc(String estadoId);
+
+	Optional<SeguimientoAdopcion> findByIdAndDeletedAtIsNull(Integer id);
 
 }
