@@ -50,5 +50,7 @@ public interface AdopcionRepository extends JpaRepository<Adopcion, Integer> {
             """, nativeQuery = true)
     boolean existsIncumplimientoSeguimiento8SemanasByAdopcionId(@Param("adopcionId") Integer adopcionId);
 
+	boolean incumpleSeguimiento8Semanas(Integer id);
+
 
 }
