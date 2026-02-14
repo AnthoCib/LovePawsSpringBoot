@@ -55,7 +55,7 @@ public class AdopcionDetalleController {
             return "redirect:/adopcion/mis-adopciones?error=forbidden";
         }
 
-        boolean incumple8Semanas = adopcionRepository.incumpleSeguimiento8Semanas(id);
+        boolean incumple8Semanas = adopcionRepository.existsIncumplimientoSeguimiento8SemanasByAdopcionId(id);
 
         model.addAttribute("adopcion", adopcion);
         model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(id));
