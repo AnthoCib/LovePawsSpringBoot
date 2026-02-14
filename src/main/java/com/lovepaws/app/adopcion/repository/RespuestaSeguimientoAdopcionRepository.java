@@ -8,4 +8,5 @@ import java.util.List;
 public interface RespuestaSeguimientoAdopcionRepository extends JpaRepository<RespuestaSeguimientoAdopcion, Integer> {
     List<RespuestaSeguimientoAdopcion> findBySeguimiento_Id(Integer seguimientoId);
     List<RespuestaSeguimientoAdopcion> findByAdopcion_Id(Integer adopcionId);
+    List<RespuestaSeguimientoAdopcion> findByAdopcion_IdOrderByFechaRespuestaDesc(Integer adopcionId);
 }
