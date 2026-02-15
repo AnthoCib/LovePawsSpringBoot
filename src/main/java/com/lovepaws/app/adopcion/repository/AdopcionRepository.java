@@ -50,5 +50,13 @@ public interface AdopcionRepository extends JpaRepository<Adopcion, Integer> {
             """, nativeQuery = true)
     boolean existsIncumplimientoSeguimiento8SemanasByAdopcionId(@Param("adopcionId") Integer adopcionId);
 
+    @Query("""
+            SELECT a
+            FROM Adopcion a
+            LEFT JOIN FETCH a.mascota m
+            WHERE a.id = :adopcionId
+              AND a.deletedAt IS NULL
+            """)
+    Optional<Adopcion> findByIdWithMascota(@Param("adopcionId") Integer adopcionId);
 
 }

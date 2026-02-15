@@ -31,6 +31,7 @@ import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.service.AdopcionService;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
+import com.lovepaws.app.adopcion.service.SeguimientoGestorViewService;
 import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
 import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
@@ -50,6 +51,7 @@ public class AdopcionController {
 	private final AdopcionService adopcionService;
 	private final MascotaService mascotaService;
 	private final SeguimientoService seguimientoService;
+	private final SeguimientoGestorViewService seguimientoGestorViewService;
 	private final EstadoSeguimientoRepository estadoSeguimientoRepository;
 
 	@GetMapping
@@ -296,15 +298,12 @@ public class AdopcionController {
 		if (adopcion == null) {
 			return "redirect:/gestor/dashboard?error=adopcion";
 		}
-		String mascotaNombre = "-";
-		if (adopcion.getMascota() != null && adopcion.getMascota().getId() != null) {
-			mascotaNombre = mascotaService.findMascotaById(adopcion.getMascota().getId())
-					.map(Mascota::getNombre)
-					.orElse("-");
-		}
-		model.addAttribute("adopcion", adopcion);
-		model.addAttribute("mascotaNombre", mascotaNombre);
-		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
+
+		var vista = seguimientoGestorViewService.obtenerVista(adopcionId);
+		model.addAttribute("adopcionId", vista.getAdopcionId());
+		model.addAttribute("fechaAdopcion", vista.getFechaAdopcion());
+		model.addAttribute("mascotaNombre", vista.getMascotaNombre());
+		model.addAttribute("seguimientos", vista.getSeguimientos());
 		model.addAttribute("estadosSeguimiento",
 				estadoSeguimientoRepository.findByIdInOrderByDescripcionAsc(EstadoMascotaTracking.idsPorTipo("MASCOTA")));
 		return "adopcion/seguimiento-gestor";

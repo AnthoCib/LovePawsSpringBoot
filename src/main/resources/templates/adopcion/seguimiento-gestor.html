@@ -20,15 +20,15 @@
 
             <div class="mb-3">
                 <strong>Mascota:</strong> <span th:text="${mascotaNombre}"></span>
-                <span class="text-muted ms-2">Adopción #</span><span th:text="${adopcion.id}"></span>
+                <span class="text-muted ms-2">Adopción #</span><span th:text="${adopcionId}"></span>
             </div>
 
-            <form th:action="@{'/adopcion/gestor/seguimiento/' + ${adopcion.id}}" method="post" class="row g-3">
+            <form th:action="@{'/adopcion/gestor/seguimiento/' + ${adopcionId}}" method="post" class="row g-3">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <div class="col-md-4">
                     <label class="form-label">Fecha de visita</label>
                     <input type="datetime-local" name="fechaVisita" class="form-control" required
-                           th:attr="min=${adopcion.fechaAdopcion != null ? #temporals.format(adopcion.fechaAdopcion, 'yyyy-MM-dd''T''HH:mm') : null}">
+                           th:attr="min=${fechaAdopcion != null ? #temporals.format(fechaAdopcion, 'yyyy-MM-dd''T''HH:mm') : null}">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Estado de seguimiento</label>
@@ -63,7 +63,7 @@
                     <tbody>
                     <tr th:each="s : ${seguimientos}">
                         <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-                        <td th:text="${T(com.lovepaws.app.adopcion.dto.EstadoMascotaTracking).labelDesdeId(s.estado != null ? s.estado.id : null)}"></td>
+                        <td th:text="${s.estadoDescripcion != null ? s.estadoDescripcion : '-'}"></td>
                         <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(seguimientos)}">

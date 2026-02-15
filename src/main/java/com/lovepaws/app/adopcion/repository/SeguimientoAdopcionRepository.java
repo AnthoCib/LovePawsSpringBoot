@@ -13,6 +13,15 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
 
     List<SeguimientoAdopcion> findByAdopcionIdOrderByFechaVisitaDesc(Integer adopcionId);
 
+    @Query("""
+            SELECT s
+            FROM SeguimientoAdopcion s
+            LEFT JOIN FETCH s.estadoProceso ep
+            WHERE s.adopcion.id = :adopcionId
+            ORDER BY s.fechaVisita DESC
+            """)
+    List<SeguimientoAdopcion> findByAdopcionIdWithEstadoProcesoOrderByFechaVisitaDesc(@Param("adopcionId") Integer adopcionId);
+
     List<SeguimientoAdopcion> findAllByOrderByFechaVisitaDesc();
 
     List<SeguimientoAdopcion> findByEstadoProceso_IdOrderByFechaVisitaDesc(String estadoId);
