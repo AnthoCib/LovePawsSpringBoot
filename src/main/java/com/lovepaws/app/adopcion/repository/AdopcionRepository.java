@@ -20,6 +20,34 @@ public interface AdopcionRepository extends JpaRepository<Adopcion, Integer> {
 
 	Optional<Adopcion> findByIdAndDeletedAtIsNullAndActivoTrue(Integer id);
 
+    @Query("""
+            SELECT a
+            FROM Adopcion a
+            JOIN FETCH a.estado
+            LEFT JOIN FETCH a.usuarioAdoptante
+            LEFT JOIN FETCH a.usuarioCreacion
+            LEFT JOIN FETCH a.mascota
+            WHERE a.id = :id
+              AND a.deletedAt IS NULL
+              AND a.activo = true
+            """)
+    Optional<Adopcion> findByIdWithRelationsAndActivoTrue(@Param("id") Integer id);
+
+    @Query("""
+            SELECT a
+            FROM Adopcion a
+            JOIN FETCH a.estado e
+            LEFT JOIN FETCH a.usuarioAdoptante
+            LEFT JOIN FETCH a.usuarioCreacion
+            LEFT JOIN FETCH a.mascota
+            WHERE a.deletedAt IS NULL
+              AND a.activo = true
+              AND (:estadoProceso IS NULL OR e.id = :estadoProceso)
+            ORDER BY a.fechaAdopcion DESC
+            """)
+    List<Adopcion> findAllByEstadoProcesoActivo(@Param("estadoProceso") String estadoProceso);
+
+
 	@Query(value = """
 		    SELECT COUNT(*)
 		    FROM adopcion a

@@ -33,32 +33,34 @@ public class SeguimientoPostAdopcionApiController {
 
     private final SeguimientoPostAdopcionApiService seguimientoApiService;
 
-    // Crea seguimiento post-adopción para adopciones confirmadas.
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SeguimientoPostAdopcionResponseDTO crear(@Valid @RequestBody SeguimientoPostAdopcionRequestDTO request,
                                                     Authentication auth) {
-        Integer gestorId = null;
-        if (auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal) {
-            gestorId = principal.getUsuario().getId();
-        }
-        return seguimientoApiService.crearSeguimiento(request, gestorId);
+        return seguimientoApiService.crearSeguimiento(request, obtenerUsuarioId(auth));
     }
 
-    // Lista seguimientos filtrados por estadoMascota de tracking (opcional).
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     @GetMapping
     public List<SeguimientoPostAdopcionResponseDTO> listar(
-            @RequestParam(required = false) EstadoMascotaTracking estadoMascota) {
-        return seguimientoApiService.listarSeguimientos(estadoMascota);
+            @RequestParam(required = false) EstadoMascotaTracking estadoMascota,
+            @RequestParam(required = false) String estadoProceso) {
+        return seguimientoApiService.listarSeguimientos(estadoMascota, estadoProceso);
     }
 
-    // Actualiza seguimiento existente (fecha, notas, estado, adopcion asociada).
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     @PatchMapping("/{seguimientoId}")
     public SeguimientoPostAdopcionResponseDTO actualizar(@PathVariable Integer seguimientoId,
-                                                         @Valid @RequestBody SeguimientoPostAdopcionRequestDTO request) {
-        return seguimientoApiService.actualizarSeguimiento(seguimientoId, request);
+                                                         @Valid @RequestBody SeguimientoPostAdopcionRequestDTO request,
+                                                         Authentication auth) {
+        return seguimientoApiService.actualizarSeguimiento(seguimientoId, request, obtenerUsuarioId(auth));
+    }
+
+    private Integer obtenerUsuarioId(Authentication auth) {
+        if (auth != null && auth.getPrincipal() instanceof UsuarioPrincipal principal) {
+            return principal.getUsuario().getId();
+        }
+        return null;
     }
 }

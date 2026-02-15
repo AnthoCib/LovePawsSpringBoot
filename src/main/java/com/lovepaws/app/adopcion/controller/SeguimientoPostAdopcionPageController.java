@@ -23,7 +23,7 @@ public class SeguimientoPostAdopcionPageController {
     @GetMapping
     public String pagina(@RequestParam(required = false) EstadoMascotaTracking estado,
                          Model model) {
-        model.addAttribute("seguimientos", seguimientoApiService.listarSeguimientos(estado));
+        model.addAttribute("seguimientos", seguimientoApiService.listarSeguimientos(estado, null));
         model.addAttribute("estadoSeleccionado", estado);
         model.addAttribute("estados", EstadoMascotaTracking.values());
         return "adopcion/seguimiento-post-adopcion";

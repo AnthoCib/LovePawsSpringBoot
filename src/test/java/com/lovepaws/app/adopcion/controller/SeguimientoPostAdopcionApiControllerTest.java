@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
@@ -73,11 +74,12 @@ class SeguimientoPostAdopcionApiControllerTest {
                 .estadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA)
                 .build();
 
-        when(seguimientoApiService.listarSeguimientos(eq(EstadoMascotaTracking.ATENCION_VETERINARIA)))
+        when(seguimientoApiService.listarSeguimientos(eq(EstadoMascotaTracking.ATENCION_VETERINARIA), eq("APROBADA")))
                 .thenReturn(List.of(item));
 
         mockMvc.perform(get("/api/seguimientos-post-adopcion")
-                        .param("estadoMascota", "ATENCION_VETERINARIA"))
+                        .param("estadoMascota", "ATENCION_VETERINARIA")
+                        .param("estadoProceso", "APROBADA"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(2))
                 .andExpect(jsonPath("$[0].estadoMascota").value("ATENCION_VETERINARIA"));
@@ -97,7 +99,7 @@ class SeguimientoPostAdopcionApiControllerTest {
                 .estadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA)
                 .build();
 
-        when(seguimientoApiService.actualizarSeguimiento(eq(3), any(SeguimientoPostAdopcionRequestDTO.class)))
+        when(seguimientoApiService.actualizarSeguimiento(eq(3), any(SeguimientoPostAdopcionRequestDTO.class), any()))
                 .thenReturn(response);
 
         mockMvc.perform(patch("/api/seguimientos-post-adopcion/3")
@@ -108,6 +110,24 @@ class SeguimientoPostAdopcionApiControllerTest {
                 .andExpect(jsonPath("$.estadoMascota").value("ATENCION_VETERINARIA"));
     }
 
+
+    @Test
+    void crearSeguimiento_conAdopcionNoAprobada_debeRetornarConflict() throws Exception {
+        SeguimientoPostAdopcionRequestDTO request = new SeguimientoPostAdopcionRequestDTO();
+        request.setAdopcionId(20);
+        request.setFechaSeguimiento(LocalDateTime.of(2026, 2, 12, 9, 45));
+        request.setEstadoMascota(EstadoMascotaTracking.BIEN);
+
+        when(seguimientoApiService.crearSeguimiento(any(SeguimientoPostAdopcionRequestDTO.class), any()))
+                .thenThrow(new ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT,
+                        "Solo se pueden registrar seguimientos para adopciones aprobadas"));
+
+        mockMvc.perform(post("/api/seguimientos-post-adopcion")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Solo se pueden registrar seguimientos para adopciones aprobadas"));
+    }
     @Test
     void crearSeguimiento_sinCamposObligatorios_debeRetornarBadRequest() throws Exception {
         String bodyInvalido = "{}";
