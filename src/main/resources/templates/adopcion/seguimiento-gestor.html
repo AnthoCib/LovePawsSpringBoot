@@ -63,7 +63,7 @@
                     <tbody>
                     <tr th:each="s : ${seguimientos}">
                         <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-                        <td th:text="${s.estado != null ? (s.estado.descripcion != null ? s.estado.descripcion : s.estado.id) : '-'}"></td>
+                        <td th:text="${T(com.lovepaws.app.adopcion.dto.EstadoMascotaTracking).labelDesdeId(s.estado != null ? s.estado.id : null)}"></td>
                         <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(seguimientos)}">
