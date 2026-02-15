@@ -1,15 +1,26 @@
 package com.lovepaws.app.adopcion.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
+import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.user.domain.Usuario;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -39,8 +50,11 @@ public class SeguimientoAdopcion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id")
-    private EstadoSeguimiento estado;
+    private EstadoSeguimiento estadoProceso;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estado_id", insertable = false, updatable = false)
+    private EstadoMascota estadoMascota;
 
     private Boolean activo = true;
 
@@ -58,4 +72,13 @@ public class SeguimientoAdopcion {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    // Compatibilidad con código existente que usa getEstado()/setEstado().
+    public EstadoSeguimiento getEstado() {
+        return this.estadoProceso;
+    }
+
+    public void setEstado(EstadoSeguimiento estado) {
+        this.estadoProceso = estado;
+    }
 }

@@ -52,7 +52,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
 
         List<SeguimientoAdopcion> data = (estadoMascota == null)
                 ? seguimientoRepository.findAllByOrderByFechaVisitaDesc()
-                : seguimientoRepository.findByEstado_IdOrderByFechaVisitaDesc(mapearEstadoId(estadoMascota));
+                : seguimientoRepository.findByEstadoProceso_IdOrderByFechaVisitaDesc(mapearEstadoId(estadoMascota));
 
         return data.stream().map(this::toDto).toList();
     }

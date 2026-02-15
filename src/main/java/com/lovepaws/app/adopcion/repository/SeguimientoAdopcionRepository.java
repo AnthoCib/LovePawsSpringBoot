@@ -15,7 +15,7 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
 
     List<SeguimientoAdopcion> findAllByOrderByFechaVisitaDesc();
 
-    List<SeguimientoAdopcion> findByEstado_IdOrderByFechaVisitaDesc(String estadoId);
+    List<SeguimientoAdopcion> findByEstadoProceso_IdOrderByFechaVisitaDesc(String estadoId);
 
     Optional<SeguimientoAdopcion> findByIdAndDeletedAtIsNull(Integer id);
 
@@ -25,7 +25,7 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
     @Query("""
             SELECT s
             FROM SeguimientoAdopcion s
-            WHERE s.estado.id = :estado
+            WHERE s.estadoProceso.id = :estado
             ORDER BY s.fechaVisita DESC
             """)
     List<SeguimientoAdopcion> findByEstadoProceso_Id(@Param("estado") String estado);
@@ -33,7 +33,7 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
     @Query("""
             SELECT s
             FROM SeguimientoAdopcion s
-            WHERE s.estado.id = :estado
+            WHERE s.estadoMascota.id = :estado
             ORDER BY s.fechaVisita DESC
             """)
     List<SeguimientoAdopcion> findByEstadoMascota_Id(@Param("estado") String estado);
