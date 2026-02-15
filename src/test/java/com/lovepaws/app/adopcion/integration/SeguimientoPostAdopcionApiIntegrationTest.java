@@ -26,7 +26,7 @@ import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.user.service.AuditoriaService;
 
@@ -41,7 +41,7 @@ class SeguimientoPostAdopcionApiIntegrationTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private SeguimientoPostAdopcionRepository seguimientoRepository;
+    private SeguimientoAdopcionRepository seguimientoRepository;
     @MockBean
     private AdopcionRepository adopcionRepository;
     @MockBean
@@ -70,7 +70,7 @@ class SeguimientoPostAdopcionApiIntegrationTest {
         item.setFechaVisita(LocalDateTime.of(2026, 2, 21, 9, 0));
         when(seguimientoRepository.findAllByFiltros(eq("ATENCION_VETERINARIA"), eq("APROBADA")))
                 .thenReturn(List.of(item));
-        when(seguimientoRepository.findByIdWithRelations(900)).thenReturn(Optional.of(item));
+        when(seguimientoRepository.findByIdAndDeletedAtIsNull(900)).thenReturn(Optional.of(item));
 
         String crearBody = """
                 {

@@ -27,7 +27,7 @@ import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.mapper.SeguimientoPostAdopcionMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.user.service.AuditoriaService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.user.domain.Usuario;
@@ -36,7 +36,7 @@ import com.lovepaws.app.user.domain.Usuario;
 class SeguimientoPostAdopcionApiServiceImplTest {
 
     @Mock
-    private SeguimientoPostAdopcionRepository seguimientoRepository;
+    private SeguimientoAdopcionRepository seguimientoRepository;
     @Mock
     private AuditoriaService auditoriaService;
     @Mock
@@ -139,7 +139,7 @@ class SeguimientoPostAdopcionApiServiceImplTest {
         SeguimientoAdopcion existente = new SeguimientoAdopcion();
         existente.setId(701);
 
-        when(seguimientoRepository.findByIdWithRelations(701)).thenReturn(Optional.of(existente));
+        when(seguimientoRepository.findByIdAndDeletedAtIsNull(701)).thenReturn(Optional.of(existente));
         when(adopcionRepository.findByIdWithRelationsAndActivoTrue(21)).thenReturn(Optional.of(adopcionAprobada(21)));
         when(seguimientoRepository.save(any(SeguimientoAdopcion.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
