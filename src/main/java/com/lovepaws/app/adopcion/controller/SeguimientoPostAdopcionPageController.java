@@ -1,5 +1,7 @@
 package com.lovepaws.app.adopcion.controller;
 
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,15 +19,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SeguimientoPostAdopcionPageController {
 
+    private static final String TIPO_MASCOTA = "MASCOTA";
+    private static final String TIPO_PROCESO = "PROCESO";
+
     private final SeguimientoPostAdopcionApiService seguimientoApiService;
 
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     @GetMapping
     public String pagina(@RequestParam(required = false) EstadoMascotaTracking estado,
+                         @RequestParam(defaultValue = TIPO_MASCOTA) String tipo,
                          Model model) {
-        model.addAttribute("seguimientos", seguimientoApiService.listarSeguimientos(estado));
-        model.addAttribute("estadoSeleccionado", estado);
-        model.addAttribute("estados", EstadoMascotaTracking.values());
+        String tipoNormalizado = TIPO_PROCESO.equalsIgnoreCase(tipo) ? TIPO_PROCESO : TIPO_MASCOTA;
+        List<EstadoMascotaTracking> estadosDisponibles = EstadoMascotaTracking.valoresPorTipo(tipoNormalizado);
+
+        EstadoMascotaTracking estadoFiltro = (estado != null && estado.esTipo(tipoNormalizado)) ? estado : null;
+
+        model.addAttribute("seguimientos", seguimientoApiService.listarSeguimientos(estadoFiltro));
+        model.addAttribute("estadoSeleccionado", estadoFiltro);
+        model.addAttribute("estados", estadosDisponibles);
+        model.addAttribute("tipoSeleccionado", tipoNormalizado);
         return "adopcion/seguimiento-post-adopcion";
     }
 }

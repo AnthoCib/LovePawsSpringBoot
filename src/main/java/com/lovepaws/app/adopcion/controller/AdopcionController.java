@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
+import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.service.AdopcionService;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
 import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
@@ -297,7 +298,8 @@ public class AdopcionController {
 		}
 		model.addAttribute("adopcion", adopcion);
 		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
-		model.addAttribute("estadosSeguimiento", estadoSeguimientoRepository.findAll());
+		model.addAttribute("estadosSeguimiento",
+				estadoSeguimientoRepository.findByIdInOrderByDescripcionAsc(EstadoMascotaTracking.idsPorTipo("MASCOTA")));
 		return "adopcion/seguimiento-gestor";
 	}
 
@@ -329,7 +331,11 @@ public class AdopcionController {
 		seguimiento.setObservaciones(observaciones != null ? observaciones.trim() : null);
 		seguimiento.setUsuarioCreacion(principal.getUsuario());
 		if (estadoId != null && !estadoId.isBlank()) {
-			EstadoSeguimiento estadoSeguimiento = estadoSeguimientoRepository.findById(estadoId).orElse(null);
+			String estadoIdNormalizado = estadoId.trim().toUpperCase();
+			if (!EstadoMascotaTracking.idsPorTipo("MASCOTA").contains(estadoIdNormalizado)) {
+				return "redirect:/adopcion/gestor/seguimiento/" + adopcionId + "?error=estado";
+			}
+			EstadoSeguimiento estadoSeguimiento = estadoSeguimientoRepository.findById(estadoIdNormalizado).orElse(null);
 			seguimiento.setEstado(estadoSeguimiento);
 		}
 		seguimientoService.createSeguimiento(seguimiento, principal.getUsuario().getId(), principal.getUsuario().getUsername());

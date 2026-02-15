@@ -91,5 +91,11 @@
         Swal.fire({icon: 'warning', title: 'Fecha inválida', text: 'La visita no puede registrarse antes de la fecha de adopción.'});
     </script>
 </div>
+<div th:if="${param.error == 'estado'}">
+    <script>
+        Swal.fire({icon: 'warning', title: 'Estado inválido', text: 'Solo se permiten estados de mascota para el seguimiento post adopción.'});
+    </script>
+</div>
+
 </body>
 </html>
