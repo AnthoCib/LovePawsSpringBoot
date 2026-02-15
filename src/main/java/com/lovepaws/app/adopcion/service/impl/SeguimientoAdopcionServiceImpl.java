@@ -160,7 +160,7 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
     @Override
     @Transactional(readOnly = true)
     public List<SeguimientoAdopcion> listarPorAdopcion(Integer adopcionId) {
-        return seguimientoRepo.findByAdopcion_IdOrderByFechaVisitaDesc(adopcionId);
+        return seguimientoRepo.findByAdopcionIdOrderByFechaVisitaDesc(adopcionId);
     }
 
     @Override
