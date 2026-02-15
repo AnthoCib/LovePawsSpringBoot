@@ -27,7 +27,8 @@ import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.mapper.SeguimientoPostAdopcionMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionRepository;
+import com.lovepaws.app.user.service.AuditoriaService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.user.domain.Usuario;
 
@@ -35,7 +36,9 @@ import com.lovepaws.app.user.domain.Usuario;
 class SeguimientoPostAdopcionApiServiceImplTest {
 
     @Mock
-    private SeguimientoAdopcionRepository seguimientoRepository;
+    private SeguimientoPostAdopcionRepository seguimientoRepository;
+    @Mock
+    private AuditoriaService auditoriaService;
     @Mock
     private AdopcionRepository adopcionRepository;
 
@@ -46,7 +49,8 @@ class SeguimientoPostAdopcionApiServiceImplTest {
         service = new SeguimientoPostAdopcionApiServiceImpl(
                 seguimientoRepository,
                 adopcionRepository,
-                new SeguimientoPostAdopcionMapper());
+                new SeguimientoPostAdopcionMapper(),
+                auditoriaService);
     }
 
     @Test
@@ -59,7 +63,7 @@ class SeguimientoPostAdopcionApiServiceImplTest {
 
         Adopcion adopcion = adopcionAprobada(15);
 
-        when(adopcionRepository.findByIdAndDeletedAtIsNullAndActivoTrue(15)).thenReturn(Optional.of(adopcion));
+        when(adopcionRepository.findByIdWithRelationsAndActivoTrue(15)).thenReturn(Optional.of(adopcion));
         when(seguimientoRepository.save(any(SeguimientoAdopcion.class))).thenAnswer(invocation -> {
             SeguimientoAdopcion seguimiento = invocation.getArgument(0);
             seguimiento.setId(300);
@@ -93,7 +97,7 @@ class SeguimientoPostAdopcionApiServiceImplTest {
         estado.setId("PENDIENTE");
         adopcion.setEstado(estado);
 
-        when(adopcionRepository.findByIdAndDeletedAtIsNullAndActivoTrue(16)).thenReturn(Optional.of(adopcion));
+        when(adopcionRepository.findByIdWithRelationsAndActivoTrue(16)).thenReturn(Optional.of(adopcion));
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                 () -> service.crearSeguimiento(request, 1));
@@ -114,10 +118,10 @@ class SeguimientoPostAdopcionApiServiceImplTest {
         gestor.setId(11);
         seguimiento.setUsuarioCreacion(gestor);
 
-        when(seguimientoRepository.findByEstado_IdWithRelationsOrderByFechaVisitaDesc("ATENCION_VETERINARIA"))
+        when(seguimientoRepository.findAllByFiltros("ATENCION_VETERINARIA", null))
                 .thenReturn(List.of(seguimiento));
 
-        var response = service.listarSeguimientos(EstadoMascotaTracking.ATENCION_VETERINARIA);
+        var response = service.listarSeguimientos(EstadoMascotaTracking.ATENCION_VETERINARIA, null);
 
         assertEquals(1, response.size());
         assertEquals(EstadoMascotaTracking.ATENCION_VETERINARIA, response.get(0).getEstadoMascota());
@@ -135,11 +139,11 @@ class SeguimientoPostAdopcionApiServiceImplTest {
         SeguimientoAdopcion existente = new SeguimientoAdopcion();
         existente.setId(701);
 
-        when(seguimientoRepository.findByIdWithRelationsAndDeletedAtIsNull(701)).thenReturn(Optional.of(existente));
-        when(adopcionRepository.findByIdAndDeletedAtIsNullAndActivoTrue(21)).thenReturn(Optional.of(adopcionAprobada(21)));
+        when(seguimientoRepository.findByIdWithRelations(701)).thenReturn(Optional.of(existente));
+        when(adopcionRepository.findByIdWithRelationsAndActivoTrue(21)).thenReturn(Optional.of(adopcionAprobada(21)));
         when(seguimientoRepository.save(any(SeguimientoAdopcion.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        var response = service.actualizarSeguimiento(701, request);
+        var response = service.actualizarSeguimiento(701, request, 10);
 
         assertNull(response.getNotas());
     }
