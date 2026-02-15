@@ -27,6 +27,7 @@ public class SeguimientoPostAdopcionMapper {
                 .estadoMascota(mapearTrackingDesdeEstadoId(estadoMascotaId))
                 .estadoMascotaId(estadoMascotaId)
                 .estadoProcesoAdopcion(estadoProcesoAdopcion)
+                .activo(seguimiento.getActivo())
                 .fechaCreacion(seguimiento.getFechaCreacion())
                 .fechaActualizacion(seguimiento.getFechaModificacion())
                 .build();

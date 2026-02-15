@@ -74,11 +74,12 @@ class SeguimientoPostAdopcionApiControllerTest {
                 .estadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA)
                 .build();
 
-        when(seguimientoApiService.listarSeguimientos(eq(EstadoMascotaTracking.ATENCION_VETERINARIA)))
+        when(seguimientoApiService.listarSeguimientos(eq(EstadoMascotaTracking.ATENCION_VETERINARIA), eq("APROBADA")))
                 .thenReturn(List.of(item));
 
         mockMvc.perform(get("/api/seguimientos-post-adopcion")
-                        .param("estadoMascota", "ATENCION_VETERINARIA"))
+                        .param("estadoMascota", "ATENCION_VETERINARIA")
+                        .param("estadoProceso", "APROBADA"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(2))
                 .andExpect(jsonPath("$[0].estadoMascota").value("ATENCION_VETERINARIA"));
@@ -98,7 +99,7 @@ class SeguimientoPostAdopcionApiControllerTest {
                 .estadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA)
                 .build();
 
-        when(seguimientoApiService.actualizarSeguimiento(eq(3), any(SeguimientoPostAdopcionRequestDTO.class)))
+        when(seguimientoApiService.actualizarSeguimiento(eq(3), any(SeguimientoPostAdopcionRequestDTO.class), any()))
                 .thenReturn(response);
 
         mockMvc.perform(patch("/api/seguimientos-post-adopcion/3")
