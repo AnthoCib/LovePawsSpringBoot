@@ -296,7 +296,14 @@ public class AdopcionController {
 		if (adopcion == null) {
 			return "redirect:/gestor/dashboard?error=adopcion";
 		}
+		String mascotaNombre = "-";
+		if (adopcion.getMascota() != null && adopcion.getMascota().getId() != null) {
+			mascotaNombre = mascotaService.findMascotaById(adopcion.getMascota().getId())
+					.map(Mascota::getNombre)
+					.orElse("-");
+		}
 		model.addAttribute("adopcion", adopcion);
+		model.addAttribute("mascotaNombre", mascotaNombre);
 		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
 		model.addAttribute("estadosSeguimiento",
 				estadoSeguimientoRepository.findByIdInOrderByDescripcionAsc(EstadoMascotaTracking.idsPorTipo("MASCOTA")));
