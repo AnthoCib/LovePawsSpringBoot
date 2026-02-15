@@ -17,6 +17,7 @@ public class SeguimientoPostAdopcionResponseDTO {
     private String notas;
     private EstadoMascotaTracking estadoMascota;
     private String estadoMascotaId;
+    private String estadoProcesoAdopcion;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 }
