@@ -1,6 +1,5 @@
 package com.lovepaws.app.adopcion.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -12,20 +11,28 @@ import com.lovepaws.app.adopcion.mapper.SeguimientoGestorMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SeguimientoGestorViewService {
+public class SeguimientoGestorViewService implements SeguimientoGestorViewQueryService {
 
     private final AdopcionRepository adopcionRepository;
     private final SeguimientoAdopcionRepository seguimientoRepository;
     private final SeguimientoGestorMapper mapper;
 
-    public SeguimientoGestorViewData obtenerVista(Integer adopcionId) {
+    @Override
+    public List<SeguimientoGestorItemDTO> listarSeguimientosDto(Integer adopcionId, String estadoProcesoId) {
+        String estado = (estadoProcesoId == null || estadoProcesoId.isBlank()) ? null : estadoProcesoId.trim().toUpperCase();
+        return seguimientoRepository.findByAdopcionAndEstadoProceso(adopcionId, estado)
+                .stream()
+                .map(mapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public SeguimientoGestorViewData obtenerVista(Integer adopcionId, String estadoProcesoId) {
         Adopcion adopcion = adopcionRepository.findByIdWithMascota(adopcionId)
                 .orElseThrow(() -> new IllegalArgumentException("Adopción no encontrada"));
 
@@ -33,26 +40,13 @@ public class SeguimientoGestorViewService {
                 ? adopcion.getMascota().getNombre()
                 : "-";
 
-        List<SeguimientoGestorItemDTO> seguimientos = seguimientoRepository
-                .findByAdopcionIdWithEstadoProcesoOrderByFechaVisitaDesc(adopcionId)
-                .stream()
-                .map(mapper::toDto)
-                .toList();
+        List<SeguimientoGestorItemDTO> seguimientos = listarSeguimientosDto(adopcionId, estadoProcesoId);
 
-        return SeguimientoGestorViewData.builder()
-                .adopcionId(adopcion.getId())
-                .fechaAdopcion(adopcion.getFechaAdopcion())
-                .mascotaNombre(mascotaNombre)
-                .seguimientos(seguimientos)
-                .build();
-    }
-
-    @Value
-    @Builder
-    public static class SeguimientoGestorViewData {
-        Integer adopcionId;
-        LocalDateTime fechaAdopcion;
-        String mascotaNombre;
-        List<SeguimientoGestorItemDTO> seguimientos;
+        return new SeguimientoGestorViewData(
+                adopcion.getId(),
+                adopcion.getFechaAdopcion(),
+                mascotaNombre,
+                seguimientos
+        );
     }
 }

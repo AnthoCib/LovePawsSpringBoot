@@ -64,7 +64,7 @@
                     <tr th:each="s : ${seguimientos}">
                         <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}"></td>
                         <td th:text="${s.estadoDescripcion != null ? s.estadoDescripcion : '-'}"></td>
-                        <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
+                        <td th:text="${s.notas != null ? s.notas : '-'}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(seguimientos)}">
                         <td colspan="3" class="text-center text-muted">Aún no hay visitas registradas.</td>

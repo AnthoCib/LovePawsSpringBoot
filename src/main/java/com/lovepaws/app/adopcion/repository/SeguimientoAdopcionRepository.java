@@ -13,15 +13,6 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
 
     List<SeguimientoAdopcion> findByAdopcionIdOrderByFechaVisitaDesc(Integer adopcionId);
 
-    @Query("""
-            SELECT s
-            FROM SeguimientoAdopcion s
-            LEFT JOIN FETCH s.estadoProceso ep
-            WHERE s.adopcion.id = :adopcionId
-            ORDER BY s.fechaVisita DESC
-            """)
-    List<SeguimientoAdopcion> findByAdopcionIdWithEstadoProcesoOrderByFechaVisitaDesc(@Param("adopcionId") Integer adopcionId);
-
     List<SeguimientoAdopcion> findAllByOrderByFechaVisitaDesc();
 
     List<SeguimientoAdopcion> findByEstadoProceso_IdOrderByFechaVisitaDesc(String estadoId);
@@ -30,6 +21,21 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
 
     @Override
     List<SeguimientoAdopcion> findAll();
+
+    @Query("""
+            SELECT s
+            FROM SeguimientoAdopcion s
+            JOIN FETCH s.adopcion a
+            LEFT JOIN FETCH a.mascota m
+            LEFT JOIN FETCH s.estadoProceso ep
+            LEFT JOIN FETCH s.estadoMascota em
+            LEFT JOIN FETCH s.usuarioCreacion uc
+            WHERE a.id = :adopcionId
+              AND (:estadoProcesoId IS NULL OR ep.id = :estadoProcesoId)
+            ORDER BY s.fechaVisita DESC
+            """)
+    List<SeguimientoAdopcion> findByAdopcionAndEstadoProceso(@Param("adopcionId") Integer adopcionId,
+                                                             @Param("estadoProcesoId") String estadoProcesoId);
 
     @Query("""
             SELECT s
