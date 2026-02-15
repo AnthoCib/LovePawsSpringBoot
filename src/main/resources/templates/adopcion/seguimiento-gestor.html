@@ -31,7 +31,7 @@
                            th:attr="min=${adopcion.fechaAdopcion != null ? #temporals.format(adopcion.fechaAdopcion, 'yyyy-MM-dd''T''HH:mm') : null}">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Estado de la mascota</label>
+                    <label class="form-label">Estado físico</label>
                     <select name="estadoId" class="form-select">
                         <option value="">Sin cambio</option>
                         <option th:each="e : ${estadosMascota}" th:value="${e.id}" th:text="${e.descripcion != null ? e.descripcion : e.id}"></option>
@@ -56,7 +56,7 @@
                     <thead>
                     <tr>
                         <th>Fecha visita</th>
-                        <th>Estado mascota</th>
+                        <th>Estado físico</th>
                         <th>Observaciones</th>
                     </tr>
                     </thead>
