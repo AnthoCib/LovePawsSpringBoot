@@ -14,7 +14,7 @@ import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.mapper.SeguimientoPostAdopcionMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.user.domain.Usuario;
@@ -28,7 +28,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
 
     private static final String ESTADO_ADOPCION_APROBADA = "APROBADA";
 
-    private final SeguimientoPostAdopcionRepository seguimientoRepository;
+    private final SeguimientoAdopcionRepository seguimientoRepository;
     private final AdopcionRepository adopcionRepository;
     private final SeguimientoPostAdopcionMapper mapper;
     private final AuditoriaService auditoriaService;
@@ -70,7 +70,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     public SeguimientoPostAdopcionResponseDTO actualizarSeguimiento(Integer seguimientoId,
                                                                     SeguimientoPostAdopcionRequestDTO request,
                                                                     Integer gestorId) {
-        SeguimientoAdopcion existente = seguimientoRepository.findByIdWithRelations(seguimientoId)
+        SeguimientoAdopcion existente = seguimientoRepository.findByIdAndDeletedAtIsNull(seguimientoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seguimiento no encontrado"));
 
         Adopcion adopcion = obtenerAdopcionAprobada(request.getAdopcionId());
