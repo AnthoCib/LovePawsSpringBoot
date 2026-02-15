@@ -13,7 +13,7 @@ import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
-import com.lovepaws.app.mascota.domain.EstadoMascota;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.user.domain.Usuario;
 
 import lombok.RequiredArgsConstructor;
@@ -85,18 +85,26 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         return adopcion;
     }
 
-    private EstadoMascota mapearEstadoTracking(EstadoMascotaTracking tracking) {
-        EstadoMascota estado = new EstadoMascota();
+    private EstadoSeguimiento mapearEstadoTracking(EstadoMascotaTracking tracking) {
+        EstadoSeguimiento estado = new EstadoSeguimiento();
         estado.setId(mapearEstadoId(tracking));
         return estado;
     }
 
-    // El tracking usa IDs del catálogo estado_mascota en BD.
+    // El tracking usa IDs del catálogo estado_seguimiento en BD.
     private String mapearEstadoId(EstadoMascotaTracking tracking) {
         return switch (tracking) {
-            case DISPONIBLE -> "DISPONIBLE";
-            case ADOPTADA -> "ADOPTADA";
-            case NO_DISPONIBLE -> "NO_DISPONIBLE";
+            case ABIERTO -> "ABIERTO";
+            case RESPONDIDO -> "RESPONDIDO";
+            case CERRADO -> "CERRADO";
+            case ESCALADO -> "ESCALADO";
+            case EXCELENTE -> "EXCELENTE";
+            case BUENO -> "BUENO";
+            case EN_OBSERVACION -> "EN_OBSERVACION";
+            case REQUIERE_ATENCION -> "REQUIERE_ATENCION";
+            case PROBLEMA_SALUD -> "PROBLEMA_SALUD";
+            case INCUMPLIMIENTO -> "INCUMPLIMIENTO";
+            case RETIRADA -> "RETIRADA";
         };
     }
 
@@ -106,9 +114,17 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         }
 
         return switch (estadoId.toUpperCase()) {
-            case "DISPONIBLE", "RETORNADO" -> EstadoMascotaTracking.DISPONIBLE;
-            case "ADOPTADA", "BIEN" -> EstadoMascotaTracking.ADOPTADA;
-            case "NO_DISPONIBLE", "ATENCION_VETERINARIA" -> EstadoMascotaTracking.NO_DISPONIBLE;
+            case "ABIERTO" -> EstadoMascotaTracking.ABIERTO;
+            case "RESPONDIDO" -> EstadoMascotaTracking.RESPONDIDO;
+            case "CERRADO" -> EstadoMascotaTracking.CERRADO;
+            case "ESCALADO" -> EstadoMascotaTracking.ESCALADO;
+            case "EXCELENTE" -> EstadoMascotaTracking.EXCELENTE;
+            case "BUENO" -> EstadoMascotaTracking.BUENO;
+            case "EN_OBSERVACION" -> EstadoMascotaTracking.EN_OBSERVACION;
+            case "REQUIERE_ATENCION" -> EstadoMascotaTracking.REQUIERE_ATENCION;
+            case "PROBLEMA_SALUD" -> EstadoMascotaTracking.PROBLEMA_SALUD;
+            case "INCUMPLIMIENTO" -> EstadoMascotaTracking.INCUMPLIMIENTO;
+            case "RETIRADA" -> EstadoMascotaTracking.RETIRADA;
             default -> null;
         };
     }

@@ -1,16 +1,32 @@
 package com.lovepaws.app.adopcion.dto;
 
-// Estado de mascota alineado a catálogo estado_mascota en BD.
+// Estados de seguimiento post-adopción alineados a catálogo estado_seguimiento en BD.
 public enum EstadoMascotaTracking {
-    DISPONIBLE,
-    ADOPTADA,
-    NO_DISPONIBLE;
+    ABIERTO,
+    RESPONDIDO,
+    CERRADO,
+    ESCALADO,
+    EXCELENTE,
+    BUENO,
+    EN_OBSERVACION,
+    REQUIERE_ATENCION,
+    PROBLEMA_SALUD,
+    INCUMPLIMIENTO,
+    RETIRADA;
 
     public String getLabel() {
         return switch (this) {
-            case DISPONIBLE -> "Disponible";
-            case ADOPTADA -> "Adoptada";
-            case NO_DISPONIBLE -> "No disponible";
+            case ABIERTO -> "Abierto";
+            case RESPONDIDO -> "Respondido";
+            case CERRADO -> "Cerrado";
+            case ESCALADO -> "Escalado";
+            case EXCELENTE -> "Excelente";
+            case BUENO -> "Bueno";
+            case EN_OBSERVACION -> "En observación";
+            case REQUIERE_ATENCION -> "Requiere atención";
+            case PROBLEMA_SALUD -> "Problema de salud";
+            case INCUMPLIMIENTO -> "Incumplimiento";
+            case RETIRADA -> "Mascota retirada";
         };
     }
 

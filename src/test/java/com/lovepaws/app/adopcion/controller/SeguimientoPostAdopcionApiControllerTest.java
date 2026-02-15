@@ -45,12 +45,12 @@ class SeguimientoPostAdopcionApiControllerTest {
         request.setAdopcionId(10);
         request.setFechaSeguimiento(LocalDateTime.of(2026, 2, 10, 10, 30));
         request.setNotas("Mascota estable");
-        request.setEstadoMascota(EstadoMascotaTracking.BIEN);
+        request.setEstadoMascota(EstadoMascotaTracking.ABIERTO);
 
         SeguimientoPostAdopcionResponseDTO response = SeguimientoPostAdopcionResponseDTO.builder()
                 .id(1)
                 .adopcionId(10)
-                .estadoMascota(EstadoMascotaTracking.BIEN)
+                .estadoMascota(EstadoMascotaTracking.ABIERTO)
                 .build();
 
         when(seguimientoApiService.crearSeguimiento(any(SeguimientoPostAdopcionRequestDTO.class), any()))
@@ -62,7 +62,7 @@ class SeguimientoPostAdopcionApiControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.adopcionId").value(10))
-                .andExpect(jsonPath("$.estadoMascota").value("BIEN"));
+                .andExpect(jsonPath("$.estadoMascota").value("ABIERTO"));
     }
 
     @Test
@@ -70,17 +70,17 @@ class SeguimientoPostAdopcionApiControllerTest {
         SeguimientoPostAdopcionResponseDTO item = SeguimientoPostAdopcionResponseDTO.builder()
                 .id(2)
                 .adopcionId(11)
-                .estadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA)
+                .estadoMascota(EstadoMascotaTracking.REQUIERE_ATENCION)
                 .build();
 
-        when(seguimientoApiService.listarSeguimientos(eq(EstadoMascotaTracking.ATENCION_VETERINARIA)))
+        when(seguimientoApiService.listarSeguimientos(eq(EstadoMascotaTracking.REQUIERE_ATENCION)))
                 .thenReturn(List.of(item));
 
         mockMvc.perform(get("/api/seguimientos-post-adopcion")
-                        .param("estadoMascota", "ATENCION_VETERINARIA"))
+                        .param("estadoMascota", "REQUIERE_ATENCION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(2))
-                .andExpect(jsonPath("$[0].estadoMascota").value("ATENCION_VETERINARIA"));
+                .andExpect(jsonPath("$[0].estadoMascota").value("REQUIERE_ATENCION"));
     }
 
     @Test
@@ -89,12 +89,12 @@ class SeguimientoPostAdopcionApiControllerTest {
         request.setAdopcionId(12);
         request.setFechaSeguimiento(LocalDateTime.of(2026, 2, 11, 9, 15));
         request.setNotas("Se detectó control veterinario");
-        request.setEstadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA);
+        request.setEstadoMascota(EstadoMascotaTracking.REQUIERE_ATENCION);
 
         SeguimientoPostAdopcionResponseDTO response = SeguimientoPostAdopcionResponseDTO.builder()
                 .id(3)
                 .adopcionId(12)
-                .estadoMascota(EstadoMascotaTracking.ATENCION_VETERINARIA)
+                .estadoMascota(EstadoMascotaTracking.REQUIERE_ATENCION)
                 .build();
 
         when(seguimientoApiService.actualizarSeguimiento(eq(3), any(SeguimientoPostAdopcionRequestDTO.class)))
@@ -105,7 +105,7 @@ class SeguimientoPostAdopcionApiControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(3))
-                .andExpect(jsonPath("$.estadoMascota").value("ATENCION_VETERINARIA"));
+                .andExpect(jsonPath("$.estadoMascota").value("REQUIERE_ATENCION"));
     }
 
     @Test

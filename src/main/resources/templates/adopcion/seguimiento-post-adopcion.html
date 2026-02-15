@@ -38,7 +38,7 @@
                     <th>Adoptante</th>
                     <th>Gestor</th>
                     <th>Fecha seguimiento</th>
-                    <th>Estado mascota</th>
+                    <th>Estado seguimiento</th>
                     <th>Notas</th>
                 </tr>
                 </thead>
@@ -49,7 +49,7 @@
                     <td th:text="${s.adoptanteId}">20</td>
                     <td th:text="${s.gestorId != null ? s.gestorId : '-'}">2</td>
                     <td th:text="${#temporals.format(s.fechaSeguimiento, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
-                    <td><span class="badge text-bg-info" th:text="${s.estadoMascota != null ? s.estadoMascota.label : '-'}">Bien</span></td>
+                    <td><span class="badge text-bg-info" th:text="${s.estadoMascota != null ? s.estadoMascota.label : '-'}">Abierto</span></td>
                     <td th:text="${s.notas != null ? s.notas : '-'}">Sin novedades</td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(seguimientos)}">

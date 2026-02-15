@@ -32,8 +32,8 @@ import com.lovepaws.app.adopcion.service.AdopcionService;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
 import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
 import com.lovepaws.app.mascota.domain.Mascota;
-import com.lovepaws.app.mascota.domain.EstadoMascota;
-import com.lovepaws.app.mascota.repository.EstadoMascotaRepository;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
+import com.lovepaws.app.seguimiento.repository.EstadoSeguimientoRepository;
 import com.lovepaws.app.mascota.service.MascotaService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.user.domain.Usuario;
@@ -49,7 +49,7 @@ public class AdopcionController {
 	private final AdopcionService adopcionService;
 	private final MascotaService mascotaService;
 	private final SeguimientoService seguimientoService;
-	private final EstadoMascotaRepository estadoMascotaRepository;
+	private final EstadoSeguimientoRepository estadoSeguimientoRepository;
 
 	@GetMapping
 	public String flujoAdopcion() {
@@ -297,7 +297,7 @@ public class AdopcionController {
 		}
 		model.addAttribute("adopcion", adopcion);
 		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
-		model.addAttribute("estadosMascota", estadoMascotaRepository.findAll());
+		model.addAttribute("estadosSeguimiento", estadoSeguimientoRepository.findAll());
 		return "adopcion/seguimiento-gestor";
 	}
 
@@ -329,8 +329,8 @@ public class AdopcionController {
 		seguimiento.setObservaciones(observaciones != null ? observaciones.trim() : null);
 		seguimiento.setUsuarioCreacion(principal.getUsuario());
 		if (estadoId != null && !estadoId.isBlank()) {
-			EstadoMascota estadoMascota = estadoMascotaRepository.findById(estadoId).orElse(null);
-			seguimiento.setEstado(estadoMascota);
+			EstadoSeguimiento estadoSeguimiento = estadoSeguimientoRepository.findById(estadoId).orElse(null);
+			seguimiento.setEstado(estadoSeguimiento);
 		}
 		seguimientoService.createSeguimiento(seguimiento, principal.getUsuario().getId(), principal.getUsuario().getUsername());
 		return "redirect:/adopcion/gestor/seguimiento/" + adopcionId + "?created";
