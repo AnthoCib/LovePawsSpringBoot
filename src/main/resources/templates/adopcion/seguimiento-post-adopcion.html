@@ -20,7 +20,7 @@
         <div class="col-sm-4">
             <select class="form-select" name="estado">
                 <option value="">Todos los estados</option>
-                <option th:each="e : ${estados}" th:value="${e}" th:text="${e}" th:selected="${estadoSeleccionado == e}"></option>
+                <option th:each="e : ${estados}" th:value="${e}" th:text="${e.label}" th:selected="${estadoSeleccionado == e}"></option>
             </select>
         </div>
         <div class="col-auto">
@@ -49,7 +49,7 @@
                     <td th:text="${s.adoptanteId}">20</td>
                     <td th:text="${s.gestorId != null ? s.gestorId : '-'}">2</td>
                     <td th:text="${#temporals.format(s.fechaSeguimiento, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
-                    <td><span class="badge text-bg-info" th:text="${s.estadoMascota}">BIEN</span></td>
+                    <td><span class="badge text-bg-info" th:text="${s.estadoMascota != null ? s.estadoMascota.label : '-'}">Bien</span></td>
                     <td th:text="${s.notas != null ? s.notas : '-'}">Sin novedades</td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(seguimientos)}">
