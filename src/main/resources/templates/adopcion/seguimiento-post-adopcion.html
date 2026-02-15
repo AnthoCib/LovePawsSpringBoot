@@ -26,7 +26,7 @@
         <div class="col-sm-4">
             <select class="form-select" name="estado">
                 <option value="">Todos los estados</option>
-                <option th:each="e : ${estados}" th:value="${e}" th:text="${e.label}" th:selected="${estadoSeleccionado == e}"></option>
+                <option th:each="e : ${estados}" th:value="${e}" th:text="${e.label}" th:selected="${estadoSeleccionado == e.name()}"></option>
             </select>
         </div>
         <div class="col-auto">
@@ -51,12 +51,12 @@
                 <tbody>
                 <tr th:each="s : ${seguimientos}">
                     <td th:text="${s.id}">1</td>
-                    <td th:text="${s.adopcionId}">10</td>
-                    <td th:text="${s.adoptanteId}">20</td>
-                    <td th:text="${s.gestorId != null ? s.gestorId : '-'}">2</td>
-                    <td th:text="${#temporals.format(s.fechaSeguimiento, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
-                    <td><span class="badge text-bg-info" th:text="${s.estadoMascota != null ? s.estadoMascota.label : '-'}">Abierto</span></td>
-                    <td th:text="${s.notas != null ? s.notas : '-'}">Sin novedades</td>
+                    <td th:text="${s.adopcion != null ? s.adopcion.id : '-'}">10</td>
+                    <td th:text="${s.adopcion != null && s.adopcion.usuarioAdoptante != null ? s.adopcion.usuarioAdoptante.id : '-'}">20</td>
+                    <td th:text="${s.usuarioCreacion != null ? s.usuarioCreacion.id : '-'}">2</td>
+                    <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}">01/01/2026 10:00</td>
+                    <td><span class="badge text-bg-info" th:text="${T(com.lovepaws.app.adopcion.dto.EstadoMascotaTracking).labelDesdeId(s.estado != null ? s.estado.id : null)}">Abierto</span></td>
+                    <td th:text="${s.observaciones != null ? s.observaciones : '-'}">Sin novedades</td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(seguimientos)}">
                     <td colspan="7" class="text-center text-muted">No hay seguimientos registrados.</td>
