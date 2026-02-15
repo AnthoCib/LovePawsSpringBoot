@@ -15,9 +15,7 @@ import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.RespuestaSeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
-import com.lovepaws.app.mascota.domain.EstadoMascota;
-import com.lovepaws.app.mascota.domain.Mascota;
-import com.lovepaws.app.mascota.repository.MascotaRepository;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.AuditoriaService;
 
@@ -31,7 +29,6 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
     private final SeguimientoAdopcionRepository seguimientoRepo;
     private final RespuestaSeguimientoAdopcionRepository respuestaRepo;
     private final AdopcionRepository adopcionRepo;
-    private final MascotaRepository mascotaRepository;
     private final AuditoriaService auditoriaService;
 
 
@@ -74,21 +71,12 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
         seguimiento.setUsuarioCreacion(usuario);
 
         if (estadoMascotaId != null && !estadoMascotaId.isBlank()) {
-            EstadoMascota estadoMascota = new EstadoMascota();
-            estadoMascota.setId(estadoMascotaId.trim());
-            seguimiento.setEstado(estadoMascota);
+            EstadoSeguimiento estadoSeguimiento = new EstadoSeguimiento();
+            estadoSeguimiento.setId(estadoMascotaId.trim());
+            seguimiento.setEstado(estadoSeguimiento);
         }
 
         SeguimientoAdopcion saved = seguimientoRepo.save(seguimiento);
-
-        if (estadoMascotaId != null && !estadoMascotaId.isBlank() && adopcion.getMascota() != null && adopcion.getMascota().getId() != null) {
-            Mascota mascota = mascotaRepository.findById(adopcion.getMascota().getId())
-                    .orElseThrow(() -> new IllegalStateException("Mascota asociada a adopción no encontrada"));
-            EstadoMascota nuevoEstado = new EstadoMascota();
-            nuevoEstado.setId(estadoMascotaId.trim());
-            mascota.setEstado(nuevoEstado);
-            mascotaRepository.save(mascota);
-        }
 
         auditoriaService.registrar("seguimiento_post_adopcion", saved.getId(), "INSERT", usuarioId,
                 usuarioNombre, "Seguimiento post adopción creado para adopción " + adopcionId);
