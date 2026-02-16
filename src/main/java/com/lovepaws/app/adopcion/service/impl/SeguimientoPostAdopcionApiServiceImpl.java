@@ -15,7 +15,7 @@ import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.mapper.SeguimientoPostAdopcionMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionAdopcionRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
@@ -35,7 +35,8 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     private final AdopcionRepository adopcionRepository;
     private final SeguimientoPostAdopcionMapper mapper;
     private final AuditoriaService auditoriaService;
-    private final SeguimientoPostAdopcionRepository seguimientoPostAdopcionRepository;
+    private final SeguimientoPostAdopcionAdopcionRepository seguimientoPostAdopcionAdopcionRepository;
+
     
 
     @Override
@@ -74,13 +75,13 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
 
         if (estado == null) {
             // Traer todos los seguimientos con estados válidos
-            data = seguimientoPostAdopcionRepository.findByEstado_IdInOrderByFechaVisitaDesc(estadosValidos);
+            data = seguimientoPostAdopcionAdopcionRepository.findByEstado_IdInOrderByFechaVisitaDesc(estadosValidos);
         } else {
             if (!estadosValidos.contains(estado.getId())) {
                 // Si el estado no es válido, retornamos lista vacía
                 return List.of();
             }
-            data = seguimientoPostAdopcionRepository.findByEstado_IdOrderByFechaVisitaDesc(estado.getId());
+            data = seguimientoPostAdopcionAdopcionRepository.findByEstado_IdOrderByFechaVisitaDesc(estado.getId());
         }
 
         return data.stream()

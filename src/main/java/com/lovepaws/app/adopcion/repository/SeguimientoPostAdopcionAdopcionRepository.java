@@ -7,7 +7,7 @@ import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 
 
 
-public interface SeguimientoPostAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
+public interface SeguimientoPostAdopcionAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
  
 	
 	List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaVisitaDesc(String estadoId);
