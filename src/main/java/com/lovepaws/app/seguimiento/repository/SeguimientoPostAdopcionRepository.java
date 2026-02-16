@@ -26,6 +26,5 @@
 	    // Filtrado por adoptante
 	    List<SeguimientoPostAdopcion> findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(Integer adoptanteId);
 
-	    // Todos activos ordenados por fecha de creación
-	    List<SeguimientoPostAdopcion> findByDeletedAtIsNullOrderByFechaCreacionDesc();
-	}
+}
+
