@@ -1,3 +1,4 @@
+// src/main/java/com/lovepaws/app/adopcion/service/impl/SeguimientoPostAdopcionApiServiceImpl.java
 package com.lovepaws.app.adopcion.service.impl;
 
 import java.util.List;
@@ -14,16 +15,10 @@ import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.mapper.SeguimientoPostAdopcionMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-<<<<<<< HEAD
-import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionAdopcionRepository;
-=======
 import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionTrackingRepository;
->>>>>>> branch 'codex/revise-adopcion-y-seguimiento-post-adopcion' of https://github.com/AnthoCib/LovePawsSpringBoot.git
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
-import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.AuditoriaService;
 
@@ -42,9 +37,6 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     private final AdopcionRepository adopcionRepository;
     private final SeguimientoPostAdopcionMapper mapper;
     private final AuditoriaService auditoriaService;
-    private final SeguimientoPostAdopcionAdopcionRepository seguimientoPostAdopcionAdopcionRepository;
-
-    
 
     @Override
     @Transactional
@@ -71,31 +63,6 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
 
     @Override
     @Transactional(readOnly = true)
-<<<<<<< HEAD
-    public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoSeguimiento estado) {
-        List<SeguimientoPostAdopcion> data;
-
-        // Lista de estados válidos para seguimiento de mascotas
-        List<String> estadosValidos = List.of(
-            "EXCELENTE","BUENO","EN_OBSERVACION","REQUIERE_ATENCION",
-            "PROBLEMA_SALUD","INCUMPLIMIENTO","RETIRADA"
-        );
-
-        if (estado == null) {
-            // Traer todos los seguimientos con estados válidos
-            data = seguimientoPostAdopcionAdopcionRepository.findByEstado_IdInOrderByFechaVisitaDesc(estadosValidos);
-        } else {
-            if (!estadosValidos.contains(estado.getId())) {
-                // Si el estado no es válido, retornamos lista vacía
-                return List.of();
-            }
-            data = seguimientoPostAdopcionAdopcionRepository.findByEstado_IdOrderByFechaVisitaDesc(estado.getId());
-        }
-
-        return data.stream()
-                .map(mapper::toDto)
-                .toList();
-=======
     public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoMascotaTracking estadoMascota,
                                                                         String estadoProceso) {
         List<SeguimientoAdopcion> data;
@@ -118,7 +85,6 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         }
 
         return data.stream().map(mapper::toDto).toList();
->>>>>>> branch 'codex/revise-adopcion-y-seguimiento-post-adopcion' of https://github.com/AnthoCib/LovePawsSpringBoot.git
     }
 
     @Override
@@ -192,4 +158,12 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         auditoriaService.registrar("seguimiento_post_adopcion", seguimiento.getId(), operacion, usuarioId,
                 "GESTOR", detalle + " (adopcionId=" + (seguimiento.getAdopcion() != null ? seguimiento.getAdopcion().getId() : null) + ")");
     }
+
+	@Override
+	public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoSeguimiento estado) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 }

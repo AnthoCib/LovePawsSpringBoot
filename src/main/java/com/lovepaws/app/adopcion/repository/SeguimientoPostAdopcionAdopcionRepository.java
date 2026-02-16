@@ -10,9 +10,9 @@ import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 public interface SeguimientoPostAdopcionAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
  
 	
-	List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaVisitaDesc(String estadoId);
+	List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaCreacionDesc(String estadoId);
 
-	List<SeguimientoPostAdopcion> findAllByOrderByFechaVisitaDesc();
+	List<SeguimientoPostAdopcion> findAllByOrderByFechaCreacionDesc();
 	
-	List<SeguimientoPostAdopcion> findByEstado_IdInOrderByFechaVisitaDesc(List<String> ids);
+	List<SeguimientoPostAdopcion> findByEstado_IdInOrderByFechaCreacionDesc(List<String> ids);
 }

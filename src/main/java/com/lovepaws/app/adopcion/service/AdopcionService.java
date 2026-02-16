@@ -15,15 +15,5 @@ public interface AdopcionService {
 
 	List<Adopcion> listarAdopciones();
 
-	// flujo crítico
-	/**
-	 * Aprueba una solicitud de adopción.
-	 * Flujo transaccional:
-	 * Bloquea solicitud
-	 * Bloquea mascota
-	 * Verifica estados
-	 * Crea adopción
-	 * Actualiza estados
-	 */
 	Adopcion aprobarSolicitud(Integer solicitudId, Integer gestorId);
 }
