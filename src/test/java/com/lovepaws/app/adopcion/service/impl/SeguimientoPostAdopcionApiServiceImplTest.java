@@ -27,7 +27,7 @@ import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.mapper.SeguimientoPostAdopcionMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionTrackingRepository;
 import com.lovepaws.app.user.service.AuditoriaService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.user.domain.Usuario;
@@ -36,7 +36,7 @@ import com.lovepaws.app.user.domain.Usuario;
 class SeguimientoPostAdopcionApiServiceImplTest {
 
     @Mock
-    private SeguimientoAdopcionRepository seguimientoRepository;
+    private SeguimientoPostAdopcionTrackingRepository seguimientoRepository;
     @Mock
     private AuditoriaService auditoriaService;
     @Mock
@@ -118,7 +118,7 @@ class SeguimientoPostAdopcionApiServiceImplTest {
         gestor.setId(11);
         seguimiento.setUsuarioCreacion(gestor);
 
-        when(seguimientoRepository.findAllByFiltros("ATENCION_VETERINARIA", null))
+        when(seguimientoRepository.findByEstado_IdOrderByFechaVisitaDesc("REQUIERE_ATENCION"))
                 .thenReturn(List.of(seguimiento));
 
         var response = service.listarSeguimientos(EstadoMascotaTracking.ATENCION_VETERINARIA, null);
@@ -139,7 +139,7 @@ class SeguimientoPostAdopcionApiServiceImplTest {
         SeguimientoAdopcion existente = new SeguimientoAdopcion();
         existente.setId(701);
 
-        when(seguimientoRepository.findByIdAndDeletedAtIsNull(701)).thenReturn(Optional.of(existente));
+        when(seguimientoRepository.findById(701)).thenReturn(Optional.of(existente));
         when(adopcionRepository.findByIdWithRelationsAndActivoTrue(21)).thenReturn(Optional.of(adopcionAprobada(21)));
         when(seguimientoRepository.save(any(SeguimientoAdopcion.class))).thenAnswer(invocation -> invocation.getArgument(0));
 

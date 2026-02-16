@@ -14,7 +14,7 @@ import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.mapper.SeguimientoPostAdopcionMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionTrackingRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.user.domain.Usuario;
@@ -27,8 +27,11 @@ import lombok.RequiredArgsConstructor;
 public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdopcionApiService {
 
     private static final String ESTADO_ADOPCION_APROBADA = "APROBADA";
+    private static final List<String> ESTADOS_VALIDOS_LISTADO = List.of(
+            "EXCELENTE", "BUENO", "EN_OBSERVACION", "REQUIERE_ATENCION",
+            "PROBLEMA_SALUD", "INCUMPLIMIENTO", "RETIRADA");
 
-    private final SeguimientoAdopcionRepository seguimientoRepository;
+    private final SeguimientoPostAdopcionTrackingRepository seguimientoRepository;
     private final AdopcionRepository adopcionRepository;
     private final SeguimientoPostAdopcionMapper mapper;
     private final AuditoriaService auditoriaService;
@@ -60,8 +63,25 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     @Transactional(readOnly = true)
     public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoMascotaTracking estadoMascota,
                                                                         String estadoProceso) {
-        String estadoMascotaId = estadoMascota != null ? mapper.toEstadoMascotaId(estadoMascota) : null;
-        List<SeguimientoAdopcion> data = seguimientoRepository.findAllByFiltros(estadoMascotaId, normalizarFiltro(estadoProceso));
+        List<SeguimientoAdopcion> data;
+
+        if (estadoMascota == null) {
+            data = seguimientoRepository.findByEstado_IdInOrderByFechaVisitaDesc(ESTADOS_VALIDOS_LISTADO);
+        } else {
+            String estadoMascotaId = mapper.toEstadoMascotaId(estadoMascota);
+            validarEstadoPermitidoParaListado(estadoMascotaId);
+            data = seguimientoRepository.findByEstado_IdOrderByFechaVisitaDesc(estadoMascotaId);
+        }
+
+        String estadoProcesoNormalizado = normalizarFiltro(estadoProceso);
+        if (estadoProcesoNormalizado != null) {
+            data = data.stream()
+                    .filter(s -> s.getAdopcion() != null
+                            && s.getAdopcion().getEstado() != null
+                            && estadoProcesoNormalizado.equalsIgnoreCase(s.getAdopcion().getEstado().getId()))
+                    .toList();
+        }
+
         return data.stream().map(mapper::toDto).toList();
     }
 
@@ -70,7 +90,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     public SeguimientoPostAdopcionResponseDTO actualizarSeguimiento(Integer seguimientoId,
                                                                     SeguimientoPostAdopcionRequestDTO request,
                                                                     Integer gestorId) {
-        SeguimientoAdopcion existente = seguimientoRepository.findByIdAndDeletedAtIsNull(seguimientoId)
+        SeguimientoAdopcion existente = seguimientoRepository.findById(seguimientoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seguimiento no encontrado"));
 
         Adopcion adopcion = obtenerAdopcionAprobada(request.getAdopcionId());
@@ -118,6 +138,13 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
             return null;
         }
         return valor.trim().toUpperCase();
+    }
+
+    private void validarEstadoPermitidoParaListado(String estadoMascotaId) {
+        if (!ESTADOS_VALIDOS_LISTADO.contains(estadoMascotaId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "estadoMascota no permitido para listado: " + estadoMascotaId);
+        }
     }
 
     private void registrarAuditoria(SeguimientoAdopcion seguimiento, String operacion, Integer gestorId, String detalle) {
