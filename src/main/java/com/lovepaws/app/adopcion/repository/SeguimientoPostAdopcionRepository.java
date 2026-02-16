@@ -1,8 +1,10 @@
 package com.lovepaws.app.adopcion.repository;
 
-import org.springframework.data.repository.NoRepositoryBean;
+import java.util.List;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
+import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 
 /**
  * Repositorio legado mantenido solo para compatibilidad de código antiguo.
@@ -12,6 +14,12 @@ import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
  * El repositorio activo para adopción es {@link SeguimientoAdopcionRepository}.</p>
  */
 @NoRepositoryBean
-public interface SeguimientoPostAdopcionRepository extends SeguimientoAdopcionRepository {
+public interface SeguimientoPostAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
     // Sin métodos adicionales: usar SeguimientoAdopcionRepository.
+	
+	List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaVisitaDesc(String estadoId);
+
+	List<SeguimientoPostAdopcion> findAllByOrderByFechaVisitaDesc();
+	
+	List<SeguimientoPostAdopcion> findByEstado_IdInOrderByFechaVisitaDesc(List<String> ids);
 }

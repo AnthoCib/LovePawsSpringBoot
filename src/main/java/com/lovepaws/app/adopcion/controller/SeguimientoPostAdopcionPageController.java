@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,9 +22,9 @@ public class SeguimientoPostAdopcionPageController {
 
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     @GetMapping
-    public String pagina(@RequestParam(required = false) EstadoMascotaTracking estado,
+    public String pagina(@RequestParam(required = false) EstadoSeguimiento estado,
                          Model model) {
-        model.addAttribute("seguimientos", seguimientoApiService.listarSeguimientos(estado, null));
+        model.addAttribute("seguimientos", seguimientoApiService.listarSeguimientos(estado));
         model.addAttribute("estadoSeleccionado", estado);
         model.addAttribute("estados", EstadoMascotaTracking.values());
         return "adopcion/seguimiento-post-adopcion";

@@ -21,6 +21,7 @@ import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
 import com.lovepaws.app.security.UsuarioPrincipal;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +45,9 @@ public class SeguimientoPostAdopcionApiController {
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     @GetMapping
     public List<SeguimientoPostAdopcionResponseDTO> listar(
-            @RequestParam(required = false) EstadoMascotaTracking estadoMascota,
+            @RequestParam(required = false) EstadoSeguimiento estado,
             @RequestParam(required = false) String estadoProceso) {
-        return seguimientoApiService.listarSeguimientos(estadoMascota, estadoProceso);
+        return seguimientoApiService.listarSeguimientos(estado);
     }
 
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")

@@ -15,8 +15,11 @@ import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
 import com.lovepaws.app.adopcion.mapper.SeguimientoPostAdopcionMapper;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionRepository;
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
+import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.AuditoriaService;
 
@@ -32,6 +35,8 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     private final AdopcionRepository adopcionRepository;
     private final SeguimientoPostAdopcionMapper mapper;
     private final AuditoriaService auditoriaService;
+    private final SeguimientoPostAdopcionRepository seguimientoPostAdopcionRepository;
+    
 
     @Override
     @Transactional
@@ -58,11 +63,29 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
 
     @Override
     @Transactional(readOnly = true)
-    public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoMascotaTracking estadoMascota,
-                                                                        String estadoProceso) {
-        String estadoMascotaId = estadoMascota != null ? mapper.toEstadoMascotaId(estadoMascota) : null;
-        List<SeguimientoAdopcion> data = seguimientoRepository.findAllByFiltros(estadoMascotaId, normalizarFiltro(estadoProceso));
-        return data.stream().map(mapper::toDto).toList();
+    public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoSeguimiento estado) {
+        List<SeguimientoPostAdopcion> data;
+
+        // Lista de estados válidos para seguimiento de mascotas
+        List<String> estadosValidos = List.of(
+            "EXCELENTE","BUENO","EN_OBSERVACION","REQUIERE_ATENCION",
+            "PROBLEMA_SALUD","INCUMPLIMIENTO","RETIRADA"
+        );
+
+        if (estado == null) {
+            // Traer todos los seguimientos con estados válidos
+            data = seguimientoPostAdopcionRepository.findByEstado_IdInOrderByFechaVisitaDesc(estadosValidos);
+        } else {
+            if (!estadosValidos.contains(estado.getId())) {
+                // Si el estado no es válido, retornamos lista vacía
+                return List.of();
+            }
+            data = seguimientoPostAdopcionRepository.findByEstado_IdOrderByFechaVisitaDesc(estado.getId());
+        }
+
+        return data.stream()
+                .map(mapper::toDto)
+                .toList();
     }
 
     @Override
