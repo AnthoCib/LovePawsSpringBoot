@@ -68,11 +68,11 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         List<SeguimientoAdopcion> data;
 
         if (estadoMascota == null) {
-            data = seguimientoRepository.findByEstado_IdInOrderByFechaVisitaDesc(ESTADOS_VALIDOS_LISTADO);
+            data = seguimientoRepository.findByEstado_IdInOrderByFechaCreacionDesc(ESTADOS_VALIDOS_LISTADO);
         } else {
             String estadoMascotaId = mapper.toEstadoMascotaId(estadoMascota);
             validarEstadoPermitidoParaListado(estadoMascotaId);
-            data = seguimientoRepository.findByEstado_IdOrderByFechaVisitaDesc(estadoMascotaId);
+            data = seguimientoRepository.findByEstado_IdOrderByFechaCreacionDesc(estadoMascotaId);
         }
 
         String estadoProcesoNormalizado = normalizarFiltro(estadoProceso);
