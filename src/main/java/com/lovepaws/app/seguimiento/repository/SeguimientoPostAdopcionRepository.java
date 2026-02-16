@@ -11,7 +11,11 @@ public interface SeguimientoPostAdopcionRepository extends JpaRepository<Seguimi
 
     Optional<SeguimientoPostAdopcion> findByIdAndDeletedAtIsNull(Integer id);
 
-    List<SeguimientoPostAdopcion> findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(Integer adoptanteId);
-
     List<SeguimientoPostAdopcion> findByDeletedAtIsNullOrderByFechaCreacionDesc();
+
+    List<SeguimientoPostAdopcion> findByEstado_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(String estadoId);
+
+    List<SeguimientoPostAdopcion> findByEstado_IdInAndDeletedAtIsNullOrderByFechaCreacionDesc(List<String> estadoIds);
+
+    List<SeguimientoPostAdopcion> findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(Integer adoptanteId);
 }

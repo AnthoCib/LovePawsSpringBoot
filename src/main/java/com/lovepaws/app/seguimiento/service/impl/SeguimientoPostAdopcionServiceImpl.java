@@ -66,6 +66,49 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoService {
         return mapSeguimiento(seguimiento, true);
     }
 
+    /**
+     * Crea seguimiento validando FK de estado_seguimiento (estado.id es String).
+     */
+    public SeguimientoPostAdopcion crearSeguimiento(SeguimientoPostAdopcion seguimiento) {
+        if (seguimiento == null) {
+            throw new SeguimientoException("Seguimiento no puede ser nulo");
+        }
+        if (seguimiento.getEstado() == null || seguimiento.getEstado().getId() == null
+                || seguimiento.getEstado().getId().isBlank()) {
+            throw new SeguimientoException("Estado de seguimiento es obligatorio");
+        }
+
+        String estadoId = seguimiento.getEstado().getId().trim();
+        EstadoSeguimiento estadoPersistido = estadoRepository.findById(estadoId)
+                .orElseThrow(() -> new SeguimientoException("Estado de seguimiento no encontrado: " + estadoId));
+
+        seguimiento.setEstado(estadoPersistido);
+        if (seguimiento.getActivo() == null) {
+            seguimiento.setActivo(Boolean.TRUE);
+        }
+
+        return seguimientoRepository.save(seguimiento);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SeguimientoPostAdopcion> listarSeguimientosPorEstados(List<String> estadoIds) {
+        if (estadoIds == null || estadoIds.isEmpty()) {
+            return seguimientoRepository.findByDeletedAtIsNullOrderByFechaCreacionDesc();
+        }
+
+        List<String> idsNormalizados = estadoIds.stream()
+                .filter(id -> id != null && !id.isBlank())
+                .map(String::trim)
+                .toList();
+
+        if (idsNormalizados.isEmpty()) {
+            return seguimientoRepository.findByDeletedAtIsNullOrderByFechaCreacionDesc();
+        }
+
+        return seguimientoRepository.findByEstado_IdInAndDeletedAtIsNullOrderByFechaCreacionDesc(idsNormalizados);
+    }
+
+
     @Override
     public SeguimientoResponse responderSeguimiento(Integer seguimientoId, RespuestaSeguimientoRequest request, Integer usuarioId) {
         SeguimientoPostAdopcion seguimiento = obtenerSeguimientoVigente(seguimientoId);
