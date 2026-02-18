@@ -1,7 +1,9 @@
 package com.lovepaws.app.mascota.service.impl;
 
+import com.lovepaws.app.api.dto.MascotaResponseDTO;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.mascota.domain.Mascota;
+import com.lovepaws.app.mascota.mapper.MascotaMapper;
 import com.lovepaws.app.mascota.repository.EstadoMascotaRepository;
 import com.lovepaws.app.mascota.repository.MascotaRepository;
 import com.lovepaws.app.mascota.service.MascotaService;
@@ -23,6 +25,7 @@ public class MascotaServiceImpl implements MascotaService {
 
     private final MascotaRepository mascotaRepository;
     private final EstadoMascotaRepository estadoRepo;
+    private final MascotaMapper mapper;
     
     
 
@@ -155,4 +158,12 @@ public class MascotaServiceImpl implements MascotaService {
         mascotaRepository.delete(mascota);
 		
 	}
+	 
+	@Override
+	 public List<MascotaResponseDTO> listar(){
+	        return mascotaRepository.findAll()
+	                   .stream()
+	                   .map(mapper::toDTO)
+	                   .toList();
+	    }
 }

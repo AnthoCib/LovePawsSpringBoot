@@ -6,6 +6,7 @@ import lombok.Value;
 @Value
 @Builder
 public class MascotaResponseDTO {
+	
     Integer id;
     String nombre;
     Integer edad;

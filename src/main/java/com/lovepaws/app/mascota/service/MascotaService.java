@@ -3,6 +3,7 @@ package com.lovepaws.app.mascota.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.lovepaws.app.api.dto.MascotaResponseDTO;
 import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.user.domain.Usuario;
 
@@ -27,5 +28,7 @@ public interface MascotaService {
 	void deleteMascotaSegura(Integer mascotaId, Usuario usuarioActual);
 
 	void cambiarEstado(Integer mascotaId);
+	
+	List<MascotaResponseDTO> listar();
 
 }
