@@ -14,6 +14,7 @@ import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
+import com.lovepaws.app.adopcion.repository.EstadoAdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SolicitudAdopcionRepository;
 import com.lovepaws.app.adopcion.service.NotificacionEmailService;
 import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
@@ -34,6 +35,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 	private final NotificacionEmailService notificacionEmailService;
 	private final MascotaRepository mascotaRepository;
 	private final AuditoriaService auditoriaService;
+	private final EstadoAdopcionRepository estadoAdopcionRepo;
 	private static final String ESTADO_PENDIENTE = "PENDIENTE";
 	private static final String ESTADO_APROBADA = "APROBADA";
 	private static final String ESTADO_RECHAZADA = "RECHAZADA";
@@ -132,30 +134,38 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 	@Override
 	@Transactional
 	public SolicitudAdopcion cancelarSolicitud(Integer solicitudId, Integer usuarioId) {
-		SolicitudAdopcion solicitud = solicitudRepo.findById(solicitudId)
-				.orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
+	    SolicitudAdopcion solicitud = solicitudRepo.findById(solicitudId)
+	            .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
 
-		if (!solicitud.getUsuario().getId().equals(usuarioId)) {
-			throw new IllegalStateException("No puedes cancelar solicitudes de otro usuario");
-		}
-		if (!ESTADO_PENDIENTE.equalsIgnoreCase(solicitud.getEstado().getId())) {
-			throw new IllegalStateException("Solo se puede cancelar solicitudes pendientes");
-		}
+	    if (!solicitud.getUsuario().getId().equals(usuarioId)) {
+	        throw new IllegalStateException("No puedes cancelar solicitudes de otro usuario");
+	    }
+	    if (!ESTADO_PENDIENTE.equalsIgnoreCase(solicitud.getEstado().getId())) {
+	        throw new IllegalStateException("Solo se puede cancelar solicitudes pendientes");
+	    }
 
-		EstadoAdopcion estado = new EstadoAdopcion();
-		estado.setId(ESTADO_CANCELADA);
-		solicitud.setEstado(estado);
-		solicitud.setInfoAdicional("Solicitud cancelada por usuario");
-		SolicitudAdopcion updated = solicitudRepo.save(solicitud);
+	    // ✅ Buscar el estado CANCELADA ya persistido
+	    EstadoAdopcion estadoCancelada = estadoAdopcionRepo.findById(ESTADO_CANCELADA)
+	            .orElseThrow(() -> new IllegalStateException("Estado CANCELADA no encontrado"));
 
-		Usuario u = updated.getUsuario();
-		auditoriaService.registrar("solicitud_adopcion", updated.getId(), "UPDATE", usuarioId,
-				u != null ? u.getNombre() : "USUARIO", "Estado cambiado a CANCELADA");
-		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(updated);
-		notificacionEmailService.enviarCorreoCancelacion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
-		return updated;
+	    solicitud.setEstado(estadoCancelada); // Asignación segura
+	    solicitud.setInfoAdicional("Solicitud cancelada por usuario");
+
+	    SolicitudAdopcion updated = solicitudRepo.save(solicitud);
+
+	    Usuario u = updated.getUsuario();
+	    auditoriaService.registrar("solicitud_adopcion", updated.getId(), "UPDATE", usuarioId,
+	            u != null ? u.getNombre() : "USUARIO", "Estado cambiado a CANCELADA");
+
+	    DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(updated);
+	    notificacionEmailService.enviarCorreoCancelacion(
+	            datosCorreo.getCorreoDestino(),
+	            datosCorreo.getNombreUsuario(),
+	            datosCorreo.getNombreMascota()
+	    );
+
+	    return updated;
 	}
-
 	@Override
 	@Transactional
 	public SolicitudAdopcion decidirSolicitud(Integer solicitudId, Integer gestorId, String accion, String motivo) {

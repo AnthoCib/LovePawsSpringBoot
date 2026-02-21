@@ -80,4 +80,14 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
             """)
     List<SeguimientoAdopcion> findAllByFiltros(@Param("estadoMascotaId") String estadoMascotaId,
                                                @Param("estadoProcesoId") String estadoProcesoId);
+    
+    @Query("""
+    	       SELECT COUNT(s)
+    	       FROM SeguimientoAdopcion s
+    	       WHERE s.adopcion.id = :adopcionId
+    	         AND s.estado.id = :estadoId
+    	         AND s.deletedAt IS NULL
+    	       """)
+    	long countByAdopcionIdAndEstadoId(@Param("adopcionId") Integer adopcionId,
+    	                                  @Param("estadoId") String estadoId);
 }
