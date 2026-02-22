@@ -4,9 +4,9 @@
 	import java.util.Optional;
 	
 	import org.springframework.data.jpa.repository.JpaRepository;
-	
-	
-	import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
+
+import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 	
 	
 	public interface SeguimientoPostAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
@@ -25,6 +25,9 @@
 
 	    // Filtrado por adoptante
 	    List<SeguimientoPostAdopcion> findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(Integer adoptanteId);
+	    
+	    List<SeguimientoAdopcion> findByEstadoSeg_IdOrderByFechaCreacionDesc(String estadoId);
 
+	   
 }
 

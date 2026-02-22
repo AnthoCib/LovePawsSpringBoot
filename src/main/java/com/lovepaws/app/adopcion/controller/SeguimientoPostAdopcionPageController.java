@@ -38,6 +38,7 @@ public class SeguimientoPostAdopcionPageController {
         // Resultados posibles de seguimiento (desde el servicio)
         model.addAttribute("resultadosSeguimiento", seguimientoService.listarResultados());
 
+      
         return "adopcion/seguimiento-post-adopcion";
     }
 }

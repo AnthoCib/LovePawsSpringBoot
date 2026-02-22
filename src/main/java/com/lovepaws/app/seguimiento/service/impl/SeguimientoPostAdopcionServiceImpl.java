@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.seguimiento.repository.SeguimientoPostAdopcionRepository;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
@@ -40,6 +41,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
     private final UsuarioRepository usuarioRepository;
     private final AuditoriaService auditoriaService;
     private final ResultadoSeguimientoRepository resultadoRepository;
+  
     @Override
     public SeguimientoResponse crearSeguimiento(SeguimientoCreateRequest request, Integer usuarioId) {
         Usuario gestor = obtenerUsuario(usuarioId);
@@ -308,5 +310,14 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
     @Transactional(readOnly = true)
     public List<ResultadoSeguimiento> listarResultados() {
         return resultadoRepository.findByActivoTrueOrderByDescripcionAsc();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SeguimientoAdopcion> listarSeguimientos(EstadoSeguimiento estado) {
+        if (estado == null) {
+            return seguimientoRepository.findAllByOrderByFechaCreacionDesc();
+        }
+        return seguimientoRepository.findByEstadoSeg_IdOrderByFechaCreacionDesc(estado.getId());
     }
 }
