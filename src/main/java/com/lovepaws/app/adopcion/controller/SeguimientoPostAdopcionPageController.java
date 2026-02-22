@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
-import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
-import com.lovepaws.app.seguimiento.domain.ResultadoSeguimiento;
 import com.lovepaws.app.seguimiento.service.SeguimientoPostAdopcionService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +36,8 @@ public class SeguimientoPostAdopcionPageController {
         // Resultados posibles de seguimiento (desde el servicio)
         model.addAttribute("resultadosSeguimiento", seguimientoService.listarResultados());
 
+        
+       
       
         return "adopcion/seguimiento-post-adopcion";
     }

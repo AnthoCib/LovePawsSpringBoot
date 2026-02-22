@@ -2,15 +2,15 @@ package com.lovepaws.app.adopcion.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
-import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
+
 
 @Component
 public class SeguimientoPostAdopcionMapper {
 
-    public SeguimientoPostAdopcionResponseDTO toDto(SeguimientoAdopcion seguimiento) {
+    public SeguimientoPostAdopcionResponseDTO toDto(SeguimientoPostAdopcion seguimiento) {
         String estadoMascotaId = seguimiento.getEstado() != null ? seguimiento.getEstado().getId() : null;
         String estadoProcesoAdopcion = seguimiento.getAdopcion() != null && seguimiento.getAdopcion().getEstado() != null
                 ? seguimiento.getAdopcion().getEstado().getId()
@@ -33,32 +33,7 @@ public class SeguimientoPostAdopcionMapper {
                 .fechaActualizacion(seguimiento.getFechaModificacion())
                 .build();
     }
-    public SeguimientoPostAdopcionResponseDTO toDto(SeguimientoPostAdopcion seguimiento) {
-        if (seguimiento == null) return null;
-
-        String estadoMascotaId = seguimiento.getEstado() != null ? seguimiento.getEstado().getId() : null;
-        String estadoProcesoAdopcion = seguimiento.getAdopcion() != null && seguimiento.getAdopcion().getEstado() != null
-                ? seguimiento.getAdopcion().getEstado().getId()
-                : null;
-
-        return SeguimientoPostAdopcionResponseDTO.builder()
-                .id(seguimiento.getId())
-                .adopcionId(seguimiento.getAdopcion() != null ? seguimiento.getAdopcion().getId() : null)
-                .adoptanteId(seguimiento.getAdopcion() != null && seguimiento.getAdopcion().getUsuarioAdoptante() != null
-                        ? seguimiento.getAdopcion().getUsuarioAdoptante().getId()
-                        : null)
-                .gestorId(seguimiento.getUsuarioCreacion() != null ? seguimiento.getUsuarioCreacion().getId() : null)
-                .fechaSeguimiento(seguimiento.getFechaCreacion())
-                .notas(seguimiento.getObservaciones())
-                .estadoMascota(mapearTrackingDesdeEstadoId(estadoMascotaId))
-                .estadoMascotaId(estadoMascotaId)
-                .estadoProcesoAdopcion(estadoProcesoAdopcion)
-                .activo(seguimiento.getActivo())
-                .fechaCreacion(seguimiento.getFechaCreacion())
-                .fechaActualizacion(seguimiento.getFechaModificacion())
-                .build();
-    }
-
+   
 
     public String toEstadoMascotaId(EstadoMascotaTracking tracking) {
         return switch (tracking) {

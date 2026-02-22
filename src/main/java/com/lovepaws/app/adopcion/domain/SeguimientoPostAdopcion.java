@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Builder
 @SQLDelete(sql = "UPDATE seguimiento_post_adopcion SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
-public class SeguimientoAdopcion {
+public class SeguimientoPostAdopcion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,13 +40,14 @@ public class SeguimientoAdopcion {
     private String observaciones;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estado_id")
-    private EstadoMascota estado;
+    @JoinColumn(name = "estado_id", nullable = false)
+    private EstadoSeguimiento estado;
   
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resultado_id")
     private ResultadoSeguimiento resultado;
     
+ 
     private Boolean activo = true;
 
     @ManyToOne(fetch = FetchType.LAZY)

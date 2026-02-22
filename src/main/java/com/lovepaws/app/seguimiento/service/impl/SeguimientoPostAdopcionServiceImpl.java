@@ -7,14 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.seguimiento.repository.SeguimientoPostAdopcionRepository;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.seguimiento.domain.RespuestaSeguimientoPostAdopcion;
 import com.lovepaws.app.seguimiento.domain.ResultadoSeguimiento;
-import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.seguimiento.dto.RespuestaSeguimientoRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoCreateRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoResponse;
@@ -42,7 +41,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
     private final UsuarioRepository usuarioRepository;
     private final AuditoriaService auditoriaService;
     private final ResultadoSeguimientoRepository resultadoRepository;
-    private final SeguimientoAdopcionRepository seguimientoRepository;
+  
     @Override
     public SeguimientoResponse crearSeguimiento(SeguimientoCreateRequest request, Integer usuarioId) {
         Usuario gestor = obtenerUsuario(usuarioId);
@@ -319,6 +318,6 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
         if (estado == null) {
             return seguimientoPostRepository.findAllByOrderByFechaCreacionDesc();
         }
-        return seguimientoPostRepository.findByEstadoSeg_IdOrderByFechaCreacionDesc(estado.getId());
+        return seguimientoPostRepository.findByEstado_IdOrderByFechaCreacionDesc(estado.getId());
     }
 }

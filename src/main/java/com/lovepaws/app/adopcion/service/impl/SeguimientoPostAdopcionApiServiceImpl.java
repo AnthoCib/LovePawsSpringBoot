@@ -1,4 +1,4 @@
-// src/main/java/com/lovepaws/app/adopcion/service/impl/SeguimientoPostAdopcionApiServiceImpl.java
+
 package com.lovepaws.app.adopcion.service.impl;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionRequestDTO;
 import com.lovepaws.app.adopcion.dto.SeguimientoPostAdopcionResponseDTO;
@@ -19,6 +19,7 @@ import com.lovepaws.app.adopcion.repository.SeguimientoPostAdopcionTrackingRepos
 import com.lovepaws.app.adopcion.service.SeguimientoPostAdopcionApiService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
+import com.lovepaws.app.seguimiento.repository.EstadoSeguimientoRepository;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.AuditoriaService;
 
@@ -37,13 +38,13 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     private final AdopcionRepository adopcionRepository;
     private final SeguimientoPostAdopcionMapper mapper;
     private final AuditoriaService auditoriaService;
-
+    private final EstadoSeguimientoRepository estadoSeguimientoRepository;
     @Override
     @Transactional
     public SeguimientoPostAdopcionResponseDTO crearSeguimiento(SeguimientoPostAdopcionRequestDTO request, Integer gestorId) {
         Adopcion adopcion = obtenerAdopcionAprobada(request.getAdopcionId());
 
-        SeguimientoAdopcion seguimiento = new SeguimientoAdopcion();
+        SeguimientoPostAdopcion seguimiento = new SeguimientoPostAdopcion();
         seguimiento.setAdopcion(adopcion);
         seguimiento.setFechaVisita(request.getFechaSeguimiento());
         seguimiento.setObservaciones(normalizarNotas(request.getNotas()));
@@ -56,7 +57,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
             seguimiento.setUsuarioCreacion(gestor);
         }
 
-        SeguimientoAdopcion saved = seguimientoRepository.save(seguimiento);
+        SeguimientoPostAdopcion saved = seguimientoRepository.save(seguimiento);
         registrarAuditoria(saved, "INSERT", gestorId, "Creación de seguimiento post-adopción");
         return mapper.toDto(saved);
     }
@@ -65,7 +66,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     @Transactional(readOnly = true)
     public List<SeguimientoPostAdopcionResponseDTO> listarSeguimientos(EstadoMascotaTracking estadoMascota,
                                                                         String estadoProceso) {
-        List<SeguimientoAdopcion> data;
+        List<SeguimientoPostAdopcion> data;
 
         if (estadoMascota == null) {
             data = seguimientoRepository.findByEstado_IdInOrderByFechaCreacionDesc(ESTADOS_VALIDOS_LISTADO);
@@ -92,7 +93,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
     public SeguimientoPostAdopcionResponseDTO actualizarSeguimiento(Integer seguimientoId,
                                                                     SeguimientoPostAdopcionRequestDTO request,
                                                                     Integer gestorId) {
-        SeguimientoAdopcion existente = seguimientoRepository.findById(seguimientoId)
+        SeguimientoPostAdopcion existente = seguimientoRepository.findById(seguimientoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seguimiento no encontrado"));
 
         Adopcion adopcion = obtenerAdopcionAprobada(request.getAdopcionId());
@@ -104,7 +105,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
             existente.setActivo(request.getActivo());
         }
 
-        SeguimientoAdopcion updated = seguimientoRepository.save(existente);
+        SeguimientoPostAdopcion updated = seguimientoRepository.save(existente);
         registrarAuditoria(updated, "UPDATE", gestorId, "Actualización de seguimiento post-adopción");
         return mapper.toDto(updated);
     }
@@ -121,10 +122,19 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         return adopcion;
     }
 
-    private EstadoMascota mapearEstadoTracking(EstadoMascotaTracking tracking) {
-        EstadoMascota estado = new EstadoMascota();
-        estado.setId(mapper.toEstadoMascotaId(tracking));
-        return estado;
+    private EstadoSeguimiento mapearEstadoTracking(EstadoMascotaTracking tracking) {
+
+        if (tracking == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado de seguimiento es obligatorio");
+        }
+
+        String estadoId = mapper.toEstadoMascotaId(tracking);
+
+        return estadoSeguimientoRepository.findById(estadoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Estado de seguimiento no válido: " + estadoId
+                ));
     }
 
     private String normalizarNotas(String notas) {
@@ -149,7 +159,7 @@ public class SeguimientoPostAdopcionApiServiceImpl implements SeguimientoPostAdo
         }
     }
 
-    private void registrarAuditoria(SeguimientoAdopcion seguimiento, String operacion, Integer gestorId, String detalle) {
+    private void registrarAuditoria(SeguimientoPostAdopcion seguimiento, String operacion, Integer gestorId, String detalle) {
         if (seguimiento == null || seguimiento.getId() == null) {
             return;
         }

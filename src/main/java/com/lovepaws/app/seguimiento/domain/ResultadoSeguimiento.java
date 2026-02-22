@@ -21,5 +21,6 @@ public class ResultadoSeguimiento {
 
     @Column(name = "descripcion", length = 100)
     private String descripcion;
-
+    
+    private Boolean activo = true;
 }

@@ -46,7 +46,7 @@
                 <tbody>
                 <tr th:each="s : ${seguimientos}">
                     <td th:text="${s.id}">1</td>
-                    <td th:text="${s.adopcionId}">10</td>
+                    <td th:text="${s.adopcion.id}">10</td>
                     <td th:text="${s.adoptanteId}">20</td>
                     <td th:text="${s.gestorId != null ? s.gestorId : '-'}">2</td>
                     <td th:text="${#temporals.format(s.fechaSeguimiento, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>

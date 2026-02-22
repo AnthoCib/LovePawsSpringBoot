@@ -6,13 +6,13 @@ import java.time.LocalDateTime;
 
 import com.lovepaws.app.adopcion.domain.RespuestaSeguimientoAdopcion;
 import com.lovepaws.app.adopcion.domain.Adopcion;
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 
 public interface SeguimientoService {
 
-	SeguimientoAdopcion createSeguimiento(SeguimientoAdopcion seguimiento, Integer usuarioId, String usuarioNombre);
+	SeguimientoPostAdopcion createSeguimiento(SeguimientoPostAdopcion seguimiento, Integer usuarioId, String usuarioNombre);
 
-	SeguimientoAdopcion crearSeguimientoCompleto(Integer adopcionId,
+	SeguimientoPostAdopcion crearSeguimientoCompleto(Integer adopcionId,
 	                                           LocalDateTime fechaVisita,
 	                                           String observaciones,
 	                                           String estadoMascotaId,
@@ -30,7 +30,7 @@ public interface SeguimientoService {
 
 	void eliminarSeguimientoSoft(Integer seguimientoId, Integer usuarioId, String usuarioNombre);
 
-	List<SeguimientoAdopcion> listarPorAdopcion(Integer adopcionId);
+	List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId);
 
 	List<RespuestaSeguimientoAdopcion> listarRespuestasPorAdopcion(Integer adopcionId);
 
@@ -38,7 +38,7 @@ public interface SeguimientoService {
 
 	boolean incumpleSeguimiento8Semanas(Integer adopcionId);
 
-	Optional<SeguimientoAdopcion> findById(Integer id);
+	Optional<SeguimientoPostAdopcion> findById(Integer id);
 
 	void eliminarLogico(Integer seguimientoId, Integer usuarioId, String usuarioNombre);
 

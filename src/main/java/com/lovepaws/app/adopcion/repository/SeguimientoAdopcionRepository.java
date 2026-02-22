@@ -7,16 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
-
-
-
-public interface SeguimientoAdopcionRepository extends JpaRepository<SeguimientoAdopcion, Integer> {
+public interface SeguimientoAdopcionRepository  extends JpaRepository<SeguimientoPostAdopcion, Integer> {
 
     @Query("""
             SELECT s
-            FROM SeguimientoAdopcion s
+            FROM SeguimientoPostAdopcion s
             JOIN FETCH s.adopcion a
             JOIN FETCH a.estado estadoProceso
             LEFT JOIN FETCH a.usuarioAdoptante
@@ -25,11 +22,12 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
             WHERE a.id = :adopcionId
             ORDER BY s.fechaVisita DESC
             """)
-    List<SeguimientoAdopcion> findByAdopcionIdOrderByFechaVisitaDesc(@Param("adopcionId") Integer adopcionId);
+    List<SeguimientoPostAdopcion> findByAdopcionIdOrderByFechaVisitaDesc(
+            @Param("adopcionId") Integer adopcionId);
 
     @Query("""
             SELECT s
-            FROM SeguimientoAdopcion s
+            FROM SeguimientoPostAdopcion s
             JOIN FETCH s.adopcion a
             JOIN FETCH a.estado
             LEFT JOIN FETCH a.usuarioAdoptante
@@ -37,11 +35,11 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
             LEFT JOIN FETCH s.estado
             ORDER BY s.fechaVisita DESC
             """)
-    List<SeguimientoAdopcion> findAllByOrderByFechaVisitaDesc();
+    List<SeguimientoPostAdopcion> findAllByOrderByFechaVisitaDesc();
 
     @Query("""
             SELECT s
-            FROM SeguimientoAdopcion s
+            FROM SeguimientoPostAdopcion s
             JOIN FETCH s.adopcion a
             JOIN FETCH a.estado
             LEFT JOIN FETCH a.usuarioAdoptante
@@ -50,11 +48,12 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
             WHERE s.estado.id = :estadoId
             ORDER BY s.fechaVisita DESC
             """)
-    List<SeguimientoAdopcion> findByEstado_IdOrderByFechaVisitaDesc(@Param("estadoId") String estadoId);
+    List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaVisitaDesc(
+            @Param("estadoId") String estadoId);
 
     @Query("""
             SELECT s
-            FROM SeguimientoAdopcion s
+            FROM SeguimientoPostAdopcion s
             JOIN FETCH s.adopcion a
             JOIN FETCH a.estado
             LEFT JOIN FETCH a.usuarioAdoptante
@@ -63,11 +62,12 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
             WHERE s.id = :id
               AND s.deletedAt IS NULL
             """)
-    Optional<SeguimientoAdopcion> findByIdAndDeletedAtIsNull(@Param("id") Integer id);
+    Optional<SeguimientoPostAdopcion> findByIdAndDeletedAtIsNull(
+            @Param("id") Integer id);
 
     @Query("""
             SELECT s
-            FROM SeguimientoAdopcion s
+            FROM SeguimientoPostAdopcion s
             JOIN FETCH s.adopcion a
             JOIN FETCH a.estado estadoProceso
             LEFT JOIN FETCH a.usuarioAdoptante
@@ -78,16 +78,18 @@ public interface SeguimientoAdopcionRepository extends JpaRepository<Seguimiento
               AND (:estadoProcesoId IS NULL OR estadoProceso.id = :estadoProcesoId)
             ORDER BY s.fechaVisita DESC
             """)
-    List<SeguimientoAdopcion> findAllByFiltros(@Param("estadoMascotaId") String estadoMascotaId,
-                                               @Param("estadoProcesoId") String estadoProcesoId);
-    
+    List<SeguimientoPostAdopcion> findAllByFiltros(
+            @Param("estadoMascotaId") String estadoMascotaId,
+            @Param("estadoProcesoId") String estadoProcesoId);
+
     @Query("""
-    	       SELECT COUNT(s)
-    	       FROM SeguimientoAdopcion s
-    	       WHERE s.adopcion.id = :adopcionId
-    	         AND s.estado.id = :estadoId
-    	         AND s.deletedAt IS NULL
-    	       """)
-    	long countByAdopcionIdAndEstadoId(@Param("adopcionId") Integer adopcionId,
-    	                                  @Param("estadoId") String estadoId);
+            SELECT COUNT(s)
+            FROM SeguimientoPostAdopcion s
+            WHERE s.adopcion.id = :adopcionId
+              AND s.estado.id = :estadoId
+              AND s.deletedAt IS NULL
+            """)
+    long countByAdopcionIdAndEstadoId(
+            @Param("adopcionId") Integer adopcionId,
+            @Param("estadoId") String estadoId);
 }

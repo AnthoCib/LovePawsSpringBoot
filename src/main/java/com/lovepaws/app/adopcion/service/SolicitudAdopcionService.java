@@ -3,8 +3,11 @@ package com.lovepaws.app.adopcion.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 
+@Service
 public interface SolicitudAdopcionService {
 
 	SolicitudAdopcion createSolicitud(SolicitudAdopcion solicitud);
