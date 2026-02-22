@@ -317,8 +317,8 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
     @Transactional(readOnly = true)
     public List<SeguimientoPostAdopcion> listarSeguimientos(EstadoSeguimiento estado) {
         if (estado == null) {
-            return seguimientoRepository.findAllByOrderByFechaCreacionDesc();
+            return seguimientoPostRepository.findAllByOrderByFechaCreacionDesc();
         }
-        return seguimientoRepository.findByEstadoSeg_IdOrderByFechaCreacionDesc(estado.getId());
+        return seguimientoPostRepository.findByEstadoSeg_IdOrderByFechaCreacionDesc(estado.getId());
     }
 }

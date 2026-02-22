@@ -27,7 +27,7 @@ import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 	    // Filtrado por adoptante
 	    List<SeguimientoPostAdopcion> findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(Integer adoptanteId);
 	    
-	    List<SeguimientoAdopcion> findByEstadoSeg_IdOrderByFechaCreacionDesc(String estadoId);
+	    List<SeguimientoPostAdopcion> findByEstadoSeg_IdOrderByFechaCreacionDesc(String estadoId);
 
 	   
 }
