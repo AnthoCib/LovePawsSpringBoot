@@ -95,41 +95,26 @@ function mostrarAlerta(tipo, titulo, texto) {
 /**
  * Agrega confirmación SweetAlert a formularios con data-confirm.
  */
-function initConfirmableForms() {
-    const forms = document.querySelectorAll("form[data-confirm='true']");
-    if (!forms.length) return;
+// Delegación global para todos los formularios con data-confirm
+document.addEventListener("submit", function(event) {
+    const form = event.target;
+    if (form.dataset.confirm === "true" && form.dataset.confirmed !== "true") {
+        event.preventDefault();
 
-    forms.forEach((form) => {
-        form.addEventListener("submit", (event) => {
-            if (form.dataset.confirmed === "true") {
-                return;
+        Swal.fire({
+            title: form.dataset.confirmTitle || "¿Estás seguro?",
+            text: form.dataset.confirmText || "Esta acción no se puede deshacer.",
+            icon: form.dataset.confirmIcon || "warning",
+            showCancelButton: true,
+            confirmButtonText: form.dataset.confirmButton || "Confirmar",
+            cancelButtonText: form.dataset.cancelButton || "Cancelar",
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.dataset.confirmed = "true";
+                form.submit();
             }
-
-            event.preventDefault();
-
-            const title = form.dataset.confirmTitle || "¿Estás seguro?";
-            const text = form.dataset.confirmText || "Esta acción no se puede deshacer.";
-            const confirmText = form.dataset.confirmButton || "Confirmar";
-            const cancelText = form.dataset.cancelButton || "Cancelar";
-            const icon = form.dataset.confirmIcon || "warning";
-
-            Swal.fire({
-                title,
-                text,
-                icon,
-                showCancelButton: true,
-                confirmButtonText: confirmText,
-                cancelButtonText: cancelText,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.dataset.confirmed = "true";
-                    form.submit();
-                }
-            });
         });
-    });
-}
-
-document.addEventListener("DOMContentLoaded", initConfirmableForms);
+    }
+});

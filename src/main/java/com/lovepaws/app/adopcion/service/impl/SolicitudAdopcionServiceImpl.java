@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +25,6 @@ import com.lovepaws.app.mascota.repository.MascotaRepository;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.AuditoriaService;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
@@ -36,6 +35,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 	private final MascotaRepository mascotaRepository;
 	private final AuditoriaService auditoriaService;
 	private final EstadoAdopcionRepository estadoAdopcionRepo;
+
 	private static final String ESTADO_PENDIENTE = "PENDIENTE";
 	private static final String ESTADO_APROBADA = "APROBADA";
 	private static final String ESTADO_RECHAZADA = "RECHAZADA";
@@ -50,6 +50,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 
 		Mascota mascota = mascotaRepository.findById(solicitud.getMascota().getId())
 				.orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
+
 		if (mascota.getEstado() == null || !"DISPONIBLE".equalsIgnoreCase(mascota.getEstado().getId())) {
 			throw new IllegalStateException("La mascota no se encuentra disponible para adopción");
 		}
@@ -63,6 +64,7 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 			throw new IllegalStateException("El usuario ya tiene una solicitud activa");
 		}
 
+		// Validar datos personales
 		if (solicitud.getUsuario().getNombre() == null || solicitud.getUsuario().getNombre().isBlank()
 				|| solicitud.getUsuario().getCorreo() == null || !solicitud.getUsuario().getCorreo().contains("@")
 				|| solicitud.getUsuario().getTelefono() == null || solicitud.getUsuario().getTelefono().isBlank()
@@ -70,12 +72,30 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 			throw new IllegalStateException("Datos personales o medio de contacto incompletos");
 		}
 
+		// Establecer estado pendiente desde DB
+		EstadoAdopcion estadoPendiente = estadoAdopcionRepo.findById(ESTADO_PENDIENTE)
+				.orElseThrow(() -> new IllegalStateException("Estado PENDIENTE no encontrado"));
+		solicitud.setEstado(estadoPendiente);
+
 		SolicitudAdopcion saved = solicitudRepo.save(solicitud);
+
 		String usuarioNombre = saved.getUsuario() != null ? saved.getUsuario().getNombre() : "Sistema";
-		auditoriaService.registrar("solicitud_adopcion", saved.getId(), "CREAR_SOLICITUD", usuarioId, usuarioNombre,
-				"Solicitud creada para mascota " + (saved.getMascota() != null ? saved.getMascota().getId() : "-"));
+		auditoriaService.registrar(
+				"solicitud_adopcion",
+				saved.getId(),
+				"CREAR_SOLICITUD",
+				usuarioId,
+				usuarioNombre,
+				"Solicitud creada para mascota " + (saved.getMascota() != null ? saved.getMascota().getId() : "-")
+		);
+
 		DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(saved);
-		notificacionEmailService.enviarCorreoRecepcion(datosCorreo.getCorreoDestino(), datosCorreo.getNombreUsuario(), datosCorreo.getNombreMascota());
+		notificacionEmailService.enviarCorreoRecepcion(
+				datosCorreo.getCorreoDestino(),
+				datosCorreo.getNombreUsuario(),
+				datosCorreo.getNombreMascota()
+		);
+
 		return saved;
 	}
 
@@ -121,6 +141,50 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 
 	@Override
 	@Transactional
+	public SolicitudAdopcion cancelarSolicitud(Integer solicitudId, Integer usuarioId) {
+	    SolicitudAdopcion solicitud = solicitudRepo.findById(solicitudId)
+	            .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
+
+	    // Validaciones
+	    if (!solicitud.getUsuario().getId().equals(usuarioId)) {
+	        throw new IllegalStateException("No puedes cancelar solicitudes de otro usuario");
+	    }
+	    if (!ESTADO_PENDIENTE.equalsIgnoreCase(solicitud.getEstado().getId())) {
+	        throw new IllegalStateException("Solo se puede cancelar solicitudes pendientes");
+	    }
+
+	    // ⚡ Cargar estado CANCELADA desde la DB
+	    EstadoAdopcion estadoCancelada = estadoAdopcionRepo.findById(ESTADO_CANCELADA)
+	            .orElseThrow(() -> new IllegalStateException("Estado CANCELADA no encontrado"));
+
+	    solicitud.setEstado(estadoCancelada);
+	    solicitud.setInfoAdicional("Solicitud cancelada por usuario");
+
+	    SolicitudAdopcion updated = solicitudRepo.save(solicitud);
+
+	    // Auditoría y notificación
+	    Usuario u = updated.getUsuario();
+	    auditoriaService.registrar(
+	        "solicitud_adopcion",
+	        updated.getId(),
+	        "UPDATE",
+	        usuarioId,
+	        u != null ? u.getNombre() : "USUARIO",
+	        "Estado cambiado a CANCELADA"
+	    );
+
+	    DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(updated);
+	    notificacionEmailService.enviarCorreoCancelacion(
+	        datosCorreo.getCorreoDestino(),
+	        datosCorreo.getNombreUsuario(),
+	        datosCorreo.getNombreMascota()
+	    );
+
+	    return updated;
+	}
+
+	@Override
+	@Transactional
 	public SolicitudAdopcion aprobarSolicitud(Integer solicitudId, Integer gestorId) {
 		return decidirSolicitud(solicitudId, gestorId, "APROBAR", null);
 	}
@@ -131,41 +195,6 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		return decidirSolicitud(solicitudId, gestorId, "RECHAZAR", motivo);
 	}
 
-	@Override
-	@Transactional
-	public SolicitudAdopcion cancelarSolicitud(Integer solicitudId, Integer usuarioId) {
-	    SolicitudAdopcion solicitud = solicitudRepo.findById(solicitudId)
-	            .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
-
-	    if (!solicitud.getUsuario().getId().equals(usuarioId)) {
-	        throw new IllegalStateException("No puedes cancelar solicitudes de otro usuario");
-	    }
-	    if (!ESTADO_PENDIENTE.equalsIgnoreCase(solicitud.getEstado().getId())) {
-	        throw new IllegalStateException("Solo se puede cancelar solicitudes pendientes");
-	    }
-
-	    // ✅ Buscar el estado CANCELADA ya persistido
-	    EstadoAdopcion estadoCancelada = estadoAdopcionRepo.findById(ESTADO_CANCELADA)
-	            .orElseThrow(() -> new IllegalStateException("Estado CANCELADA no encontrado"));
-
-	    solicitud.setEstado(estadoCancelada); // Asignación segura
-	    solicitud.setInfoAdicional("Solicitud cancelada por usuario");
-
-	    SolicitudAdopcion updated = solicitudRepo.save(solicitud);
-
-	    Usuario u = updated.getUsuario();
-	    auditoriaService.registrar("solicitud_adopcion", updated.getId(), "UPDATE", usuarioId,
-	            u != null ? u.getNombre() : "USUARIO", "Estado cambiado a CANCELADA");
-
-	    DatosCorreoSolicitud datosCorreo = extraerDatosCorreo(updated);
-	    notificacionEmailService.enviarCorreoCancelacion(
-	            datosCorreo.getCorreoDestino(),
-	            datosCorreo.getNombreUsuario(),
-	            datosCorreo.getNombreMascota()
-	    );
-
-	    return updated;
-	}
 	@Override
 	@Transactional
 	public SolicitudAdopcion decidirSolicitud(Integer solicitudId, Integer gestorId, String accion, String motivo) {
@@ -196,10 +225,6 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 	}
 
 	private void aprobarConAdopcion(SolicitudAdopcion solicitud, Integer gestorId) {
-		if (solicitud.getMascota() == null || solicitud.getMascota().getId() == null) {
-			throw new IllegalStateException("Solicitud sin mascota asociada");
-		}
-
 		Mascota mascota = mascotaRepository.findByIdForUpdate(solicitud.getMascota().getId())
 				.orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
 
@@ -212,8 +237,8 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 			throw new IllegalStateException("La solicitud ya tiene una adopción registrada");
 		}
 
-		EstadoAdopcion estadoAprobada = new EstadoAdopcion();
-		estadoAprobada.setId(ESTADO_APROBADA);
+		EstadoAdopcion estadoAprobada = estadoAdopcionRepo.findById(ESTADO_APROBADA)
+				.orElseThrow(() -> new IllegalStateException("Estado APROBADA no encontrado"));
 		solicitud.setEstado(estadoAprobada);
 		solicitud.setInfoAdicional("Aprobada por gestor ID: " + gestorId);
 
@@ -244,9 +269,10 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 	}
 
 	private void rechazarConMotivo(SolicitudAdopcion solicitud, Integer gestorId, String motivo) {
-		EstadoAdopcion estadoRechazada = new EstadoAdopcion();
-		estadoRechazada.setId(ESTADO_RECHAZADA);
+		EstadoAdopcion estadoRechazada = estadoAdopcionRepo.findById(ESTADO_RECHAZADA)
+				.orElseThrow(() -> new IllegalStateException("Estado RECHAZADA no encontrado"));
 		solicitud.setEstado(estadoRechazada);
+
 		String motivoFinal = (motivo == null || motivo.isBlank()) ? "No cumple criterios de adopción" : motivo.trim();
 		solicitud.setInfoAdicional(motivoFinal);
 
@@ -275,5 +301,4 @@ public class SolicitudAdopcionServiceImpl implements SolicitudAdopcionService {
 		private final String nombreUsuario;
 		private final String nombreMascota;
 	}
-
 }
