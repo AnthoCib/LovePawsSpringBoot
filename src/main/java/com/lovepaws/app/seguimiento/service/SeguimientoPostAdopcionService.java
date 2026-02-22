@@ -6,7 +6,7 @@ import com.lovepaws.app.seguimiento.dto.RespuestaSeguimientoRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoCreateRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoResponse;
 
-public interface SeguimientoService {
+public interface SeguimientoPostAdopcionService {
 
     SeguimientoResponse crearSeguimiento(SeguimientoCreateRequest request, Integer usuarioId);
 

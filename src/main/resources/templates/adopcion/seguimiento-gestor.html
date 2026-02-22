@@ -4,8 +4,10 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Seguimiento post adopción</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link th:href="@{/css/admin.css}" rel="stylesheet"/>
 </head>
 <body class="bg-light">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
@@ -32,10 +34,14 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Estado físico</label>
-                    <select name="estadoId" class="form-select">
-                        <option value="">Sin cambio</option>
-                        <option th:each="e : ${estadosMascota}" th:value="${e.id}" th:text="${e.descripcion != null ? e.descripcion : e.id}"></option>
-                    </select>
+                   <select name="estadoId" class="form-select">
+					    <option value="">Sin cambio</option>
+					    <option th:each="e : ${estadosSeguimiento}" 
+					            th:value="${e.id}" 
+					            th:text="${e.descripcion != null ? e.descripcion : e.id}"
+					            th:selected="${seguimiento.estadoId == e.id}">
+					    </option>
+					</select>
                 </div>
                 <div class="col-12">
                     <label class="form-label">Observaciones</label>

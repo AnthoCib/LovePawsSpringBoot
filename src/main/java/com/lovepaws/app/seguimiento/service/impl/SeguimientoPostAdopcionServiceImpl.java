@@ -19,7 +19,7 @@ import com.lovepaws.app.seguimiento.exception.EstadoInvalidoException;
 import com.lovepaws.app.seguimiento.exception.SeguimientoException;
 import com.lovepaws.app.seguimiento.repository.EstadoSeguimientoRepository;
 import com.lovepaws.app.seguimiento.repository.RespuestaSeguimientoPostAdopcionRepository;
-import com.lovepaws.app.seguimiento.service.SeguimientoService;
+import com.lovepaws.app.seguimiento.service.SeguimientoPostAdopcionService;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.repository.UsuarioRepository;
 import com.lovepaws.app.user.service.AuditoriaService;
@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class SeguimientoPostAdopcionServiceImpl implements SeguimientoService {
+public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopcionService {
 
     private final SeguimientoPostAdopcionRepository seguimientoRepository;
     private final RespuestaSeguimientoPostAdopcionRepository respuestaRepository;
