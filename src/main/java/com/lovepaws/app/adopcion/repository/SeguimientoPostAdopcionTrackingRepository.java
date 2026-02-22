@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 
 
-public interface SeguimientoPostAdopcionTrackingRepository extends JpaRepository<SeguimientoAdopcion, Integer> {
+public interface SeguimientoPostAdopcionTrackingRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
 
-    List<SeguimientoAdopcion> findAllByOrderByFechaCreacionDesc();
+    List<SeguimientoPostAdopcion> findAllByOrderByFechaCreacionDesc();
     
-    List<SeguimientoAdopcion> findByEstado_IdOrderByFechaCreacionDesc(String estadoId);
+    List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaCreacionDesc(String estadoId);
 
-    List<SeguimientoAdopcion> findByEstado_IdInOrderByFechaCreacionDesc(List<String> ids);
+    List<SeguimientoPostAdopcion> findByEstado_IdInOrderByFechaCreacionDesc(List<String> ids);
 }

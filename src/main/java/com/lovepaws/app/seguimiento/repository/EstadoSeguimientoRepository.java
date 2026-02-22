@@ -8,5 +8,5 @@ import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 
 public interface EstadoSeguimientoRepository extends JpaRepository<EstadoSeguimiento, String> {
 
-    List<EstadoSeguimiento> findByIdIn(List<String> ids);
+	List<EstadoSeguimiento> findAllByOrderByDescripcionAsc();
 }

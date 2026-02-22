@@ -1,5 +1,6 @@
 package com.lovepaws.app.adopcion.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,5 +79,11 @@ public interface AdopcionRepository extends JpaRepository<Adopcion, Integer> {
             """, nativeQuery = true)
     boolean existsIncumplimientoSeguimiento8SemanasByAdopcionId(@Param("adopcionId") Integer adopcionId);
 
+	   long countByUsuarioAdoptanteIdAndFechaAdopcionBetween(
+	    	    Integer adoptanteId,
+	    	    LocalDateTime inicio,
+	    	    LocalDateTime fin
+	    	);
 
+	   Optional<Adopcion> findTopByUsuarioAdoptanteIdOrderByFechaAdopcionDesc(Integer usuarioAdoptanteId);
 }

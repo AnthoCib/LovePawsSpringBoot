@@ -191,19 +191,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 		}
 		Optional<Usuario> usuarioOpt = usuarioRepo.findByCorreo(correo.trim());
 		if (usuarioOpt.isEmpty()) {
-			return false;
+			return true;
 		}
 		Usuario usuario = usuarioOpt.get();
 		String tokenSeguro = UUID.randomUUID().toString();
 		usuario.setResetToken(tokenSeguro);
-		usuario.setResetTokenExpira(LocalDateTime.now().plusHours(1));
+		usuario.setResetTokenExpira(LocalDateTime.now().plusMinutes(30));
 		usuarioRepo.saveAndFlush(usuario);
 
 		String link = baseUrl + "/usuarios/reset-password?token=" + tokenSeguro;
 		String contenido = "<p>Hola " + usuario.getNombre() + ",</p>"
 				+ "<p>Para restablecer tu contraseña haz clic en el siguiente enlace:</p>"
 				+ "<p><a href=\"" + link + "\">Restablecer contraseña</a></p>"
-				+ "<p>Este enlace expirará en 1 hora.</p>";
+				+ "<p>Este enlace expirará en 30 minutos.</p>";
 
 		try {
 			emailService.enviarCorreo(usuario.getCorreo(), "Recuperación de contraseña", contenido);

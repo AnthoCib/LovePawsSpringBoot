@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.user.domain.Usuario;
 
 import jakarta.persistence.Column;

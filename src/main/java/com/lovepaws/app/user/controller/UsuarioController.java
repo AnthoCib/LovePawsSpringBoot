@@ -301,7 +301,7 @@ public class UsuarioController {
                                 @RequestParam String confirmar) {
         try {
             usuarioService.restablecerPassword(token, nueva, confirmar);
-            return "redirect:/usuarios/login?reset=ok";
+            return "redirect:/usuarios/login?reset=success";
         } catch (IllegalArgumentException ex) {
             String msg = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
             if (msg.contains("coinciden")) {

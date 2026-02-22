@@ -1,66 +1,111 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Seguimiento Post-Adopción | LovePaws</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
-    <link th:href="@{/css/admin.css}" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Seguimiento Post-Adopción | LovePaws</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet" />
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+	rel="stylesheet" />
+<link th:href="@{/css/custom.css}" rel="stylesheet" />
 </head>
 <body class="bg-light">
-<div th:replace="~{fragments/navbar :: navbar}"></div>
+	<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="h4 mb-0">Seguimiento Post-Adopción</h1>
-        <a th:href="@{/gestor/dashboard}" class="btn btn-outline-secondary btn-sm">Volver</a>
-    </div>
+	<main class="container py-4">
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h1 class="h4 mb-0">Seguimiento Post-Adopción</h1>
+			<a th:href="@{/gestor/dashboard}"
+				class="btn btn-outline-secondary btn-sm">Volver</a>
+		</div>
 
-    <form method="get" class="row g-2 mb-3">
-        <div class="col-sm-4">
-            <select class="form-select" name="estado">
-                <option value="">Todos los estados</option>
-                <option th:each="e : ${estados}" th:value="${e}" th:text="${e}" th:selected="${estadoSeleccionado == e}"></option>
-            </select>
-        </div>
-        <div class="col-auto">
-            <button class="btn btn-primary" type="submit">Filtrar</button>
-        </div>
-    </form>
+		<form method="get" class="row g-2 mb-3">
+			<div class="col-sm-4">
+				<select class="form-select" name="estado">
+					<option value="">Todos los estados</option>
+					<option th:each="e : ${estados}"
+					        th:value="${e.id}"
+					        th:text="${e.descripcion}"
+					        th:selected="${estadoSeleccionado == e.id}">
+					</option>
+				</select>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-primary" type="submit">Filtrar</button>
+			</div>
+		</form>
 
-    <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-striped mb-0 align-middle">
-                <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Adopción</th>
-                    <th>Adoptante</th>
-                    <th>Gestor</th>
-                    <th>Fecha seguimiento</th>
-                    <th>Estado mascota</th>
-                    <th>Notas</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="s : ${seguimientos}">
-                    <td th:text="${s.id}">1</td>
-                    <td th:text="${s.adopcionId}">10</td>
-                    <td th:text="${s.adoptanteId}">20</td>
-                    <td th:text="${s.gestorId != null ? s.gestorId : '-'}">2</td>
-                    <td th:text="${#temporals.format(s.fechaSeguimiento, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
-                    <td><span class="badge text-bg-info" th:text="${s.estadoMascota}">BIEN</span></td>
-                    <td th:text="${s.notas != null ? s.notas : '-'}">Sin novedades</td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(seguimientos)}">
-                    <td colspan="7" class="text-center text-muted">No hay seguimientos registrados.</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+		<div class="card border-0 shadow-sm">
+			<div class="table-responsive">
+				<table class="table table-striped mb-0 align-middle">
+					<thead class="table-light">
+						<tr>
+							<th>ID</th>
+							<th>Adopción</th>
+							<th>Adoptante</th>
+							<th>Gestor</th>
+							<th>Fecha seguimiento</th>
+							<th>Estado mascota</th>
+							<th>Notas</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="s : ${seguimientos}">
+
+							<!-- ID Seguimiento -->
+							<td th:text="${s.id}">1</td>
+
+							<!-- Mascota (desde adopción) -->
+							<td
+								th:text="${s.adopcion != null && s.adopcion.mascota != null ? s.adopcion.mascota.nombre : '-'}">
+								Firulais</td>
+
+							
+						   
+								<!-- Adoptante -->
+							<td th:text="${s.adopcion != null and s.adopcion.usuarioAdoptante != null 
+							    ? s.adopcion.usuarioAdoptante.nombre 
+							    : '-'}">
+							    Juan Pérez
+							</td>
+
+							<td th:text="${s.usuarioCreacion != null 
+							    ? s.usuarioCreacion.nombre 
+							    : '-'}">
+							    Gestor
+							</td>
+
+							<!-- Fecha visita -->
+							<td
+								th:text="${s.fechaVisita != null 
+				                  ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') 
+				                  : '-'}">
+								01/01/2026 10:00</td>
+
+							<!-- Estado -->
+							<td><span class="badge text-bg-info"
+								th:text="${s.estado != null ? s.estado.descripcion : '-'}">
+									BIEN </span></td>
+
+							<!-- Observaciones -->
+							<td th:text="${s.observaciones != null ? s.observaciones : '-'}">
+								Sin novedades</td>
+
+						</tr>
+
+						<tr th:if="${#lists.isEmpty(seguimientos)}">
+							<td colspan="7" class="text-center text-muted">No hay
+								seguimientos registrados.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</main>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

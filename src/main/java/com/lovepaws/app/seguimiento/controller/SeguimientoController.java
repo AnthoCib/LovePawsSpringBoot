@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lovepaws.app.seguimiento.dto.RespuestaSeguimientoRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoCreateRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoResponse;
-import com.lovepaws.app.seguimiento.service.SeguimientoService;
+import com.lovepaws.app.seguimiento.service.SeguimientoPostAdopcionService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 
 import jakarta.validation.Valid;
@@ -28,13 +28,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SeguimientoController {
 
-    private final SeguimientoService seguimientoService;
+    private final SeguimientoPostAdopcionService seguimientoPostAdopcionService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     public SeguimientoResponse crear(@Valid @RequestBody SeguimientoCreateRequest request,
                                      @AuthenticationPrincipal UsuarioPrincipal principal) {
-        return seguimientoService.crearSeguimiento(request, principal.getUsuario().getId());
+        return seguimientoPostAdopcionService.crearSeguimiento(request, principal.getUsuario().getId());
     }
 
     @PostMapping("/{seguimientoId}/respuestas")
@@ -42,7 +42,7 @@ public class SeguimientoController {
     public SeguimientoResponse responder(@PathVariable Integer seguimientoId,
                                          @Valid @RequestBody RespuestaSeguimientoRequest request,
                                          @AuthenticationPrincipal UsuarioPrincipal principal) {
-        return seguimientoService.responderSeguimiento(seguimientoId, request, principal.getUsuario().getId());
+        return seguimientoPostAdopcionService.responderSeguimiento(seguimientoId, request, principal.getUsuario().getId());
     }
 
     @PostMapping("/{seguimientoId}/cerrar")
@@ -50,7 +50,7 @@ public class SeguimientoController {
     public SeguimientoResponse cerrar(@PathVariable Integer seguimientoId,
                                       @RequestParam String comentario,
                                       @AuthenticationPrincipal UsuarioPrincipal principal) {
-        return seguimientoService.cerrarSeguimiento(seguimientoId, comentario, principal.getUsuario().getId());
+        return seguimientoPostAdopcionService.cerrarSeguimiento(seguimientoId, comentario, principal.getUsuario().getId());
     }
 
     @PostMapping("/{seguimientoId}/escalar")
@@ -58,14 +58,14 @@ public class SeguimientoController {
     public SeguimientoResponse escalar(@PathVariable Integer seguimientoId,
                                        @RequestParam String motivo,
                                        @AuthenticationPrincipal UsuarioPrincipal principal) {
-        return seguimientoService.escalarSeguimiento(seguimientoId, motivo, principal.getUsuario().getId());
+        return seguimientoPostAdopcionService.escalarSeguimiento(seguimientoId, motivo, principal.getUsuario().getId());
     }
 
     @DeleteMapping("/{seguimientoId}")
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     public void eliminar(@PathVariable Integer seguimientoId,
                          @AuthenticationPrincipal UsuarioPrincipal principal) {
-        seguimientoService.eliminarLogico(seguimientoId, principal.getUsuario().getId());
+        seguimientoPostAdopcionService.eliminarLogico(seguimientoId, principal.getUsuario().getId());
     }
 
     @GetMapping("/{seguimientoId}")
@@ -75,18 +75,18 @@ public class SeguimientoController {
         boolean gestor = principal.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(a -> "ROLE_GESTOR".equals(a) || "ROLE_ADMIN".equals(a));
-        return seguimientoService.obtenerDetalle(seguimientoId, principal.getUsuario().getId(), gestor);
+        return seguimientoPostAdopcionService.obtenerDetalle(seguimientoId, principal.getUsuario().getId(), gestor);
     }
 
     @GetMapping("/mis")
     @PreAuthorize("hasRole('ADOPTANTE')")
     public List<SeguimientoResponse> mis(@AuthenticationPrincipal UsuarioPrincipal principal) {
-        return seguimientoService.listarMisSeguimientos(principal.getUsuario().getId());
+        return seguimientoPostAdopcionService.listarMisSeguimientos(principal.getUsuario().getId());
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     public List<SeguimientoResponse> listarGestion() {
-        return seguimientoService.listarSeguimientosGestion();
+        return seguimientoPostAdopcionService.listarSeguimientosGestion();
     }
 }

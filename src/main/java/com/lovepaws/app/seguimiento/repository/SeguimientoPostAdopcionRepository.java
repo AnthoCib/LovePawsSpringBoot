@@ -2,11 +2,10 @@
 	
 	import java.util.List;
 	import java.util.Optional;
-	
 	import org.springframework.data.jpa.repository.JpaRepository;
-	
-	
-	import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
+
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+
 	
 	
 	public interface SeguimientoPostAdopcionRepository extends JpaRepository<SeguimientoPostAdopcion, Integer> {
@@ -16,6 +15,7 @@
 
 	    // Todos los seguimientos activos ordenados por fecha de creación
 	    List<SeguimientoPostAdopcion> findAllByOrderByFechaCreacionDesc();
+	    
 
 	    // Por estado único
 	    List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaCreacionDesc(String estadoId);
@@ -25,6 +25,8 @@
 
 	    // Filtrado por adoptante
 	    List<SeguimientoPostAdopcion> findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(Integer adoptanteId);
-
+	    
+	   
+	   
 }
 

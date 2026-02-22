@@ -25,7 +25,7 @@ public class RespuestaSeguimientoAdopcion {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "seguimiento_id")
-    private SeguimientoAdopcion seguimiento;
+    private SeguimientoPostAdopcion seguimiento;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adopcion_id")

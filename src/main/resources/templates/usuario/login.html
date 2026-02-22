@@ -12,7 +12,7 @@
 
 <main class="container-fluid min-vh-100 px-0 lp-auth-shell">
     <div class="row g-0 min-vh-100 align-items-stretch">
-
+	    
         <section class="col-lg-6 col-md-6 d-none d-md-block lp-auth-visual">
             <img src="/images/login/login.jpg" alt="LovePaws adopción" class="lp-auth-visual-img">
             <div class="lp-auth-visual-overlay"></div>
@@ -34,7 +34,10 @@
                         <i class="bi bi-arrow-left"></i>
                     </a>
                 </div>
-
+				<div th:if="${param.reset == 'success'}" class="alert alert-success py-2">
+				    <i class="bi bi-check-circle me-1"></i>
+				    Contraseña actualizada correctamente.
+				</div>
                 <div th:if="${param.error}" class="alert alert-danger py-2" role="alert">
                     Usuario o contraseña incorrectos.
                 </div>

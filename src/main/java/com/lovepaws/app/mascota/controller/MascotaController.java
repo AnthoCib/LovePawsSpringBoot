@@ -99,6 +99,7 @@ public class MascotaController {
 		try {
 			if (foto != null && !foto.isEmpty()) {
 				String url = fileStorageService.store(foto);
+				System.out.println("URL generada: " + url);
 				mascota.setFotoUrl(url);
 			}
 		} catch (RuntimeException ex) {

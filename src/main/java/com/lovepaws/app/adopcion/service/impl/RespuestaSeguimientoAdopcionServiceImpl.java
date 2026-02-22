@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.RespuestaSeguimientoAdopcion;
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoRequestDTO;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoResponseDTO;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
@@ -42,7 +42,7 @@ public class RespuestaSeguimientoAdopcionServiceImpl implements RespuestaSeguimi
                                                               Integer usuarioId,
                                                               String usuarioNombre) {
         // Validación en capa service: seguimiento debe existir.
-        SeguimientoAdopcion seguimiento = seguimientoRepository.findById(request.getSeguimientoId())
+        SeguimientoPostAdopcion seguimiento = seguimientoRepository.findById(request.getSeguimientoId())
                 .orElseThrow(() -> new IllegalArgumentException("Seguimiento no encontrado"));
 
         // Validación en capa service: adopción debe existir y coincidir con seguimiento.

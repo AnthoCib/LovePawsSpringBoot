@@ -16,15 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lovepaws.app.adopcion.domain.Adopcion;
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.dto.RespuestaSeguimientoRequestDTO;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.service.AdopcionService;
 import com.lovepaws.app.adopcion.service.RespuestaSeguimientoAdopcionService;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
-import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.mascota.repository.EstadoMascotaRepository;
 import com.lovepaws.app.security.UsuarioPrincipal;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 
 import lombok.RequiredArgsConstructor;
 
@@ -82,7 +82,7 @@ public class AdopcionDetalleController {
             return "redirect:/adopcion/" + adopcionId + "?error=fecha";
         }
 
-        SeguimientoAdopcion seguimiento = new SeguimientoAdopcion();
+        SeguimientoPostAdopcion seguimiento = new SeguimientoPostAdopcion();
         Adopcion adopcion = new Adopcion();
         adopcion.setId(adopcionId);
         seguimiento.setAdopcion(adopcion);
@@ -91,7 +91,7 @@ public class AdopcionDetalleController {
         seguimiento.setUsuarioCreacion(principal.getUsuario());
         seguimiento.setActivo(Boolean.TRUE);
         if (estadoId != null && !estadoId.isBlank()) {
-            EstadoMascota estado = new EstadoMascota();
+            EstadoSeguimiento estado = new EstadoSeguimiento();
             estado.setId(estadoId);
             seguimiento.setEstado(estado);
         }
@@ -119,7 +119,7 @@ public class AdopcionDetalleController {
             return "redirect:/adopcion/mis-adopciones?error=forbidden";
         }
 
-        SeguimientoAdopcion seguimiento = seguimientoService.findById(seguimientoId)
+        SeguimientoPostAdopcion seguimiento = seguimientoService.findById(seguimientoId)
                 .orElseThrow(() -> new IllegalArgumentException("Seguimiento no encontrado"));
         if (seguimiento.getAdopcion() == null || !seguimiento.getAdopcion().getId().equals(adopcionId)) {
             return "redirect:/adopcion/" + adopcionId + "?error=seguimiento";

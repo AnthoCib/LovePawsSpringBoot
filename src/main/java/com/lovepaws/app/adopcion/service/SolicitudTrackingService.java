@@ -2,8 +2,11 @@ package com.lovepaws.app.adopcion.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.lovepaws.app.adopcion.dto.SolicitudTrackingResponseDTO;
 
+@Service
 public interface SolicitudTrackingService {
 
     // Lista solicitudes de adopción filtradas por estado de tracking.

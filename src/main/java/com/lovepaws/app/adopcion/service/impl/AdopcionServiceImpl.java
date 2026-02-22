@@ -1,5 +1,6 @@
 package com.lovepaws.app.adopcion.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SolicitudAdopcionRepository;
 import com.lovepaws.app.adopcion.service.AdopcionService;
 import com.lovepaws.app.adopcion.service.NotificacionEmailService;
@@ -34,9 +36,14 @@ public class AdopcionServiceImpl implements AdopcionService {
 	private final MascotaRepository mascotaRepo;
 	private final NotificacionEmailService notificacionEmailService;
 	private final AuditoriaService auditoriaService;
+	private final SeguimientoAdopcionRepository seguimientoRepo;
 
 	@Override
 	public Adopcion createAdopcion(Adopcion adopcion) {
+		 Integer adoptanteId = adopcion.getUsuarioAdoptante().getId();
+
+		    validarLimiteAnual(adoptanteId);
+		    validarReglaSeisMesesYSeguimientos(adoptanteId);
 		if (adopcion.getFechaAdopcion() == null)
 			adopcion.setFechaAdopcion(LocalDateTime.now());
 		return adopcionRepo.save(adopcion);
@@ -153,6 +160,61 @@ public class AdopcionServiceImpl implements AdopcionService {
 		private final String correoDestino;
 		private final String nombreUsuario;
 		private final String nombreMascota;
+	}
+
+	@Override
+	public void validarLimiteAnual(Integer adoptanteId) {
+
+	    int anioActual = LocalDate.now().getYear();
+
+	    LocalDateTime inicioAnio = LocalDate.of(anioActual, 1, 1).atStartOfDay();
+	    LocalDateTime finAnio = LocalDate.of(anioActual, 12, 31).atTime(23, 59);
+
+	    long adopcionesEsteAnio = adopcionRepo
+	            .countByUsuarioAdoptanteIdAndFechaAdopcionBetween(
+	                adoptanteId,
+	                inicioAnio,
+	                finAnio
+	            );
+
+	    if (adopcionesEsteAnio >= 2) {
+	        throw new IllegalStateException(
+	            "Has alcanzado el límite anual permitido de 2 adopciones."
+	        );
+	    }
+	}
+
+	@Override
+	public void validarReglaSeisMesesYSeguimientos(Integer usuarioAdoptanteId) {
+		  Optional<Adopcion> ultimaAdopcion =
+		            adopcionRepo.findTopByUsuarioAdoptanteIdOrderByFechaAdopcionDesc(usuarioAdoptanteId);
+
+		    if (ultimaAdopcion.isEmpty()) {
+		        return; // primera adopción, permitido
+		    }
+
+		    Adopcion adopcion = ultimaAdopcion.get();
+
+		    LocalDateTime fechaUltima = adopcion.getFechaAdopcion();
+		    LocalDateTime fechaMinimaPermitida = fechaUltima.plusMonths(6);
+
+		    if (LocalDateTime.now().isBefore(fechaMinimaPermitida)) {
+		        throw new IllegalStateException(
+		                "Debes esperar 6 meses desde tu última adopción para solicitar otra."
+		        );
+		    }
+
+		    long seguimientosSatisfactorios =
+		            seguimientoRepo.countByAdopcionIdAndEstadoId(
+		                    adopcion.getId(),
+		                    "SATISFACTORIO"
+		            );
+
+		    if (seguimientosSatisfactorios < 3) {
+		        throw new IllegalStateException(
+		                "Debes tener al menos 3 seguimientos satisfactorios antes de una nueva adopción."
+		        );
+		    }
 	}
 
 }

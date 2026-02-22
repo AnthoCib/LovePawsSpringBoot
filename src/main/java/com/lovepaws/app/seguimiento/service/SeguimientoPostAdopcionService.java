@@ -2,11 +2,14 @@ package com.lovepaws.app.seguimiento.service;
 
 import java.util.List;
 
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
+import com.lovepaws.app.seguimiento.domain.ResultadoSeguimiento;
 import com.lovepaws.app.seguimiento.dto.RespuestaSeguimientoRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoCreateRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoResponse;
 
-public interface SeguimientoService {
+public interface SeguimientoPostAdopcionService {
 
     SeguimientoResponse crearSeguimiento(SeguimientoCreateRequest request, Integer usuarioId);
 
@@ -23,4 +26,10 @@ public interface SeguimientoService {
     List<SeguimientoResponse> listarMisSeguimientos(Integer adoptanteId);
 
     List<SeguimientoResponse> listarSeguimientosGestion();
+    
+    List<ResultadoSeguimiento> listarResultados();
+
+    List<SeguimientoPostAdopcion> listarSeguimientos(EstadoSeguimiento estado);
+    
+    List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId);
 }

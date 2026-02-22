@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.RespuestaSeguimientoAdopcion;
-import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.adopcion.repository.RespuestaSeguimientoAdopcionRepository;
 import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
@@ -18,6 +18,8 @@ import com.lovepaws.app.adopcion.service.SeguimientoService;
 import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.mascota.domain.Mascota;
 import com.lovepaws.app.mascota.repository.MascotaRepository;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
+import com.lovepaws.app.seguimiento.repository.EstadoSeguimientoRepository;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.service.AuditoriaService;
 
@@ -33,12 +35,12 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
     private final AdopcionRepository adopcionRepo;
     private final MascotaRepository mascotaRepository;
     private final AuditoriaService auditoriaService;
-
+   
 
     @Override
     @Transactional
-    public SeguimientoAdopcion createSeguimiento(SeguimientoAdopcion seguimiento, Integer usuarioId, String usuarioNombre) {
-        SeguimientoAdopcion saved = seguimientoRepo.save(seguimiento);
+    public SeguimientoPostAdopcion createSeguimiento(SeguimientoPostAdopcion seguimiento, Integer usuarioId, String usuarioNombre) {
+        SeguimientoPostAdopcion saved = seguimientoRepo.save(seguimiento);
         auditoriaService.registrar("seguimiento_post_adopcion", saved.getId(), "CREAR_SEGUIMIENTO", usuarioId,
                 usuarioNombre, "Seguimiento post adopción registrado");
         return saved;
@@ -47,7 +49,7 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
 
     @Override
     @Transactional
-    public SeguimientoAdopcion crearSeguimientoCompleto(Integer adopcionId,
+    public SeguimientoPostAdopcion crearSeguimientoCompleto(Integer adopcionId,
                                                         LocalDateTime fechaVisita,
                                                         String observaciones,
                                                         String estadoMascotaId,
@@ -63,7 +65,7 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
             throw new IllegalStateException("La fecha de visita no puede ser menor a la fecha de adopción");
         }
 
-        SeguimientoAdopcion seguimiento = new SeguimientoAdopcion();
+        SeguimientoPostAdopcion seguimiento = new SeguimientoPostAdopcion();
         seguimiento.setAdopcion(adopcion);
         seguimiento.setFechaVisita(fechaVisita);
         seguimiento.setObservaciones(observaciones != null ? observaciones.trim() : null);
@@ -74,12 +76,12 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
         seguimiento.setUsuarioCreacion(usuario);
 
         if (estadoMascotaId != null && !estadoMascotaId.isBlank()) {
-            EstadoMascota estadoMascota = new EstadoMascota();
+        	EstadoSeguimiento  estadoMascota = new EstadoSeguimiento();
             estadoMascota.setId(estadoMascotaId.trim());
             seguimiento.setEstado(estadoMascota);
         }
 
-        SeguimientoAdopcion saved = seguimientoRepo.save(seguimiento);
+        SeguimientoPostAdopcion saved = seguimientoRepo.save(seguimiento);
 
         if (estadoMascotaId != null && !estadoMascotaId.isBlank() && adopcion.getMascota() != null && adopcion.getMascota().getId() != null) {
             Mascota mascota = mascotaRepository.findById(adopcion.getMascota().getId())
@@ -117,7 +119,7 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
             throw new IllegalStateException("El adoptante autenticado no pertenece a la adopción");
         }
 
-        SeguimientoAdopcion seguimiento = seguimientoRepo.findById(seguimientoId)
+        SeguimientoPostAdopcion seguimiento = seguimientoRepo.findById(seguimientoId)
                 .orElseThrow(() -> new IllegalArgumentException("Seguimiento no encontrado"));
 
         if (seguimiento.getAdopcion() == null || !seguimiento.getAdopcion().getId().equals(adopcion.getId())) {
@@ -148,7 +150,7 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
     @Override
     @Transactional
     public void eliminarSeguimientoSoft(Integer seguimientoId, Integer usuarioId, String usuarioNombre) {
-        SeguimientoAdopcion seguimiento = seguimientoRepo.findById(seguimientoId)
+        SeguimientoPostAdopcion seguimiento = seguimientoRepo.findById(seguimientoId)
                 .orElseThrow(() -> new IllegalArgumentException("Seguimiento no encontrado"));
 
         seguimientoRepo.delete(seguimiento);
@@ -159,7 +161,7 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SeguimientoAdopcion> listarPorAdopcion(Integer adopcionId) {
+    public List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId) {
         return seguimientoRepo.findByAdopcionIdOrderByFechaVisitaDesc(adopcionId);
     }
 
@@ -199,7 +201,7 @@ public class SeguimientoAdopcionServiceImpl implements SeguimientoService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<SeguimientoAdopcion> findById(Integer id) {
+    public Optional<SeguimientoPostAdopcion> findById(Integer id) {
         return seguimientoRepo.findById(id);
     }
 
