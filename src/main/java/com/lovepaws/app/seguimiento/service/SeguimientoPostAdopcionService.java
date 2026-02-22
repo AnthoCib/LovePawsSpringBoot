@@ -30,4 +30,6 @@ public interface SeguimientoPostAdopcionService {
     List<ResultadoSeguimiento> listarResultados();
 
     List<SeguimientoPostAdopcion> listarSeguimientos(EstadoSeguimiento estado);
+    
+    List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId);
 }

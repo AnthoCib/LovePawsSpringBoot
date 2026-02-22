@@ -62,21 +62,20 @@
                     <thead>
                     <tr>
                         <th>Fecha visita</th>
-                        <th>Estado físico</th>
+                        <th>Resultado de la visita</th>
                         <th>Observaciones</th>
                     </tr>
                     </thead>
-                <tbody>
-				    <tr th:each="s : ${seguimientos}">
-				        <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-				        <td th:text="${s.resultado != null ? (s.resultado.descripcion != null ? s.resultado.descripcion : s.resultado.id) : '-'}"></td>
-				        <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
-				    </tr>
-				
-				    <tr th:if="${#lists.isEmpty(seguimientos)}">
-				        <td colspan="3" class="text-center text-muted">Aún no hay visitas registradas.</td>
-				    </tr>
-				</tbody>
+					  <tbody>
+					    <tr th:each="s : ${seguimientos}">
+					        <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+					        <td th:text="${s.resultado != null ? (s.resultado.descripcion != null ? s.resultado.descripcion : s.resultado.id) : '-'}"></td>
+					        <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
+					    </tr>
+					    <tr th:if="${#lists.isEmpty(seguimientos)}">
+					        <td colspan="3" class="text-center text-muted">Aún no hay visitas registradas.</td>
+					    </tr>
+					</tbody>
                 </table>
             </div>
         </div>

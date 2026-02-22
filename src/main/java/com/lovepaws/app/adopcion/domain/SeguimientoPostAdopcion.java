@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import com.lovepaws.app.mascota.domain.EstadoMascota;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.seguimiento.domain.ResultadoSeguimiento;
 import com.lovepaws.app.user.domain.Usuario;

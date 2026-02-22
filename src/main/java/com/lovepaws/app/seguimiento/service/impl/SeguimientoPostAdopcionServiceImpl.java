@@ -319,4 +319,10 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
         }
         return seguimientoPostRepository.findByEstado_IdOrderByFechaCreacionDesc(estado.getId());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SeguimientoPostAdopcion> listarPorAdopcion(Integer adopcionId) {
+        return seguimientoPostRepository.findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(adopcionId);
+    }
 }

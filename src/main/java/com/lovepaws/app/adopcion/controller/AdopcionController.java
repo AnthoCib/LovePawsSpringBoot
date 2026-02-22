@@ -324,7 +324,7 @@ public class AdopcionController {
 	                               @RequestParam(required = false) String estadoId,
 	                               Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
-		com.lovepaws.app.adopcion.domain.Adopcion adopcion = adopcionService.findAdopcionById(adopcionId).orElse(null);
+		Adopcion adopcion = adopcionService.findAdopcionById(adopcionId).orElse(null);
 		if (adopcion == null) {
 			return "redirect:/gestor/dashboard?error=adopcion";
 		}
