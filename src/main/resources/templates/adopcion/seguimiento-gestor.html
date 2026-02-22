@@ -32,17 +32,17 @@
                     <input type="datetime-local" name="fechaVisita" class="form-control" required
                            th:attr="min=${adopcion.fechaAdopcion != null ? #temporals.format(adopcion.fechaAdopcion, 'yyyy-MM-dd''T''HH:mm') : null}">
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label">Estado físico</label>
-                   <select name="estadoId" class="form-select">
-					    <option value="">Sin cambio</option>
-					    <option th:each="e : ${estadosSeguimiento}" 
-					            th:value="${e.id}" 
-					            th:text="${e.descripcion != null ? e.descripcion : e.id}"
-					            th:selected="${seguimiento.estadoId == e.id}">
-					    </option>
-					</select>
-                </div>
+               <div class="col-md-4">
+				    <label class="form-label">Resultado de la visita</label>
+				    <select name="resultadoId" class="form-select">
+				        <option value="">Sin cambio</option>
+				        <option th:each="r : ${resultadosSeguimiento}" 
+				                th:value="${r.id}" 
+				                th:text="${r.descripcion != null ? r.descripcion : r.id}"
+				                th:selected="${seguimiento.resultado != null and seguimiento.resultado.id == r.id}">
+				        </option>
+				    </select>
+				</div>
                 <div class="col-12">
                     <label class="form-label">Observaciones</label>
                     <textarea name="observaciones" class="form-control" rows="3" maxlength="600"></textarea>

@@ -6,6 +6,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import com.lovepaws.app.mascota.domain.EstadoMascota;
+import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
+import com.lovepaws.app.seguimiento.domain.ResultadoSeguimiento;
 import com.lovepaws.app.user.domain.Usuario;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -40,8 +42,11 @@ public class SeguimientoAdopcion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id")
     private EstadoMascota estado;
-
-
+  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resultado_id")
+    private ResultadoSeguimiento resultado;
+    
     private Boolean activo = true;
 
     @ManyToOne(fetch = FetchType.LAZY)

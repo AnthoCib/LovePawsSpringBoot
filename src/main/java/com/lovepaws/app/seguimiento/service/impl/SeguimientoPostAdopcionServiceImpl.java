@@ -11,6 +11,7 @@ import com.lovepaws.app.adopcion.repository.AdopcionRepository;
 import com.lovepaws.app.seguimiento.repository.SeguimientoPostAdopcionRepository;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.seguimiento.domain.RespuestaSeguimientoPostAdopcion;
+import com.lovepaws.app.seguimiento.domain.ResultadoSeguimiento;
 import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.seguimiento.dto.RespuestaSeguimientoRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoCreateRequest;
@@ -19,6 +20,7 @@ import com.lovepaws.app.seguimiento.exception.EstadoInvalidoException;
 import com.lovepaws.app.seguimiento.exception.SeguimientoException;
 import com.lovepaws.app.seguimiento.repository.EstadoSeguimientoRepository;
 import com.lovepaws.app.seguimiento.repository.RespuestaSeguimientoPostAdopcionRepository;
+import com.lovepaws.app.seguimiento.repository.ResultadoSeguimientoRepository;
 import com.lovepaws.app.seguimiento.service.SeguimientoPostAdopcionService;
 import com.lovepaws.app.user.domain.Usuario;
 import com.lovepaws.app.user.repository.UsuarioRepository;
@@ -37,7 +39,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
     private final AdopcionRepository adopcionRepository;
     private final UsuarioRepository usuarioRepository;
     private final AuditoriaService auditoriaService;
-
+    private final ResultadoSeguimientoRepository resultadoRepository;
     @Override
     public SeguimientoResponse crearSeguimiento(SeguimientoCreateRequest request, Integer usuarioId) {
         Usuario gestor = obtenerUsuario(usuarioId);
@@ -300,5 +302,11 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
                 .fechaModificacion(s.getFechaModificacion())
                 .historial(historial)
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResultadoSeguimiento> listarResultados() {
+        return resultadoRepository.findByActivoTrueOrderByDescripcionAsc();
     }
 }
