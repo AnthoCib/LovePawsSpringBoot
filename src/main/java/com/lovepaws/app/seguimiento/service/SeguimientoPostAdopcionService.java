@@ -5,6 +5,7 @@ import java.util.List;
 import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.seguimiento.domain.ResultadoSeguimiento;
+import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.seguimiento.dto.RespuestaSeguimientoRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoCreateRequest;
 import com.lovepaws.app.seguimiento.dto.SeguimientoResponse;
@@ -29,5 +30,5 @@ public interface SeguimientoPostAdopcionService {
     
     List<ResultadoSeguimiento> listarResultados();
 
-    List<SeguimientoAdopcion> listarSeguimientos(EstadoSeguimiento estado);
+    List<SeguimientoPostAdopcion> listarSeguimientos(EstadoSeguimiento estado);
 }

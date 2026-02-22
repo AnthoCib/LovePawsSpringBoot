@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.SeguimientoAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
+import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.seguimiento.repository.SeguimientoPostAdopcionRepository;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.seguimiento.domain.RespuestaSeguimientoPostAdopcion;
@@ -34,14 +35,14 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopcionService {
 
-    private final SeguimientoPostAdopcionRepository seguimientoRepository;
+    private final SeguimientoPostAdopcionRepository seguimientoPostRepository;
     private final RespuestaSeguimientoPostAdopcionRepository respuestaRepository;
     private final EstadoSeguimientoRepository estadoRepository;
     private final AdopcionRepository adopcionRepository;
     private final UsuarioRepository usuarioRepository;
     private final AuditoriaService auditoriaService;
     private final ResultadoSeguimientoRepository resultadoRepository;
-  
+    private final SeguimientoAdopcionRepository seguimientoRepository;
     @Override
     public SeguimientoResponse crearSeguimiento(SeguimientoCreateRequest request, Integer usuarioId) {
         Usuario gestor = obtenerUsuario(usuarioId);
@@ -62,7 +63,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
                 .usuarioCreacion(gestor)
                 .build();
 
-        seguimiento = seguimientoRepository.save(seguimiento);
+        seguimiento = seguimientoPostRepository.save(seguimiento);
         registrarMensaje(seguimiento, gestor, request.getObservacionInicial(), Boolean.TRUE);
         registrarAuditoria("seguimiento_post_adopcion", seguimiento.getId(), "INSERT", gestor,
                 "Creación de seguimiento en estado ABIERTO");
@@ -91,13 +92,13 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
             seguimiento.setActivo(Boolean.TRUE);
         }
 
-        return seguimientoRepository.save(seguimiento);
+        return seguimientoPostRepository.save(seguimiento);
     }
 
     @Transactional(readOnly = true)
     public List<SeguimientoPostAdopcion> listarSeguimientosPorEstados(List<String> estadoIds) {
         if (estadoIds == null || estadoIds.isEmpty()) {
-            return seguimientoRepository.findAllByOrderByFechaCreacionDesc();
+            return seguimientoPostRepository.findAllByOrderByFechaCreacionDesc();
         }
 
         List<String> idsNormalizados = estadoIds.stream()
@@ -106,10 +107,10 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
                 .toList();
 
         if (idsNormalizados.isEmpty()) {
-            return seguimientoRepository.findAllByOrderByFechaCreacionDesc();
+            return seguimientoPostRepository.findAllByOrderByFechaCreacionDesc();
         }
 
-        return seguimientoRepository.findByEstado_IdInOrderByFechaCreacionDesc(idsNormalizados);
+        return seguimientoPostRepository.findByEstado_IdInOrderByFechaCreacionDesc(idsNormalizados);
     }
 
 
@@ -124,7 +125,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
         registrarMensaje(seguimiento, adoptante, request.getMensaje(), Boolean.FALSE);
 
         seguimiento.setEstado(obtenerEstado(EstadoSeguimiento.RESPONDIDO));
-        seguimientoRepository.save(seguimiento);
+        seguimientoPostRepository.save(seguimiento);
 
         registrarAuditoria("respuesta_seguimiento_adoptante", seguimiento.getId(), "INSERT", adoptante,
                 "Adoptante respondió seguimiento");
@@ -144,7 +145,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
 
         seguimiento.setEstado(obtenerEstado(EstadoSeguimiento.CERRADO));
         seguimiento.setObservaciones(comentario);
-        seguimientoRepository.save(seguimiento);
+        seguimientoPostRepository.save(seguimiento);
 
         registrarMensaje(seguimiento, gestor, "CIERRE: " + comentario, Boolean.TRUE);
         registrarAuditoria("seguimiento_post_adopcion", seguimiento.getId(), "UPDATE_ESTADO", gestor,
@@ -163,7 +164,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
 
         seguimiento.setEstado(obtenerEstado(EstadoSeguimiento.ESCALADO));
         seguimiento.setObservaciones(motivo);
-        seguimientoRepository.save(seguimiento);
+        seguimientoPostRepository.save(seguimiento);
 
         registrarMensaje(seguimiento, gestor, "ESCALAMIENTO: " + motivo, Boolean.TRUE);
         registrarAuditoria("seguimiento_post_adopcion", seguimiento.getId(), "UPDATE_ESTADO", gestor,
@@ -180,7 +181,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
 
         seguimiento.setDeletedAt(LocalDateTime.now());
         seguimiento.setActivo(Boolean.FALSE);
-        seguimientoRepository.save(seguimiento);
+        seguimientoPostRepository.save(seguimiento);
 
         registrarAuditoria("seguimiento_post_adopcion", seguimiento.getId(), "DELETE_LOGICO", gestor,
                 "Eliminación lógica de seguimiento");
@@ -200,14 +201,14 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
     @Override
     @Transactional(readOnly = true)
     public List<SeguimientoResponse> listarMisSeguimientos(Integer adoptanteId) {
-        return seguimientoRepository.findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(adoptanteId)
+        return seguimientoPostRepository.findByAdopcion_UsuarioAdoptante_IdAndDeletedAtIsNullOrderByFechaCreacionDesc(adoptanteId)
                 .stream().map(s -> mapSeguimiento(s, false)).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<SeguimientoResponse> listarSeguimientosGestion() {
-        return seguimientoRepository.findAllByOrderByFechaCreacionDesc()
+        return seguimientoPostRepository.findAllByOrderByFechaCreacionDesc()
                 .stream().map(s -> mapSeguimiento(s, false)).toList();
     }
 
@@ -255,7 +256,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
     }
 
     private SeguimientoPostAdopcion obtenerSeguimientoVigente(Integer seguimientoId) {
-        return seguimientoRepository.findByIdAndDeletedAtIsNull(seguimientoId)
+        return seguimientoPostRepository.findByIdAndDeletedAtIsNull(seguimientoId)
                 .orElseThrow(() -> new SeguimientoException("Seguimiento no encontrado"));
     }
 
@@ -314,7 +315,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
 
     @Override
     @Transactional(readOnly = true)
-    public List<SeguimientoAdopcion> listarSeguimientos(EstadoSeguimiento estado) {
+    public List<SeguimientoPostAdopcion> listarSeguimientos(EstadoSeguimiento estado) {
         if (estado == null) {
             return seguimientoRepository.findAllByOrderByFechaCreacionDesc();
         }

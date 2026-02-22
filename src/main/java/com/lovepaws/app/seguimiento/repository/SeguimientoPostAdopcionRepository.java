@@ -16,6 +16,7 @@ import com.lovepaws.app.seguimiento.domain.SeguimientoPostAdopcion;
 
 	    // Todos los seguimientos activos ordenados por fecha de creación
 	    List<SeguimientoPostAdopcion> findAllByOrderByFechaCreacionDesc();
+	    
 
 	    // Por estado único
 	    List<SeguimientoPostAdopcion> findByEstado_IdOrderByFechaCreacionDesc(String estadoId);
