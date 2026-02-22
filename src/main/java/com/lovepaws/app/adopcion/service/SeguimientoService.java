@@ -42,4 +42,6 @@ public interface SeguimientoService {
 
 	void eliminarLogico(Integer seguimientoId, Integer usuarioId, String usuarioNombre);
 
+	
+
 }

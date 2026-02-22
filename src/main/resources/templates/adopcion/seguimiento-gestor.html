@@ -32,17 +32,17 @@
                     <input type="datetime-local" name="fechaVisita" class="form-control" required
                            th:attr="min=${adopcion.fechaAdopcion != null ? #temporals.format(adopcion.fechaAdopcion, 'yyyy-MM-dd''T''HH:mm') : null}">
                 </div>
-               <div class="col-md-4">
-			    <label class="form-label">Resultado de la visita</label>
-			    <select name="resultadoId" class="form-select">
-			        <option value="">Sin cambio</option>
-			        <option th:each="r : ${resultadosSeguimiento}" 
-					        th:value="${r.id}" 
-					        th:text="${r.descripcion != null ? r.descripcion : r.id}"
-					        th:selected="${seguimiento.resultado != null and seguimiento.resultado.id == r.id}">
-					</option>
-			    </select>
-			</div>
+	           <div class="col-md-4">
+	                    <label class="form-label">Resultado de la visita</label>
+	                    <select name="estadoId" class="form-select">
+	                        <option value="">Sin cambio</option>
+	                        <option th:each="r : ${resultadosSeguimiento}" 
+	                                th:value="${r.id}" 
+	                                th:text="${r.descripcion != null ? r.descripcion : r.id}"
+	                                >
+	                        </option>
+	                    </select>
+	                </div>
                 <div class="col-12">
                     <label class="form-label">Observaciones</label>
                     <textarea name="observaciones" class="form-control" rows="3" maxlength="600"></textarea>
@@ -66,16 +66,17 @@
                         <th>Observaciones</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr th:each="s : ${seguimientos}">
-                        <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-                        <td th:text="${s.estado != null ? (s.estado.descripcion != null ? s.estado.descripcion : s.estado.id) : '-'}"></td>
-                        <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(seguimientos)}">
-                        <td colspan="3" class="text-center text-muted">Aún no hay visitas registradas.</td>
-                    </tr>
-                    </tbody>
+                <tbody>
+				    <tr th:each="s : ${seguimientos}">
+				        <td th:text="${s.fechaVisita != null ? #temporals.format(s.fechaVisita, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+				        <td th:text="${s.resultado != null ? (s.resultado.descripcion != null ? s.resultado.descripcion : s.resultado.id) : '-'}"></td>
+				        <td th:text="${s.observaciones != null ? s.observaciones : '-'}"></td>
+				    </tr>
+				
+				    <tr th:if="${#lists.isEmpty(seguimientos)}">
+				        <td colspan="3" class="text-center text-muted">Aún no hay visitas registradas.</td>
+				    </tr>
+				</tbody>
                 </table>
             </div>
         </div>

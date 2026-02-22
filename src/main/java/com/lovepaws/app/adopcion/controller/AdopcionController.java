@@ -22,9 +22,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.EstadoAdopcion;
 import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.domain.SolicitudAdopcion;
@@ -32,12 +34,11 @@ import com.lovepaws.app.adopcion.service.AdopcionService;
 import com.lovepaws.app.adopcion.service.SeguimientoService;
 import com.lovepaws.app.adopcion.service.SolicitudAdopcionService;
 import com.lovepaws.app.mascota.domain.Mascota;
-import com.lovepaws.app.mascota.domain.EstadoMascota;
-import com.lovepaws.app.mascota.repository.EstadoMascotaRepository;
 import com.lovepaws.app.mascota.service.MascotaService;
 import com.lovepaws.app.security.UsuarioPrincipal;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.seguimiento.repository.EstadoSeguimientoRepository;
+import com.lovepaws.app.seguimiento.repository.ResultadoSeguimientoRepository;
 import com.lovepaws.app.user.domain.Usuario;
 
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,7 @@ public class AdopcionController {
 	private final MascotaService mascotaService;
 	private final SeguimientoService seguimientoService;
 	private final EstadoSeguimientoRepository estadoSeguimientoRepository;
+	private final ResultadoSeguimientoRepository resultadoSeguimientoRepo;
 
 	@GetMapping
 	public String flujoAdopcion() {
@@ -279,7 +281,7 @@ public class AdopcionController {
 	public String verSeguimientoAdoptante(@PathVariable Integer adopcionId, Model model, Authentication auth) {
 		UsuarioPrincipal principal = (UsuarioPrincipal) auth.getPrincipal();
 		Integer usuarioId = principal.getUsuario().getId();
-		com.lovepaws.app.adopcion.domain.Adopcion adopcion = adopcionService.findAdopcionById(adopcionId)
+		Adopcion adopcion = adopcionService.findAdopcionById(adopcionId)
 				.filter(a -> a.getUsuarioAdoptante() != null && a.getUsuarioAdoptante().getId().equals(usuarioId))
 				.orElse(null);
 		if (adopcion == null) {
@@ -293,14 +295,25 @@ public class AdopcionController {
 	@PreAuthorize("hasRole('GESTOR')")
 	@GetMapping("/gestor/seguimiento/{adopcionId}")
 	public String verSeguimientoGestor(@PathVariable Integer adopcionId, Model model) {
-		com.lovepaws.app.adopcion.domain.Adopcion adopcion = adopcionService.findAdopcionById(adopcionId).orElse(null);
-		if (adopcion == null) {
-			return "redirect:/gestor/dashboard?error=adopcion";
-		}
-		model.addAttribute("adopcion", adopcion);
-		model.addAttribute("seguimientos", seguimientoService.listarPorAdopcion(adopcionId));
-		model.addAttribute("estadosSeguimiento", estadoSeguimientoRepository.findAll());
-		return "adopcion/seguimiento-gestor";
+
+	    Adopcion adopcion =
+	            adopcionService.findAdopcionById(adopcionId).orElse(null);
+
+	    if (adopcion == null) {
+	        return "redirect:/gestor/dashboard?error=adopcion";
+	    }
+
+	    model.addAttribute("adopcion", adopcion);
+
+	    model.addAttribute("seguimientos",
+	            Optional.ofNullable(seguimientoService.listarPorAdopcion(adopcionId))
+	                    .orElse(List.of()));
+
+	    model.addAttribute("resultadosSeguimiento",
+	            Optional.ofNullable(resultadoSeguimientoRepo.findAll())
+	                    .orElse(List.of()));
+
+	    return "adopcion/seguimiento-gestor";
 	}
 
 	@PreAuthorize("hasRole('GESTOR')")

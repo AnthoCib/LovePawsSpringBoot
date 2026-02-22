@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lovepaws.app.adopcion.domain.Adopcion;
 import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.adopcion.repository.AdopcionRepository;
-import com.lovepaws.app.adopcion.repository.SeguimientoAdopcionRepository;
 import com.lovepaws.app.seguimiento.repository.SeguimientoPostAdopcionRepository;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
 import com.lovepaws.app.seguimiento.domain.RespuestaSeguimientoPostAdopcion;
@@ -309,7 +308,7 @@ public class SeguimientoPostAdopcionServiceImpl implements SeguimientoPostAdopci
     @Override
     @Transactional(readOnly = true)
     public List<ResultadoSeguimiento> listarResultados() {
-        return resultadoRepository.findByActivoTrueOrderByDescripcionAsc();
+        return resultadoRepository.findAll();
     }
 
     @Override

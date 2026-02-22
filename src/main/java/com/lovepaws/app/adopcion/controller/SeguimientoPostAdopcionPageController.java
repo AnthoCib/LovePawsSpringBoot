@@ -1,6 +1,7 @@
 package com.lovepaws.app.adopcion.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -9,8 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.lovepaws.app.adopcion.dto.EstadoMascotaTracking;
+import com.lovepaws.app.adopcion.domain.SeguimientoPostAdopcion;
 import com.lovepaws.app.seguimiento.domain.EstadoSeguimiento;
+import com.lovepaws.app.seguimiento.repository.EstadoSeguimientoRepository;
 import com.lovepaws.app.seguimiento.service.SeguimientoPostAdopcionService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,24 +23,38 @@ import lombok.RequiredArgsConstructor;
 public class SeguimientoPostAdopcionPageController {
 
     private final SeguimientoPostAdopcionService seguimientoService;
+    private final EstadoSeguimientoRepository estadoSeguimientoRepository;
 
     @PreAuthorize("hasAnyRole('GESTOR','ADMIN')")
     @GetMapping
-    public String pagina(@RequestParam(required = false) EstadoSeguimiento estado,
+    public String pagina(@RequestParam(required = false) String estado,
                          Model model) {
-        // Seguimientos filtrados por estado
-        model.addAttribute("seguimientos", seguimientoService.listarSeguimientos(estado));
+
+    	EstadoSeguimiento estadoEntity = null;
+
+    	if (estado != null && !estado.isBlank()) {
+    	    estadoEntity = estadoSeguimientoRepository
+    	                        .findById(estado)
+    	                        .orElse(null);
+    	}
+
+    	List<SeguimientoPostAdopcion> lista =
+    	        Optional.ofNullable(seguimientoService
+    	                .listarSeguimientos(estadoEntity))
+    	                .orElse(List.of());
+
+        if (lista == null) {
+            lista = List.of();
+        }
+
+        model.addAttribute("seguimientos", lista);
         model.addAttribute("estadoSeleccionado", estado);
+        model.addAttribute("estados", estadoSeguimientoRepository.findAll());
 
-        // Estados físicos de la mascota (tracking)
-        model.addAttribute("estados", EstadoMascotaTracking.values());
+        model.addAttribute("resultadosSeguimiento",
+                Optional.ofNullable(seguimientoService.listarResultados())
+                        .orElse(List.of()));
 
-        // Resultados posibles de seguimiento (desde el servicio)
-        model.addAttribute("resultadosSeguimiento", seguimientoService.listarResultados());
-
-        
-       
-      
         return "adopcion/seguimiento-post-adopcion";
     }
 }
